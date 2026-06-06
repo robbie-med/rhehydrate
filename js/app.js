@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.3.0";
+  var APP_VERSION = "1.3.1";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
 
   var LANGS = ["en", "kr", "fr", "ru", "zh"];
@@ -29,8 +29,8 @@
     ivFluid:          "rl",
     planBRate:        75,
     planBHours:       4,
-    planCAppr:        "who",
-    somePct:          7.5,
+    planCAppr:        "bolus",
+    somePct:          6,
     severePct:        10,
     showZinc:         true,
     showOnda:         true,
@@ -357,12 +357,53 @@
       var total = 100 * w, first = 30 * w, rest = 70 * w, bolus = 20 * w;
 
       if (ins.planCAppr === "bolus") {
-        body.appendChild(el("div", "plan-dose",
-          t("plan.c.bolus", { bolus: fmt(bolus) })));
-        body.appendChild(liList([
-          t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4")
+        // Phase 1 — Acute resuscitation
+        var ph1 = el("div", "plan-phase");
+        ph1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
+        ph1.appendChild(el("div", "plan-dose",
+          t("plan.c.bolus", { bolus: fmt(bolus), fluid: fluidName })));
+        ph1.appendChild(liList([
+          t("plan.c.bolus.repeat"),
+          t("plan.c.bolus.fluid", { fluid: fluidName }),
+          t("plan.c.bolus.access")
         ]));
+        body.appendChild(ph1);
+
+        // Phase 2 — Post-resuscitation
+        var bolusMl   = 40 * w;
+        var remaining = Math.max(0, R.deficitVol - bolusMl);
+        var maint12   = R.maintHr * 12;
+        var total12   = remaining + maint12;
+        var rate12    = total12 / 12;
+
+        var ph2 = el("div", "plan-phase plan-phase-2");
+        ph2.appendChild(el("div", "plan-phase-label", t("plan.c.phase2.label")));
+        ph2.appendChild(el("div", "plan-calc",
+          t("plan.c.phase2.rate", {
+            remaining: fmt(remaining),
+            maint12:   fmt(maint12),
+            total:     fmt(total12),
+            rate:      fmt(rate12)
+          })));
+        ph2.appendChild(liList([
+          t("plan.c.phase2.switch"),
+          t("plan.c.4"),
+          t("plan.c.phase2.reassess")
+        ]));
+        body.appendChild(ph2);
+
+        // Variants
+        var varDiv = el("div", "plan-variants");
+        varDiv.appendChild(el("div", "plan-variants-h", t("plan.c.var.h")));
+        varDiv.appendChild(liList([
+          t("plan.c.var.cardiac"),
+          t("plan.c.var.dysna"),
+          t("plan.c.var.surgical")
+        ]));
+        body.appendChild(varDiv);
+
       } else {
+        // WHO 100 mL/kg 30/70 approach
         body.appendChild(el("div", "plan-dose",
           t("plan.c.fluid", { vol: fmt(total), fluid: fluidName })));
         var witems = [];

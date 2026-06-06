@@ -2,23 +2,43 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.2.0";
+  var APP_VERSION = "1.3.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
+
+  var LANGS = ["en", "kr", "fr", "ru", "zh"];
+  var FLAGS  = { en: "🇬🇧", kr: "🇰🇷", fr: "🇫🇷", ru: "🇷🇺", zh: "🇨🇳" };
+  var LOCALES = { en: "en-US", kr: "ko-KR", fr: "fr-FR", ru: "ru-RU", zh: "zh-CN" };
+  var HTML_LANGS = { en: "en", kr: "ko", fr: "fr", ru: "ru", zh: "zh" };
+  var IV_NOTE_LABEL = { en: "IV fluid: ", kr: "정맥 수액: ", fr: "Soluté IV : ", ru: "В/В раствор: " };
+
+  var REFS = [
+    { url: "https://iris.who.int/handle/10665/43209",            key: "edu.refs.1" },
+    { url: "https://doi.org/10.1542/peds.2007-2376",             key: "edu.refs.2" },
+    { url: "https://doi.org/10.1542/peds.19.5.823",              key: "edu.refs.3" },
+    { url: "https://www.nice.org.uk/guidance/cg84",              key: "edu.refs.4" },
+    { url: "https://doi.org/10.1097/MPG.0000000000000375",       key: "edu.refs.5" },
+    { url: "https://doi.org/10.1002/14651858.CD005436.pub5",     key: "edu.refs.6" },
+    { url: "https://doi.org/10.1542/peds.2013-3950",             key: "edu.refs.7" },
+    { url: "https://doi.org/10.1371/journal.pone.0229482",       key: "edu.refs.8" }
+  ];
 
   // ── default institution config ──────────────────────────────────────
   var INST_DEFAULTS = {
-    name:       "",
-    dept:       "",
-    ivFluid:    "rl",
-    planBRate:  75,
-    planCAppr:  "who",
-    somePct:    7.5,
-    severePct:  10,
-    showZinc:   true,
-    showOnda:   true,
-    showNgOrs:  true
+    name:             "",
+    dept:             "",
+    ivFluid:          "rl",
+    planBRate:        75,
+    planBHours:       4,
+    planCAppr:        "who",
+    somePct:          7.5,
+    severePct:        10,
+    showZinc:         true,
+    showOnda:         true,
+    showNgOrs:        true,
+    showRacecadotril: false,
+    showSmectite:     false,
+    showSboulardii:   false
   };
-  var IV_LABELS = { rl: "Ringer's lactate", ns: "Normal saline (0.9%)", plasmalyte: "Plasma-Lyte" };
 
   // ── state ───────────────────────────────────────────────────────────
   var state = {
@@ -43,12 +63,12 @@
   function fmt(n) {
     if (n == null || isNaN(n)) return "—";
     var r = n >= 10 ? Math.round(n) : Math.round(n * 10) / 10;
-    return r.toLocaleString(state.lang === "kr" ? "ko-KR" : "en-US");
+    return r.toLocaleString(LOCALES[state.lang] || "en-US");
   }
 
   // ── i18n ────────────────────────────────────────────────────────────
   function applyI18n() {
-    document.documentElement.lang = state.lang === "kr" ? "ko" : "en";
+    document.documentElement.lang = HTML_LANGS[state.lang] || state.lang;
     $$("[data-i18n]").forEach(function (el) {
       el.textContent = t(el.getAttribute("data-i18n"));
     });
@@ -59,7 +79,7 @@
       var v = t(el.getAttribute("data-i18n-title"));
       el.setAttribute("title", v); el.setAttribute("aria-label", v);
     });
-    $("#langToggle").textContent = state.lang === "en" ? "한국어" : "EN";
+    $("#langToggle").textContent = FLAGS[state.lang] || state.lang.toUpperCase();
     // update selects that carry data-i18n on options
     $$("select option[data-i18n]").forEach(function (o) {
       o.textContent = t(o.getAttribute("data-i18n"));
@@ -302,7 +322,7 @@
   function buildPlan(R) {
     var w   = R.weight, key = R.sev.key;
     var ins = state.inst;
-    var fluidName = IV_LABELS[ins.ivFluid] || ins.ivFluid;
+    var fluidName = t("inst.ivFluid." + ins.ivFluid);
     var plan = el("div", "plan");
     var head = el("div", "plan-head");
     var body = el("div", "plan-body");
@@ -317,15 +337,19 @@
 
     } else if (key === "some") {
       head.textContent = t("plan.b.title");
-      var rate = ins.planBRate;
-      var vol  = rate * w;
+      var rate  = ins.planBRate;
+      var hours = ins.planBHours;
+      var vol   = rate * w;
       body.appendChild(el("div", "plan-dose",
-        t("plan.b.dose", { vol: fmt(vol), rate: rate })));
+        t("plan.b.dose", { vol: fmt(vol), rate: rate, hours: hours })));
       var its = [t("plan.b.1")];
-      if (ins.showOnda) its.push(t("plan.b.2"));
+      if (ins.showOnda)         its.push(t("plan.b.2"));
       its.push(t("plan.b.3", { losses: fmt(R.lossVol) }));
-      its.push(t("plan.b.4"));
-      if (ins.showNgOrs) its.push(t("plan.b.5"));
+      its.push(t("plan.b.4", { hours: hours }));
+      if (ins.showNgOrs)        its.push(t("plan.b.5"));
+      if (ins.showRacecadotril) its.push(t("plan.b.racecadotril"));
+      if (ins.showSmectite)     its.push(t("plan.b.smectite"));
+      if (ins.showSboulardii)   its.push(t("plan.b.sboulardii"));
       body.appendChild(liList(its));
 
     } else {
@@ -333,17 +357,12 @@
       var total = 100 * w, first = 30 * w, rest = 70 * w, bolus = 20 * w;
 
       if (ins.planCAppr === "bolus") {
-        // AAP bolus-first approach
         body.appendChild(el("div", "plan-dose",
           t("plan.c.bolus", { bolus: fmt(bolus) })));
-        var bitems = [];
-        bitems.push(t("plan.c.1"));
-        bitems.push(t("plan.c.2"));
-        bitems.push(t("plan.c.3"));
-        bitems.push(t("plan.c.4"));
-        body.appendChild(liList(bitems));
+        body.appendChild(liList([
+          t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4")
+        ]));
       } else {
-        // WHO schedule
         body.appendChild(el("div", "plan-dose",
           t("plan.c.fluid", { vol: fmt(total), fluid: fluidName })));
         var witems = [];
@@ -355,14 +374,12 @@
         } else {
           witems.push(t("plan.c.child",  { first: fmt(first), rest: fmt(rest) }));
         }
-        witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"));
-        witems.push(t("plan.c.4"));
+        witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"));
         body.appendChild(liList(witems));
+        var fnote = el("p", "note");
+        fnote.textContent = (IV_NOTE_LABEL[state.lang] || "IV fluid: ") + fluidName;
+        body.appendChild(fnote);
       }
-      // IV fluid note
-      var fnote = el("p", "note");
-      fnote.textContent = (state.lang === "kr" ? "정맥 수액: " : "IV fluid: ") + fluidName;
-      body.appendChild(fnote);
     }
 
     plan.appendChild(head); plan.appendChild(body);
@@ -380,12 +397,21 @@
   function buildEdu() {
     var b = $("#eduBody"); if (!b) return;
     b.innerHTML = "";
-    ["s1","s2","s3","s4","s5"].forEach(function (s) {
+    ["s1","s2","s3","s4","s5","s6"].forEach(function (s) {
       b.appendChild(el("h3", null, t("edu." + s + ".h")));
       b.appendChild(el("p",  null, t("edu." + s + ".p")));
     });
     b.appendChild(el("h3", null, t("edu.refs.h")));
-    b.appendChild(liList([t("edu.refs.1"), t("edu.refs.2"), t("edu.refs.3"), t("edu.refs.4")]));
+    var ul = document.createElement("ul");
+    REFS.forEach(function (ref) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = ref.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.textContent = t(ref.key);
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    b.appendChild(ul);
   }
 
   // ── about ────────────────────────────────────────────────────────────
@@ -411,16 +437,20 @@
   // ── institution UI ───────────────────────────────────────────────────
   function syncInstUI() {
     var ins = state.inst;
-    $("#instName").value     = ins.name;
-    $("#instDept").value     = ins.dept;
-    $("#instIvFluid").value  = ins.ivFluid;
-    $("#instPlanBRate").value = String(ins.planBRate);
+    $("#instName").value          = ins.name;
+    $("#instDept").value          = ins.dept;
+    $("#instIvFluid").value       = ins.ivFluid;
+    $("#instPlanBRate").value     = String(ins.planBRate);
+    $("#instPlanBHours").value    = String(ins.planBHours);
     $("#instPlanCApproach").value = ins.planCAppr;
-    $("#instSomePct").value   = ins.somePct;
-    $("#instSeverePct").value = ins.severePct;
-    syncValSeg("#instZincSeg", ins.showZinc);
-    syncValSeg("#instOndaSeg", ins.showOnda);
-    syncValSeg("#instNgSeg",   ins.showNgOrs);
+    $("#instSomePct").value       = ins.somePct;
+    $("#instSeverePct").value     = ins.severePct;
+    syncValSeg("#instZincSeg",       ins.showZinc);
+    syncValSeg("#instOndaSeg",       ins.showOnda);
+    syncValSeg("#instNgSeg",         ins.showNgOrs);
+    syncValSeg("#instRaceSeg",       ins.showRacecadotril);
+    syncValSeg("#instSmectiteSeg",   ins.showSmectite);
+    syncValSeg("#instSboulardiiSeg", ins.showSboulardii);
   }
 
   function updateInstTag() {
@@ -455,7 +485,6 @@
   }
 
   function wireInstUI() {
-    // text inputs
     ["#instName","#instDept"].forEach(function (s) {
       $(s).addEventListener("input", function () {
         var key = s === "#instName" ? "name" : "dept";
@@ -463,24 +492,25 @@
         saveInst();
       });
     });
-    // selects
     $("#instIvFluid").addEventListener("change", function () {
       state.inst.ivFluid = this.value; saveInst();
     });
     $("#instPlanBRate").addEventListener("change", function () {
       state.inst.planBRate = parseFloat(this.value); saveInst();
     });
+    $("#instPlanBHours").addEventListener("change", function () {
+      state.inst.planBHours = parseInt(this.value, 10); saveInst();
+    });
     $("#instPlanCApproach").addEventListener("change", function () {
       state.inst.planCAppr = this.value; saveInst();
     });
-    // pct overrides
     $("#instSomePct").addEventListener("change", function () {
       state.inst.somePct = Math.max(1, Math.min(9, parseFloat(this.value) || 7.5)); saveInst();
     });
     $("#instSeverePct").addEventListener("change", function () {
       state.inst.severePct = Math.max(5, Math.min(15, parseFloat(this.value) || 10)); saveInst();
     });
-    // bool segs
+
     function wireBoolSeg(selId, key) {
       $(selId).addEventListener("click", function (e) {
         var b = e.target.closest(".seg"); if (!b) return;
@@ -490,16 +520,18 @@
         saveInst();
       });
     }
-    wireBoolSeg("#instZincSeg", "showZinc");
-    wireBoolSeg("#instOndaSeg", "showOnda");
-    wireBoolSeg("#instNgSeg",   "showNgOrs");
+    wireBoolSeg("#instZincSeg",       "showZinc");
+    wireBoolSeg("#instOndaSeg",       "showOnda");
+    wireBoolSeg("#instNgSeg",         "showNgOrs");
+    wireBoolSeg("#instRaceSeg",       "showRacecadotril");
+    wireBoolSeg("#instSmectiteSeg",   "showSmectite");
+    wireBoolSeg("#instSboulardiiSeg", "showSboulardii");
 
-    // reset
     $("#instResetBtn").addEventListener("click", function () {
       resetInst();
       var self = this, orig = this.textContent;
       this.textContent = t("inst.reset.done");
-      setTimeout(function () { self.textContent = t("inst.reset"); }, 1600);
+      setTimeout(function () { self.textContent = orig || t("inst.reset"); }, 1600);
     });
   }
 
@@ -605,9 +637,10 @@
     syncSeg("#langSeg", "lang", state.lang);
     updateInstTag();
 
-    // language toggle (topbar)
+    // language toggle (topbar) — cycles through LANGS
     $("#langToggle").addEventListener("click", function () {
-      state.lang = state.lang === "en" ? "kr" : "en";
+      var idx = LANGS.indexOf(state.lang);
+      state.lang = LANGS[(idx + 1) % LANGS.length];
       try { localStorage.setItem(LS.lang, state.lang); } catch(e) {}
       applyI18n(); syncSeg("#langSeg", "lang", state.lang);
     });
@@ -656,11 +689,9 @@
 
     wireInstUI();
 
-    // persist on simple inputs
     ["#weight","#age","#ageUnit","#wellWeight","#stools","#emesis"].forEach(function (s) {
       $(s).addEventListener("change", persist);
     });
-    // live recompute
     $$(".inputs input, .inputs select").forEach(function (n) {
       n.addEventListener("change", function () { if (lastResult) calculate(); });
     });

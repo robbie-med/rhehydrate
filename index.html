@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#0f1419" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#f5f8fb" media="(prefers-color-scheme: light)" />
   <meta name="description" content="Evidence-based pediatric dehydration severity and rehydration protocol calculator. Offline-capable clinical decision support." />
   <title>PRhehydrate — Pediatric Rehydration Calculator</title>
@@ -187,8 +187,11 @@
         <div class="setrow">
           <span data-i18n="set.lang">Language</span>
           <div class="segmented small" id="langSeg">
-            <button class="seg" data-lang="en" data-i18n="set.lang.en">English</button>
-            <button class="seg" data-lang="kr" data-i18n="set.lang.kr">한국어</button>
+            <button class="seg" data-lang="en" title="English" aria-label="English">🇬🇧</button>
+            <button class="seg" data-lang="kr" title="한국어" aria-label="한국어">🇰🇷</button>
+            <button class="seg" data-lang="fr" title="Français" aria-label="Français">🇫🇷</button>
+            <button class="seg" data-lang="ru" title="Русский" aria-label="Русский">🇷🇺</button>
+            <button class="seg" data-lang="zh" title="中文" aria-label="中文">🇨🇳</button>
           </div>
         </div>
         <div class="setrow">
@@ -233,11 +236,20 @@
           </select>
         </div>
         <div class="setrow">
-          <span data-i18n="inst.planBRate">Plan B ORS rate</span>
+          <span data-i18n="inst.planBRate">Plan B ORS dose</span>
           <select id="instPlanBRate" class="set-select">
-            <option value="75" data-i18n="inst.planBRate.75">75 mL/kg / 4 h (WHO)</option>
-            <option value="100" data-i18n="inst.planBRate.100">100 mL/kg / 4 h</option>
-            <option value="50" data-i18n="inst.planBRate.50">50 mL/kg / 4 h (mild)</option>
+            <option value="75"  data-i18n="inst.planBRate.75">75 mL/kg (WHO standard)</option>
+            <option value="60"  data-i18n="inst.planBRate.60">60 mL/kg (ESPGHAN moderate / European)</option>
+            <option value="100" data-i18n="inst.planBRate.100">100 mL/kg (WHO max)</option>
+            <option value="50"  data-i18n="inst.planBRate.50">50 mL/kg (ESPGHAN mild)</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.planBHours">Plan B duration</span>
+          <select id="instPlanBHours" class="set-select">
+            <option value="4" data-i18n="inst.planBHours.4">4 hours (standard)</option>
+            <option value="3" data-i18n="inst.planBHours.3">3 hours (rapid)</option>
+            <option value="6" data-i18n="inst.planBHours.6">6 hours (extended / home)</option>
           </select>
         </div>
         <div class="setrow">
@@ -275,11 +287,32 @@
             <button class="seg" data-val="0" data-i18n="inst.off">Off</button>
           </div>
         </div>
-        <div class="setrow last">
+        <div class="setrow">
           <span data-i18n="inst.showNgOrs">NG-ORS note</span>
           <div class="segmented small" id="instNgSeg">
             <button class="seg active" data-val="1" data-i18n="inst.on">On</button>
             <button class="seg" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.showRacecadotril">Racecadotril note</span>
+          <div class="segmented small" id="instRaceSeg">
+            <button class="seg" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg active" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.showSmectite">Smectite note</span>
+          <div class="segmented small" id="instSmectiteSeg">
+            <button class="seg" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg active" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow last">
+          <span data-i18n="inst.showSboulardii">S. boulardii note</span>
+          <div class="segmented small" id="instSboulardiiSeg">
+            <button class="seg" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg active" data-val="0" data-i18n="inst.off">Off</button>
           </div>
         </div>
         <div class="setrow">

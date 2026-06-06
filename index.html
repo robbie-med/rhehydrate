@@ -7,168 +7,183 @@
   <meta name="theme-color" content="#0f1419" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#f5f8fb" media="(prefers-color-scheme: light)" />
   <meta name="description" content="Evidence-based pediatric dehydration severity and rehydration protocol calculator. Offline-capable clinical decision support." />
-  <title>Rhehydrate — Pediatric Rehydration Calculator</title>
+  <title>PRhehydrate — Pediatric Rehydration Calculator</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+
+  <!-- ============ TOP BAR ============ -->
   <header class="topbar">
     <div class="brand">
       <img src="icon.svg" alt="" class="brand-mark" width="28" height="28" />
       <div class="brand-text">
-        <span class="brand-name" data-i18n="app.title">Rhehydrate</span>
-        <span class="brand-tag" data-i18n="app.tagline">Pediatric dehydration & rehydration calculator</span>
+        <span class="brand-name" data-i18n="app.title">PRhehydrate</span>
+        <span class="brand-tag inst-tag" id="instTag" hidden></span>
+        <span class="brand-tag app-tag" data-i18n="app.tagline">Pediatric dehydration &amp; rehydration calculator</span>
       </div>
     </div>
     <nav class="topnav" aria-label="Panels">
-      <button class="iconbtn" data-panel="edu" title="Education" aria-label="Education" data-i18n-title="nav.edu">
+      <button class="iconbtn" data-panel="edu" data-i18n-title="nav.edu" aria-label="Education">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.9V17h2V9L12 3zM5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z"/></svg>
       </button>
-      <button class="iconbtn" data-panel="about" title="About" aria-label="About" data-i18n-title="nav.about">
+      <button class="iconbtn" data-panel="about" data-i18n-title="nav.about" aria-label="About">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7h2v2h-2V7zm0 4h2v6h-2v-6zm1-9a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/></svg>
       </button>
-      <button class="iconbtn" data-panel="settings" title="Settings" aria-label="Settings" data-i18n-title="nav.settings">
+      <button class="iconbtn" data-panel="settings" data-i18n-title="nav.settings" aria-label="Settings">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.8 7.8 0 000-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 00-1.7-1l-.4-2.5H10.9l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.4-1-2 3.4L4.6 11a7.8 7.8 0 000 2l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 001.7 1l.4 2.5h4.2l.4-2.5a7.6 7.6 0 001.7-1l2.4 1 2-3.4-2-1.6zM12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7z"/></svg>
       </button>
       <button class="langtoggle" id="langToggle" aria-label="Toggle language">EN</button>
     </nav>
   </header>
 
+  <!-- ============ MAIN LAYOUT ============ -->
   <main class="layout">
-    <!-- ============ INPUT ============ -->
-    <section class="card inputs" aria-labelledby="inHead">
-      <h2 id="inHead" class="card-h" data-i18n="in.section">Patient</h2>
 
-      <div class="grid2">
-        <label class="field">
-          <span class="field-l" data-i18n="in.weight">Weight</span>
-          <span class="inputwrap">
-            <input id="weight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="in.weight.ph" placeholder="e.g. 12" />
-            <span class="suffix">kg</span>
-          </span>
-          <span class="hint" data-i18n="in.weight.help">Current measured weight in kilograms.</span>
-        </label>
+    <!-- ===== LEFT / INPUT COLUMN ===== -->
+    <section class="col col-input">
+      <div class="card inputs" aria-labelledby="inHead">
+        <h2 id="inHead" class="card-h" data-i18n="in.section">Patient</h2>
 
-        <label class="field">
-          <span class="field-l" data-i18n="in.age">Age</span>
-          <span class="inputwrap">
-            <input id="age" type="number" inputmode="numeric" min="0" max="216" step="1" data-i18n-ph="in.age.ph" placeholder="months" />
-            <select id="ageUnit" class="suffix-select" aria-label="Age unit">
-              <option value="months" data-i18n="in.ageUnit.months">months</option>
-              <option value="years" data-i18n="in.ageUnit.years">years</option>
-            </select>
-          </span>
-          <span class="hint" data-i18n="in.age.help">Used to tailor the WHO severe-dehydration IV schedule.</span>
-        </label>
-      </div>
-
-      <div class="field">
-        <span class="field-l" data-i18n="in.method">Severity assessment</span>
-        <div class="segmented" id="methodSeg" role="tablist">
-          <button role="tab" class="seg active" data-method="cds" data-i18n="in.method.cds">Clinical Dehydration Scale</button>
-          <button role="tab" class="seg" data-method="who" data-i18n="in.method.who">WHO clinical signs</button>
-          <button role="tab" class="seg" data-method="weight" data-i18n="in.method.weight">Measured weight loss</button>
-          <button role="tab" class="seg" data-method="percent" data-i18n="in.method.percent">Enter % directly</button>
-        </div>
-      </div>
-
-      <!-- CDS -->
-      <div class="method-panel" data-mpanel="cds">
-        <h3 class="sub-h" data-i18n="cds.title">Clinical Dehydration Scale (CDS)</h3>
-        <p class="hint" data-i18n="cds.help"></p>
-        <div class="scale" id="cdsScale"></div>
-        <div class="scorebar"><span data-i18n="cds.score">CDS score</span><strong id="cdsScore">0 / 8</strong></div>
-      </div>
-
-      <!-- WHO -->
-      <div class="method-panel" data-mpanel="who" hidden>
-        <h3 class="sub-h" data-i18n="who.title">WHO clinical signs</h3>
-        <p class="hint" data-i18n="who.help"></p>
-        <div class="scale" id="whoScale"></div>
-      </div>
-
-      <!-- Weight loss -->
-      <div class="method-panel" data-mpanel="weight" hidden>
-        <h3 class="sub-h" data-i18n="wl.title">Measured weight loss</h3>
-        <p class="hint" data-i18n="wl.help"></p>
-        <label class="field">
-          <span class="field-l" data-i18n="wl.well">Recent well weight</span>
-          <span class="inputwrap">
-            <input id="wellWeight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="wl.well.ph" placeholder="kg before illness" />
-            <span class="suffix">kg</span>
-          </span>
-        </label>
-      </div>
-
-      <!-- Percent -->
-      <div class="method-panel" data-mpanel="percent" hidden>
-        <h3 class="sub-h" data-i18n="pct.title">Estimated fluid deficit</h3>
-        <p class="hint" data-i18n="pct.help"></p>
-        <label class="field">
-          <span class="field-l"><span data-i18n="pct.label">Deficit</span> · <strong id="pctOut">5%</strong></span>
-          <input id="pctRange" type="range" min="0" max="15" step="0.5" value="5" class="range" />
-        </label>
-      </div>
-
-      <!-- Ongoing losses -->
-      <details class="losses">
-        <summary data-i18n="loss.title">Ongoing losses (optional)</summary>
         <div class="grid2">
           <label class="field">
-            <span class="field-l" data-i18n="loss.stools">Watery stools</span>
-            <input id="stools" type="number" inputmode="numeric" min="0" max="50" step="1" value="0" />
-            <span class="hint" data-i18n="loss.stools.unit">since last assessment</span>
+            <span class="field-l" data-i18n="in.weight">Weight</span>
+            <span class="inputwrap">
+              <input id="weight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="in.weight.ph" placeholder="e.g. 12" />
+              <span class="suffix">kg</span>
+            </span>
+            <span class="hint" data-i18n="in.weight.help"></span>
           </label>
           <label class="field">
-            <span class="field-l" data-i18n="loss.emesis">Emesis episodes</span>
-            <input id="emesis" type="number" inputmode="numeric" min="0" max="50" step="1" value="0" />
-            <span class="hint" data-i18n="loss.emesis.unit">since last assessment</span>
+            <span class="field-l" data-i18n="in.age">Age</span>
+            <span class="inputwrap">
+              <input id="age" type="number" inputmode="numeric" min="0" max="216" step="1" data-i18n-ph="in.age.ph" placeholder="months" />
+              <select id="ageUnit" class="suffix-select" aria-label="Age unit">
+                <option value="months" data-i18n="in.ageUnit.months">months</option>
+                <option value="years" data-i18n="in.ageUnit.years">years</option>
+              </select>
+            </span>
+            <span class="hint" data-i18n="in.age.help"></span>
           </label>
         </div>
-        <p class="hint" data-i18n="loss.help"></p>
-      </details>
 
-      <div class="actions">
-        <button id="calcBtn" class="btn primary" data-i18n="btn.calc">Calculate</button>
-        <button id="resetBtn" class="btn ghost" data-i18n="btn.reset">Reset</button>
+        <!-- method selector -->
+        <div class="field">
+          <span class="field-l" data-i18n="in.method">Severity assessment</span>
+          <div class="segmented method-seg" id="methodSeg" role="tablist">
+            <button role="tab" class="seg active" data-method="cds" data-i18n="in.method.cds">Clinical Dehydration Scale</button>
+            <button role="tab" class="seg" data-method="who" data-i18n="in.method.who">WHO clinical signs</button>
+            <button role="tab" class="seg" data-method="weight" data-i18n="in.method.weight">Measured weight loss</button>
+            <button role="tab" class="seg" data-method="percent" data-i18n="in.method.percent">Enter % directly</button>
+          </div>
+        </div>
+
+        <!-- CDS -->
+        <div class="method-panel" data-mpanel="cds">
+          <h3 class="sub-h" data-i18n="cds.title">Clinical Dehydration Scale (CDS)</h3>
+          <p class="hint" data-i18n="cds.help"></p>
+          <div class="scale" id="cdsScale"></div>
+          <div class="scorebar"><span data-i18n="cds.score">CDS score</span><strong id="cdsScore">0 / 8</strong></div>
+        </div>
+
+        <!-- WHO -->
+        <div class="method-panel" data-mpanel="who" hidden>
+          <h3 class="sub-h" data-i18n="who.title">WHO clinical signs</h3>
+          <p class="hint" data-i18n="who.help"></p>
+          <div class="scale" id="whoScale"></div>
+        </div>
+
+        <!-- Weight loss -->
+        <div class="method-panel" data-mpanel="weight" hidden>
+          <h3 class="sub-h" data-i18n="wl.title">Measured weight loss</h3>
+          <p class="hint" data-i18n="wl.help"></p>
+          <label class="field">
+            <span class="field-l" data-i18n="wl.well">Recent well weight</span>
+            <span class="inputwrap">
+              <input id="wellWeight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="wl.well.ph" placeholder="kg before illness" />
+              <span class="suffix">kg</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Percent -->
+        <div class="method-panel" data-mpanel="percent" hidden>
+          <h3 class="sub-h" data-i18n="pct.title">Estimated fluid deficit</h3>
+          <p class="hint" data-i18n="pct.help"></p>
+          <label class="field">
+            <span class="field-l"><span data-i18n="pct.label">Deficit</span> · <strong id="pctOut">5%</strong></span>
+            <input id="pctRange" type="range" min="0" max="15" step="0.5" value="5" class="range" />
+          </label>
+        </div>
+
+        <!-- Ongoing losses -->
+        <details class="losses">
+          <summary data-i18n="loss.title">Ongoing losses (optional)</summary>
+          <div class="grid2">
+            <label class="field">
+              <span class="field-l" data-i18n="loss.stools">Watery stools</span>
+              <input id="stools" type="number" inputmode="numeric" min="0" max="50" step="1" value="0" />
+              <span class="hint" data-i18n="loss.stools.unit"></span>
+            </label>
+            <label class="field">
+              <span class="field-l" data-i18n="loss.emesis">Emesis episodes</span>
+              <input id="emesis" type="number" inputmode="numeric" min="0" max="50" step="1" value="0" />
+              <span class="hint" data-i18n="loss.emesis.unit"></span>
+            </label>
+          </div>
+          <p class="hint" data-i18n="loss.help"></p>
+        </details>
+
+        <div class="actions">
+          <button id="calcBtn" class="btn primary" data-i18n="btn.calc">Calculate</button>
+          <button id="resetBtn" class="btn ghost" data-i18n="btn.reset">Reset</button>
+        </div>
       </div>
     </section>
 
-    <!-- ============ RESULTS ============ -->
-    <section class="card results" aria-labelledby="resHead" aria-live="polite">
-      <div class="results-head">
-        <h2 id="resHead" class="card-h" data-i18n="res.title">Assessment & plan</h2>
-        <button id="printBtn" class="btn ghost small" data-i18n="btn.print" hidden>Print / save</button>
-      </div>
-      <div id="resultsBody">
-        <p class="empty" data-i18n="res.empty">Enter a weight and complete the assessment to generate a plan.</p>
+    <!-- ===== RIGHT / RESULTS COLUMN ===== -->
+    <section class="col col-results">
+      <div class="card results" aria-labelledby="resHead" aria-live="polite">
+        <div class="results-head">
+          <h2 id="resHead" class="card-h" data-i18n="res.title">Assessment &amp; plan</h2>
+          <button id="printBtn" class="btn ghost small" data-i18n="btn.print" hidden>Print / save</button>
+        </div>
+        <div id="resultsBody">
+          <p class="empty" data-i18n="res.empty">Enter a weight and complete the assessment to generate a plan.</p>
+        </div>
       </div>
     </section>
+
   </main>
 
   <footer class="foot">
-    <span data-i18n="foot.disclaimer">For use by qualified clinicians. Decision support only — not a substitute for clinical judgement.</span>
+    <span data-i18n="foot.disclaimer"></span>
   </footer>
 
-  <!-- ============ OVERLAY PANELS ============ -->
+  <!-- ============ OVERLAY / PANELS ============ -->
   <div class="overlay" id="overlay" hidden>
-    <div class="sheet" role="dialog" aria-modal="true">
-      <button class="sheet-close" id="sheetClose" aria-label="Close" data-i18n-title="nav.close">✕</button>
+    <div class="sheet" role="dialog" aria-modal="true" id="sheet">
+      <button class="sheet-close" id="sheetClose" aria-label="Close">✕</button>
 
+      <!-- EDUCATION -->
       <div class="panel" data-panel-body="edu" hidden>
         <h2 data-i18n="edu.title">Education</h2>
         <article class="prose" id="eduBody"></article>
       </div>
 
+      <!-- ABOUT -->
       <div class="panel" data-panel-body="about" hidden>
         <h2 data-i18n="about.title">About</h2>
         <article class="prose" id="aboutBody"></article>
       </div>
 
+      <!-- SETTINGS -->
       <div class="panel" data-panel-body="settings" hidden>
         <h2 data-i18n="set.title">Settings</h2>
+
+        <!-- General -->
         <div class="setrow">
           <span data-i18n="set.lang">Language</span>
           <div class="segmented small" id="langSeg">
@@ -188,12 +203,92 @@
           <span data-i18n="set.update">Check for updates</span>
           <button class="btn ghost small" id="updateBtn" data-i18n="set.update">Check for updates</button>
         </div>
-        <div class="setrow">
+        <div class="setrow last">
           <span data-i18n="set.clear">Clear saved inputs</span>
           <button class="btn ghost small" id="clearBtn" data-i18n="set.clear">Clear saved inputs</button>
         </div>
+
+        <!-- Institution parameters -->
+        <h3 class="set-section-h" data-i18n="inst.title">Institution</h3>
+
+        <div class="setrow">
+          <label class="field full">
+            <span class="field-l" data-i18n="inst.name">Institution name</span>
+            <input id="instName" type="text" data-i18n-ph="inst.name.ph" placeholder="e.g. Seoul Children's Hospital" />
+            <span class="hint" data-i18n="inst.name.help"></span>
+          </label>
+        </div>
+        <div class="setrow">
+          <label class="field full">
+            <span class="field-l" data-i18n="inst.dept">Department / ward</span>
+            <input id="instDept" type="text" data-i18n-ph="inst.dept.ph" placeholder="e.g. Paediatric Emergency" />
+          </label>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.ivFluid">IV fluid for Plan C</span>
+          <select id="instIvFluid" class="set-select">
+            <option value="rl" data-i18n="inst.ivFluid.rl">Ringer's lactate (WHO default)</option>
+            <option value="ns" data-i18n="inst.ivFluid.ns">Normal saline (0.9% NaCl)</option>
+            <option value="plasmalyte" data-i18n="inst.ivFluid.plasmalyte">Plasma-Lyte</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.planBRate">Plan B ORS rate</span>
+          <select id="instPlanBRate" class="set-select">
+            <option value="75" data-i18n="inst.planBRate.75">75 mL/kg / 4 h (WHO)</option>
+            <option value="100" data-i18n="inst.planBRate.100">100 mL/kg / 4 h</option>
+            <option value="50" data-i18n="inst.planBRate.50">50 mL/kg / 4 h (mild)</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.planBApproach">Plan C primary approach</span>
+          <select id="instPlanCApproach" class="set-select">
+            <option value="who" data-i18n="inst.planBApproach.who">WHO (30/70 split)</option>
+            <option value="bolus" data-i18n="inst.planBApproach.bolus">Bolus-first (AAP)</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.sevPct.some">"Some" deficit %</span>
+          <span class="set-pct-wrap">
+            <input id="instSomePct" type="number" inputmode="decimal" min="2" max="9" step="0.5" value="7.5" class="set-num" />
+            <span class="set-pct-sym">%</span>
+          </span>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.sevPct.severe">"Severe" deficit %</span>
+          <span class="set-pct-wrap">
+            <input id="instSeverePct" type="number" inputmode="decimal" min="5" max="15" step="0.5" value="10" class="set-num" />
+            <span class="set-pct-sym">%</span>
+          </span>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.showZinc">Zinc reminder</span>
+          <div class="segmented small" id="instZincSeg">
+            <button class="seg active" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.showOndansetron">Ondansetron note</span>
+          <div class="segmented small" id="instOndaSeg">
+            <button class="seg active" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow last">
+          <span data-i18n="inst.showNgOrs">NG-ORS note</span>
+          <div class="segmented small" id="instNgSeg">
+            <button class="seg active" data-val="1" data-i18n="inst.on">On</button>
+            <button class="seg" data-val="0" data-i18n="inst.off">Off</button>
+          </div>
+        </div>
+        <div class="setrow">
+          <button class="btn ghost small" id="instResetBtn" data-i18n="inst.reset">Reset to defaults</button>
+        </div>
+
         <p class="hint version-line"><span data-i18n="about.version">Version</span> <span id="verOut">—</span></p>
       </div>
+
     </div>
   </div>
 

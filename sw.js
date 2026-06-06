@@ -1,6 +1,6 @@
 /* Rhehydrate service worker — offline-first.
  * Bump CACHE on any asset change to roll the cache. */
-var CACHE = "rhehydrate-v1.0.0";
+var CACHE = "rhehydrate-v1.1.0";
 var ASSETS = [
   "./",
   "./index.html",

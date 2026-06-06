@@ -4,7 +4,7 @@
  */
 window.I18N = {
   en: {
-    "app.title": "Rhehydrate",
+    "app.title": "PRhehydrate",
     "app.tagline": "Pediatric dehydration & rehydration calculator",
 
     "nav.calc": "Calculator",
@@ -59,9 +59,9 @@ window.I18N = {
     "who.eyes": "Eyes",
     "who.thirst": "Thirst / drinking",
     "who.skin": "Skin pinch",
-    "who.cond.0": "Well, alert",
-    "who.cond.1": "Restless, irritable",
-    "who.cond.2": "Lethargic or unconscious",
+    "who.condition.0": "Well, alert",
+    "who.condition.1": "Restless, irritable",
+    "who.condition.2": "Lethargic or unconscious",
     "who.eyes.0": "Normal",
     "who.eyes.1": "Sunken",
     "who.eyes.2": "Sunken",
@@ -128,7 +128,7 @@ window.I18N = {
     "plan.b.5": "Nasogastric ORS is an effective alternative if oral intake fails before escalating to IV.",
 
     "plan.c.title": "WHO Plan C — IV rehydration (severe)",
-    "plan.c.fluid": "Give {vol} mL of Ringer's lactate (or normal saline) = 100 mL/kg, split:",
+    "plan.c.fluid": "Give {vol} mL of {fluid} = 100 mL/kg, split:",
     "plan.c.infant": "Infant <12 months: {first} mL over first 1 h, then {rest} mL over next 5 h.",
     "plan.c.child": "Child ≥12 months: {first} mL over first 30 min, then {rest} mL over next 2.5 h.",
     "plan.c.1": "Reassess every 15–30 min; if hydration not improving, give fluids more rapidly.",
@@ -194,11 +194,39 @@ window.I18N = {
     "set.clear": "Clear saved inputs",
     "set.cleared": "Cleared",
 
-    "foot.disclaimer": "For use by qualified clinicians. Decision support only — not a substitute for clinical judgement."
+    "foot.disclaimer": "For use by qualified clinicians. Decision support only — not a substitute for clinical judgement.",
+
+    // Institution settings
+    "inst.title": "Institution",
+    "inst.name": "Institution name",
+    "inst.name.ph": "e.g. Seoul Children's Hospital",
+    "inst.name.help": "Shown on print/save output.",
+    "inst.dept": "Department / ward",
+    "inst.dept.ph": "e.g. Paediatric Emergency",
+    "inst.ivFluid": "IV fluid for Plan C",
+    "inst.ivFluid.rl": "Ringer's lactate (WHO default)",
+    "inst.ivFluid.ns": "Normal saline (0.9% NaCl)",
+    "inst.ivFluid.plasmalyte": "Plasma-Lyte",
+    "inst.planBRate": "Plan B ORS rate",
+    "inst.planBRate.75": "75 mL/kg over 4 h (WHO standard)",
+    "inst.planBRate.100": "100 mL/kg over 4 h",
+    "inst.planBRate.50": "50 mL/kg over 4 h (mild)",
+    "inst.planBApproach": "Plan C primary approach",
+    "inst.planBApproach.who": "WHO schedule (30/70 split)",
+    "inst.planBApproach.bolus": "Bolus-first (AAP/US — 20 mL/kg repeat)",
+    "inst.sevPct.some": "\"Some\" dehydration deficit %",
+    "inst.sevPct.severe": "\"Severe\" dehydration deficit %",
+    "inst.showZinc": "Zinc supplementation reminder",
+    "inst.showOndansetron": "Ondansetron note",
+    "inst.showNgOrs": "NG-ORS alternative note",
+    "inst.on": "On",
+    "inst.off": "Off",
+    "inst.reset": "Reset to defaults",
+    "inst.reset.done": "Defaults restored"
   },
 
   kr: {
-    "app.title": "Rhehydrate",
+    "app.title": "PRhehydrate",
     "app.tagline": "소아 탈수 평가 및 수액 요법 계산기",
 
     "nav.calc": "계산기",
@@ -249,9 +277,9 @@ window.I18N = {
     "who.eyes": "눈",
     "who.thirst": "갈증 / 음수",
     "who.skin": "피부 탄력(skin pinch)",
-    "who.cond.0": "양호, 명료",
-    "who.cond.1": "안절부절, 보챔",
-    "who.cond.2": "기면 또는 의식 저하",
+    "who.condition.0": "양호, 명료",
+    "who.condition.1": "안절부절, 보챔",
+    "who.condition.2": "기면 또는 의식 저하",
     "who.eyes.0": "정상",
     "who.eyes.1": "함몰",
     "who.eyes.2": "함몰",
@@ -313,7 +341,7 @@ window.I18N = {
     "plan.b.5": "경구 섭취 실패 시 정맥 수액 전에 비위관 ORS가 효과적인 대안입니다.",
 
     "plan.c.title": "WHO 계획 C — 정맥 수액 (중증)",
-    "plan.c.fluid": "Ringer's lactate(또는 생리식염수) {vol} mL = 100 mL/kg, 분할:",
+    "plan.c.fluid": "{fluid} {vol} mL = 100 mL/kg, 분할:",
     "plan.c.infant": "영아 <12개월: 첫 1시간 {first} mL, 이후 5시간 {rest} mL.",
     "plan.c.child": "소아 ≥12개월: 첫 30분 {first} mL, 이후 2.5시간 {rest} mL.",
     "plan.c.1": "15–30분마다 재평가; 호전이 없으면 더 빠르게 투여.",
@@ -375,6 +403,33 @@ window.I18N = {
     "set.clear": "저장된 입력 지우기",
     "set.cleared": "지워짐",
 
-    "foot.disclaimer": "자격을 갖춘 임상의용. 의사결정 보조용일 뿐 임상 판단을 대체하지 않습니다."
+    "foot.disclaimer": "자격을 갖춘 임상의용. 의사결정 보조용일 뿐 임상 판단을 대체하지 않습니다.",
+
+    "inst.title": "기관",
+    "inst.name": "기관명",
+    "inst.name.ph": "예: 서울어린이병원",
+    "inst.name.help": "인쇄/저장 출력물에 표시됩니다.",
+    "inst.dept": "진료과 / 병동",
+    "inst.dept.ph": "예: 소아응급",
+    "inst.ivFluid": "계획 C 정맥 수액",
+    "inst.ivFluid.rl": "Ringer's lactate (WHO 기본)",
+    "inst.ivFluid.ns": "생리식염수 (0.9% NaCl)",
+    "inst.ivFluid.plasmalyte": "Plasma-Lyte",
+    "inst.planBRate": "계획 B ORS 속도",
+    "inst.planBRate.75": "4시간 동안 75 mL/kg (WHO 표준)",
+    "inst.planBRate.100": "4시간 동안 100 mL/kg",
+    "inst.planBRate.50": "4시간 동안 50 mL/kg (경증)",
+    "inst.planBApproach": "계획 C 주 접근",
+    "inst.planBApproach.who": "WHO 일정 (30/70 분할)",
+    "inst.planBApproach.bolus": "볼루스 우선 (AAP/미국 — 20 mL/kg 반복)",
+    "inst.sevPct.some": "\"일부\" 탈수 결핍 %",
+    "inst.sevPct.severe": "\"중증\" 탈수 결핍 %",
+    "inst.showZinc": "아연 보충 안내",
+    "inst.showOndansetron": "온단세트론 안내",
+    "inst.showNgOrs": "비위관 ORS 대안 안내",
+    "inst.on": "켜기",
+    "inst.off": "끄기",
+    "inst.reset": "기본값으로 재설정",
+    "inst.reset.done": "기본값 복원됨"
   }
 };

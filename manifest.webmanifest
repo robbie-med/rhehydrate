@@ -1,0 +1,29 @@
+{
+  "name": "Rhehydrate — Pediatric Rehydration Calculator",
+  "short_name": "Rhehydrate",
+  "description": "Evidence-based pediatric dehydration severity and rehydration protocol calculator. Offline-capable clinical decision support.",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
+  "categories": ["medical", "health", "productivity", "education"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

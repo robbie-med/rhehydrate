@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Rhehydrate">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f9be3"/>
+      <stop offset="1" stop-color="#0b6db0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#0f1419"/>
+  <!-- droplet -->
+  <path d="M256 96 C 256 96 360 220 360 312 a104 104 0 1 1 -208 0 C 152 220 256 96 256 96 Z" fill="url(#g)"/>
+  <!-- highlight -->
+  <path d="M214 300 a44 44 0 0 0 44 44" fill="none" stroke="#bfe6fb" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+  <!-- plus / cross -->
+  <g fill="#ffffff">
+    <rect x="238" y="276" width="36" height="92" rx="10"/>
+    <rect x="210" y="304" width="92" height="36" rx="10"/>
+  </g>
+</svg>

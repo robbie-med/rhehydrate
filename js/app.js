@@ -397,9 +397,8 @@
     var ded = el("div", "dedication");
     ded.appendChild(el("p", null, "“" + t("about.dedication.p") + "”"));
     b.appendChild(ded);
-    b.appendChild(el("h3", null, t("about.sdg.h")));
-    b.appendChild(el("span", "sdg-badge", "&#9679; SDG 3 — Good Health &amp; Well-being"));
-    b.appendChild(el("p", null, t("about.sdg.p")));
+    b.appendChild(el("h3", null, t("about.mission.h")));
+    b.appendChild(el("p", null, t("about.mission.p")));
     b.appendChild(el("h3", null, t("about.disclaimer.h")));
     b.appendChild(el("p", null, t("about.disclaimer.p")));
     var swReady = !!navigator.serviceWorker && !!navigator.serviceWorker.controller;

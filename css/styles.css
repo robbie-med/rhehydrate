@@ -1,25 +1,25 @@
 /* PRhehydrate — styles. Theme via [data-theme] on <html>. */
 :root {
-  /* Dark theme (default) — deep ocean slate, not harsh */
-  --bg:          #0d1825;
-  --bg-2:        #162236;
-  --card:        #1c2f45;
-  --card-2:      #233a54;
-  --card-hi:     rgba(255,255,255,.03);   /* inner highlight */
-  --line:        #2a4460;
-  --line-soft:   rgba(42,68,96,.6);
-  --text:        #ddeaf7;
-  --text-2:      #7aa8ca;
-  --text-3:      #4a7898;
-  --accent:      #56a5f5;   /* soft sky-blue */
-  --accent-2:    #3a8de0;
-  --accent-soft: rgba(86,165,245,.14);
-  --ok:          #34d399;   /* emerald */
-  --ok-soft:     rgba(52,211,153,.13);
-  --warn:        #fb923c;   /* orange — distinct from yellow */
-  --warn-soft:   rgba(251,146,60,.13);
-  --danger:      #f87171;   /* soft rose-red */
-  --danger-soft: rgba(248,113,113,.12);
+  /* Dark theme — pure charcoal, zero blue, warm text */
+  --bg:          #111111;
+  --bg-2:        #191919;
+  --card:        #202020;
+  --card-2:      #292929;
+  --card-hi:     rgba(255,255,255,.025);
+  --line:        #333333;
+  --line-soft:   rgba(255,255,255,.08);
+  --text:        #ede8df;   /* warm off-white */
+  --text-2:      #9e9488;   /* warm mid-grey */
+  --text-3:      #645850;   /* warm muted */
+  --accent:      #c89a3c;   /* amber gold */
+  --accent-2:    #a87e28;
+  --accent-soft: rgba(200,154,60,.15);
+  --ok:          #4ec87a;   /* green */
+  --ok-soft:     rgba(78,200,122,.12);
+  --warn:        #e88030;   /* orange */
+  --warn-soft:   rgba(232,128,48,.12);
+  --danger:      #e06060;   /* red */
+  --danger-soft: rgba(224,96,96,.12);
   --radius:      16px;
   --radius-s:    10px;
   --radius-xs:   7px;
@@ -84,12 +84,7 @@ body {
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand-name {
   font-size: 17px; font-weight: 800; letter-spacing: -.3px; line-height: 1.15;
-  background: linear-gradient(135deg, var(--text) 0%, var(--text-2) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-:root[data-theme="light"] .brand-name {
-  background: none; -webkit-text-fill-color: var(--text); color: var(--text);
+  color: var(--text);
 }
 .brand-tag {
   font-size: 11px; color: var(--text-3); white-space: nowrap;
@@ -221,7 +216,7 @@ input:hover:not(:focus), select:hover:not(:focus) {
 .seg:hover { color: var(--text); background: var(--card-hi); }
 .seg.active {
   background: var(--accent); color: #fff;
-  box-shadow: 0 2px 8px rgba(86,165,245,.3);
+  box-shadow: 0 2px 8px var(--accent-soft);
 }
 :root[data-theme="light"] .seg.active { box-shadow: 0 2px 8px rgba(26,111,186,.25); }
 .method-seg .seg { white-space: normal; }

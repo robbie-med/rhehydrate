@@ -1,9 +1,9 @@
-# Rhehydrate
+# PRhehydrate
 
 **Evidence-based pediatric dehydration severity & rehydration protocol calculator.**
 A fast, offline-first, bilingual (English / 한국어) clinical decision-support web app.
 
-🔗 **[rhehydrate.robbiemed.org](https://rhehydrate.robbiemed.org)**
+🔗 **[prhehydrate.robbiemed.org](https://prhehydrate.robbiemed.org)**
 
 ---
 

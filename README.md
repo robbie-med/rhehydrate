@@ -82,9 +82,7 @@ To bump the cached version, change `CACHE` in `sw.js` and `APP_VERSION` in `js/a
 Dedicated with gratitude to my night senior, **P. C. B.**, whose steady on-call mentorship
 shaped the care behind this tool.
 
-Built in support of **UN SDG 3 — Good Health and Well-being**, to make accessible,
-evidence-based rehydration one tap closer in the fight against preventable under-five
-diarrhoeal deaths.
+Helps prevent under-five diarrhoeal deaths.
 
 ## License
 

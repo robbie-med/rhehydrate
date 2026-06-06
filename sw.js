@@ -4,6 +4,7 @@ var CACHE = "rhehydrate-v1.3.0";
 var ASSETS = [
   "./",
   "./index.html",
+  "./tables.html",
   "./css/styles.css",
   "./js/app.js",
   "./js/i18n.js",

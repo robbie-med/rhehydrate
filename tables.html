@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f5f8fb" media="(prefers-color-scheme: light)" />
+  <meta name="description" content="Clinical reference tables for pediatric dehydration assessment and rehydration — PRhehydrate." />
+  <title>Clinical Reference Tables — PRhehydrate</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+      <a href="index.html" class="iconbtn" aria-label="Back to calculator" title="Back to calculator">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </a>
+      <div class="brand">
+        <img src="icon.svg" alt="" class="brand-mark" width="28" height="28" />
+        <div class="brand-text">
+          <span class="brand-name">PRhehydrate</span>
+          <span class="brand-tag">Clinical Reference Tables</span>
+        </div>
+      </div>
+    </div>
+    <nav class="topnav" aria-label="Theme">
+      <div class="segmented small" id="themeSeg" role="group" aria-label="Color theme">
+        <button class="seg" data-theme-val="system">System</button>
+        <button class="seg" data-theme-val="light">Light</button>
+        <button class="seg" data-theme-val="dark">Dark</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ============ CONTENT ============ -->
+  <div class="tables-page">
+
+    <p class="tables-intro">
+      Evidence-based reference tables for clinical dehydration assessment, scoring, oral rehydration solution composition, and sports drink comparison. For use alongside the PRhehydrate calculator.
+    </p>
+
+    <!-- ======================================================= -->
+    <!-- TABLE 1: Severity of Dehydration                        -->
+    <!-- ======================================================= -->
+    <section class="ref-section" aria-labelledby="t1-heading">
+      <div class="ref-section-h" id="t1-heading">
+        <span class="ref-num">1</span>
+        <span class="ref-label">Severity of Dehydration</span>
+        <span class="ref-sub">Signs &amp; symptoms by category</span>
+      </div>
+
+      <div class="ref-table-wrap">
+        <table class="ref-table" aria-label="Severity of dehydration by signs and symptoms">
+          <thead>
+            <tr>
+              <th class="col-sign">Sign / Symptom</th>
+              <th class="th-none">Minimal or No Dehydration<br><small>&lt;3% body weight loss; 3%–5% fluid deficit</small></th>
+              <th class="th-some">Mild to Moderate Dehydration<br><small>3%–9% body weight loss; 6%–9% fluid deficit</small></th>
+              <th class="th-severe">Severe Dehydration<br><small>&gt;9% body weight loss; &gt;10% fluid deficit</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-sign">Mental status</td>
+              <td>Well; alert</td>
+              <td>Normal, fatigued, or restless, irritable</td>
+              <td>Apathetic, lethargic, unconscious</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Thirst</td>
+              <td>Drinks normally; might refuse liquids</td>
+              <td>Thirsty; eager to drink</td>
+              <td>Drinks poorly; unable to drink</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Heart rate</td>
+              <td>Normal</td>
+              <td>Normal to increased</td>
+              <td>Tachycardia, with bradycardia in severe cases</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Quality of pulses</td>
+              <td>Normal</td>
+              <td>Normal to decreased</td>
+              <td>Weak, thready, or impalpable</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Breathing</td>
+              <td>Normal</td>
+              <td>Normal; fast</td>
+              <td>Deep</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Eyes</td>
+              <td>Normal</td>
+              <td>Slightly sunken</td>
+              <td>Deeply sunken</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Tears</td>
+              <td>Present</td>
+              <td>Decreased</td>
+              <td>Absent</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Mouth and tongue</td>
+              <td>Moist</td>
+              <td>Dry</td>
+              <td>Parched</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Skin fold</td>
+              <td>Instant recoil</td>
+              <td>Recoil in &lt;2 s</td>
+              <td>Recoil in &gt;2 s</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Capillary refill</td>
+              <td>Normal (&lt;3 s)</td>
+              <td>Prolonged</td>
+              <td>Prolonged; minimal</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Extremities</td>
+              <td>Warm</td>
+              <td>Cool</td>
+              <td>Cold; mottled; cyanotic</td>
+            </tr>
+            <tr>
+              <td class="col-sign">Urine output</td>
+              <td>Normal to decreased</td>
+              <td>Decreased</td>
+              <td>Minimal</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ref-source">Source: CDC / AAP dehydration assessment framework.</p>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- TABLE 2: Clinical Dehydration Scale (Goldman)           -->
+    <!-- ======================================================= -->
+    <section class="ref-section" aria-labelledby="t2-heading">
+      <div class="ref-section-h" id="t2-heading">
+        <span class="ref-num">2</span>
+        <span class="ref-label">Clinical Dehydration Scale (Goldman)</span>
+        <span class="ref-sub">Scoring criteria and interpretation</span>
+      </div>
+
+      <div class="cds-grid">
+        <!-- Sub-table A: Scale -->
+        <div>
+          <div class="ref-table-wrap">
+            <table class="ref-table" aria-label="Clinical Dehydration Scale scoring criteria">
+              <thead>
+                <tr>
+                  <th>Characteristic</th>
+                  <th style="text-align:center;">0</th>
+                  <th style="text-align:center;">1</th>
+                  <th style="text-align:center;">2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>General appearance</td>
+                  <td>Normal</td>
+                  <td>Thirsty, restless, or lethargic but irritable when touched</td>
+                  <td>Drowsy, limp, cold or sweaty ± comatose</td>
+                </tr>
+                <tr>
+                  <td>Eyes</td>
+                  <td>Normal</td>
+                  <td>Slightly sunken</td>
+                  <td>Extremely sunken</td>
+                </tr>
+                <tr>
+                  <td>Mucus membrane</td>
+                  <td>Moist</td>
+                  <td>Sticky</td>
+                  <td>Dry</td>
+                </tr>
+                <tr>
+                  <td>Tears</td>
+                  <td>Present</td>
+                  <td>Decreased</td>
+                  <td>Absent</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sub-table B: Interpretation -->
+        <div>
+          <div class="ref-table-wrap">
+            <table class="ref-table" aria-label="Clinical Dehydration Scale interpretation">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Total Score</th>
+                  <th>Interpretation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="cds-none">
+                  <td style="text-align:center; font-weight:700;">0</td>
+                  <td>No dehydration</td>
+                </tr>
+                <tr class="cds-some">
+                  <td style="text-align:center; font-weight:700;">1–4</td>
+                  <td>Some dehydration</td>
+                </tr>
+                <tr class="cds-severe">
+                  <td style="text-align:center; font-weight:700;">5–8</td>
+                  <td>Moderate to severe dehydration</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <p class="ref-source">Source: Goldman RD et al. <em>Pediatrics</em> 2008;122(3):545–549.</p>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- TABLE 3: ORS Comparison                                 -->
+    <!-- ======================================================= -->
+    <section class="ref-section" aria-labelledby="t3-heading">
+      <div class="ref-section-h" id="t3-heading">
+        <span class="ref-num">3</span>
+        <span class="ref-label">ORS Comparison</span>
+        <span class="ref-sub">Composition of common oral rehydration solutions</span>
+      </div>
+
+      <div class="ref-table-wrap">
+        <table class="ref-table" aria-label="Oral rehydration solution composition comparison">
+          <thead>
+            <tr>
+              <th>ORS Product</th>
+              <th>Carbs (g/L)</th>
+              <th>Na&#x207A; (mEq/L)</th>
+              <th>K&#x207A; (mEq/L)</th>
+              <th>Cl&#x207B; (mEq/L)</th>
+              <th>HCO&#x2083;&#x207B; (mEq/L)</th>
+              <th>Osmolarity (mOsm/L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="ref-row-hl">
+              <td><strong>WHO Standard (2002)</strong></td>
+              <td>13.5</td>
+              <td>75</td>
+              <td>20</td>
+              <td>65</td>
+              <td>30</td>
+              <td>245</td>
+            </tr>
+            <tr>
+              <td>Pedialyte</td>
+              <td>25</td>
+              <td>45</td>
+              <td>20</td>
+              <td>35</td>
+              <td>30</td>
+              <td>250</td>
+            </tr>
+            <tr>
+              <td>Ceralyte</td>
+              <td>40</td>
+              <td>70</td>
+              <td>20</td>
+              <td>60</td>
+              <td>10</td>
+              <td>235</td>
+            </tr>
+            <tr>
+              <td>Enfalyte</td>
+              <td>30</td>
+              <td>50</td>
+              <td>25</td>
+              <td>45</td>
+              <td>30</td>
+              <td>200</td>
+            </tr>
+            <tr>
+              <td>Rehydra-Lyte</td>
+              <td>25</td>
+              <td>75</td>
+              <td>20</td>
+              <td>65</td>
+              <td>30</td>
+              <td>305</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ref-source">The WHO low-osmolarity formula (245 mOsm/L) is the default in PRhehydrate. The ESPGHAN option (Na&#x207A; 60 mEq/L, ~200–250 mOsm/L) can be selected under Institution settings.</p>
+      <p class="ref-source">Source: WHO. <em>The Treatment of Diarrhoea</em> (4th ed.); Guarino A et al. <em>JPGN</em> 2014.</p>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- TABLE 4: Sports Drinks Comparison                       -->
+    <!-- ======================================================= -->
+    <section class="ref-section" aria-labelledby="t4-heading">
+      <div class="ref-section-h" id="t4-heading">
+        <span class="ref-num">4</span>
+        <span class="ref-label">Sports Drinks Comparison</span>
+        <span class="ref-sub">Nutritional composition per serving</span>
+      </div>
+
+      <div class="ref-table-wrap">
+        <table class="ref-table" aria-label="Sports drinks nutritional composition comparison">
+          <thead>
+            <tr>
+              <th class="sticky-col">Brand</th>
+              <th>Serving</th>
+              <th>Cal</th>
+              <th>Carbs (g)</th>
+              <th>% Carb</th>
+              <th>Sugars (g)</th>
+              <th>Na (mg)</th>
+              <th>K (mg)</th>
+              <th>Other Key Ingredients</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="sticky-col">Gatorade Thirst Quencher</td>
+              <td>12 fl oz</td>
+              <td>80</td>
+              <td>22</td>
+              <td>6%</td>
+              <td>21</td>
+              <td>160</td>
+              <td>50</td>
+              <td>Electrolytes, natural flavor</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Powerade</td>
+              <td>12 fl oz</td>
+              <td>80</td>
+              <td>21</td>
+              <td>5.9%</td>
+              <td>21</td>
+              <td>240</td>
+              <td>80</td>
+              <td>Vitamins C, B12, calcium, magnesium</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">BodyArmor Lyte<sup>a</sup></td>
+              <td>12 fl oz</td>
+              <td>15</td>
+              <td>11</td>
+              <td>4%</td>
+              <td>2</td>
+              <td>30</td>
+              <td>680</td>
+              <td>Coconut water, vitamins B3, B5, B6, etc</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Propel Water</td>
+              <td>12 fl oz</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0%</td>
+              <td>0</td>
+              <td>160</td>
+              <td>40</td>
+              <td>Vitamins B6, C, E, niacin, pantothenic acid</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Vitaminwater</td>
+              <td>20 fl oz</td>
+              <td>100</td>
+              <td>26</td>
+              <td>6.5%</td>
+              <td>26</td>
+              <td>0</td>
+              <td>60</td>
+              <td>Vitamins B, C, E</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Nuun Sport<sup>b</sup></td>
+              <td>16 fl oz</td>
+              <td>15</td>
+              <td>4</td>
+              <td>1%</td>
+              <td>1</td>
+              <td>300</td>
+              <td>150</td>
+              <td>Magnesium, calcium</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Powerade Zero</td>
+              <td>12 fl oz</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0%</td>
+              <td>0</td>
+              <td>240</td>
+              <td>80</td>
+              <td>Vitamins B12, C, calcium, magnesium</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Pedialyte Classic</td>
+              <td>12 fl oz</td>
+              <td>25</td>
+              <td>7</td>
+              <td>3%</td>
+              <td>5</td>
+              <td>390</td>
+              <td>280</td>
+              <td>Zinc, chloride 440 mg, zinc 2.8 mg</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Skratch Labs Sport<sup>c</sup></td>
+              <td>16 fl oz</td>
+              <td>80</td>
+              <td>19</td>
+              <td>7%</td>
+              <td>17</td>
+              <td>370</td>
+              <td>35</td>
+              <td>Vitamin C, calcium, magnesium</td>
+            </tr>
+            <tr>
+              <td class="sticky-col">Ultima Replenisher<sup>d</sup></td>
+              <td>16 fl oz</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0%</td>
+              <td>0</td>
+              <td>55</td>
+              <td>250</td>
+              <td>Ca 47 mg, Mg 100 mg, Zn 1 mg, Cl 78 mg, Mn 0.2 mg, vitamin C 100 mg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="ref-footnotes">
+        <li data-note="a">BodyArmor Lyte — serving size (12 oz) from website; nutrition label did not specify which size.</li>
+        <li data-note="b">Nuun Sport — product supplied as a dissolvable tablet.</li>
+        <li data-note="c">Skratch Labs Sport Hydration Mix — product supplied as a powder mixture.</li>
+        <li data-note="d">Ultima Replenisher — composition reported per scoop.</li>
+      </ul>
+      <p class="ref-source">Source: Manufacturer nutrition labels; data as published.</p>
+    </section>
+
+  </div><!-- /.tables-page -->
+
+  <footer class="foot">
+    For clinical reference only. Verify all values against current authoritative sources before use. PRhehydrate is not a substitute for clinical judgment.
+  </footer>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = 'rh.theme';
+
+      function applyTheme(val) {
+        var html = document.documentElement;
+        if (val === 'light') {
+          html.setAttribute('data-theme', 'light');
+        } else if (val === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+        } else {
+          // system: remove explicit override, let CSS/media query decide
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        }
+      }
+
+      function syncSeg(val) {
+        var btns = document.querySelectorAll('#themeSeg .seg');
+        btns.forEach(function (btn) {
+          var match = btn.getAttribute('data-theme-val') === val;
+          btn.classList.toggle('active', match);
+        });
+      }
+
+      // Restore saved theme on load
+      var saved = localStorage.getItem(STORAGE_KEY) || 'system';
+      applyTheme(saved);
+      syncSeg(saved);
+
+      // Wire segmented control
+      document.getElementById('themeSeg').addEventListener('click', function (e) {
+        var btn = e.target.closest('.seg[data-theme-val]');
+        if (!btn) return;
+        var val = btn.getAttribute('data-theme-val');
+        localStorage.setItem(STORAGE_KEY, val);
+        applyTheme(val);
+        syncSeg(val);
+      });
+
+      // React to system preference change when in "system" mode
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+        var current = localStorage.getItem(STORAGE_KEY) || 'system';
+        if (current === 'system') applyTheme('system');
+      });
+    })();
+  </script>
+
+</body>
+</html>

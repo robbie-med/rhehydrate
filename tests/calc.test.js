@@ -147,4 +147,23 @@ t("Cholera overrides protocol: 20 mL/kg + 70 mL/kg over 6 h", function () {
   close(find(S.plan("acf", base({ cholera: true })), "sam.chol.b").v, 600);
 });
 
+// ── release consistency: versioned URLs must match the service worker ──
+t("release versions agree (sw.js, app.js, ?v= in HTML) and every script is precached", function () {
+  var fs = require("fs"), path = require("path"), root = path.join(__dirname, "..");
+  var sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+  var ver = sw.match(/var VERSION = "([\d.]+)"/)[1];
+  var app = fs.readFileSync(path.join(root, "js/app.js"), "utf8").match(/APP_VERSION = "([\d.]+)"/)[1];
+  assert.strictEqual(app, ver, "APP_VERSION " + app + " ≠ sw.js VERSION " + ver);
+  ["index.html", "tables.html"].forEach(function (f) {
+    var html = fs.readFileSync(path.join(root, f), "utf8");
+    var refs = html.match(/(?:src|href)="((?:js|css)\/[^"]+)"/g) || [];
+    assert.ok(refs.length > 0, f);
+    refs.forEach(function (r) {
+      var u = r.replace(/^(src|href)="/, "").replace(/"$/, "");
+      assert.ok(u.indexOf("?v=" + ver) > 0, f + ": " + u + " is not versioned ?v=" + ver);
+      assert.ok(sw.indexOf('"./' + u.split("?")[0] + '" + V') >= 0, f + ": " + u + " missing from sw.js ASSETS");
+    });
+  });
+});
+
 console.log("\n" + passed + " tests passed");

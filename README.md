@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.4.1-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -255,7 +255,8 @@ Hosted on **GitHub Pages** via a GitHub Actions workflow.
 
 To publish a new version:
 1. Bump `APP_VERSION` in `js/app.js`
-2. Bump `CACHE` in `sw.js` (forces all installed PWAs to fetch fresh assets)
+2. Bump `VERSION` in `sw.js` and the `?v=` on every `<script>`/`<link>` in `index.html` and
+   `tables.html` (versioned URLs stop browsers mixing old and new files; the tests check they agree)
 3. Push to `main`
 
 ---

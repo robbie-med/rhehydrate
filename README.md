@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.4.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -37,6 +37,26 @@ Four methods, selectable at the bedside:
 | **Measured weight loss** | `% deficit = (well weight − current) ÷ well weight × 100` |
 | **Direct % entry** | Clinician override for experienced estimation |
 
+### Severe acute malnutrition (SAM)
+
+A malnutrition screen (MUAC, weight-for-height, bilateral oedema — WHO 2023 criteria)
+sits above the severity assessment. When it is positive, Plans A/B/C are replaced by a
+SAM rehydration plan from the protocol chosen in Settings:
+
+| Protocol | Source |
+|----------|--------|
+| **WHO** (default) | Pocket Book of Hospital Care for Children 2013 + WHO wasting guideline 2023 |
+| **MSF** | Clinical guidelines — Severe acute malnutrition (Feb 2024) |
+| **ACF International** | Guidelines for the integrated management of SAM (2011) — weight-guided |
+| **India** | MoHFW facility-based management of children with SAM (2011) |
+| **Kenya** | Basic Paediatric Protocols, 5th ed. (2022) |
+
+Inputs for shock, oral/NG tolerance, suspected cholera and pre-illness weight steer the
+plan; suspected cholera switches to MSF's SAM-specific cholera volumes with standard ORS.
+Every plan lists its sources. Page-level excerpts for each number:
+[`docs/SAM-PROTOCOLS.md`](./docs/SAM-PROTOCOLS.md). The screen can be optional
+(default), required before any plan, or off.
+
 ### Outputs
 
 - **Severity banner** — none / some (mild–moderate) / severe
@@ -48,6 +68,8 @@ Four methods, selectable at the bedside:
 - **Adjunct reminders** — zinc, ondansetron, NG-ORS, racecadotril, smectite, *S. boulardii*
   (each individually toggleable per institution)
 - **Red-flag checklist** — shock, altered consciousness, surgical abdomen, dysnatraemia
+- **Show the maths** — under every result: the formula, this patient's numbers
+  substituted, the result, a link to the source, and a link to the code
 - **Print / save** — formatted output for the medical record
 
 > **⚕ Decision support only.** PRhehydrate is not a regulated medical device. Verify every
@@ -64,7 +86,15 @@ Four methods, selectable at the bedside:
 </tr>
 <tr>
   <td><strong>🌐 Five languages</strong></td>
-  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文 — full UI and clinical content, 203 keys each. Switch via flag selector; preference persisted.</td>
+  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文. English, French and Korean cover everything, including the SAM pathway and reference tables; Russian and Chinese cover the v1.3 content, with v1.4 additions shown in English for now. The browser language is detected on first visit.</td>
+</tr>
+<tr>
+  <td><strong>🔗 Setup link</strong></td>
+  <td>Settings → Setup link creates a URL carrying the language, assessment method and all institution settings. Opening it on another device applies and saves them — one link sets up a whole ward.</td>
+</tr>
+<tr>
+  <td><strong>∑ Transparent maths</strong></td>
+  <td>All formulas live in <code>js/calc.js</code> and <code>js/sam.js</code> as pure functions that return their working. The reference-tables page prints the live source of each one; <code>node tests/calc.test.js</code> checks them.</td>
 </tr>
 <tr>
   <td><strong>🏥 Institution parameters</strong></td>
@@ -93,20 +123,30 @@ All protocols and reference ranges are drawn from peer-reviewed sources:
 | Reference | DOI / URL | Coverage |
 |-----------|-----------|----------|
 | WHO. *The Treatment of Diarrhoea*, 4th ed. | [iris.who.int](https://iris.who.int/handle/10665/43209) | Plans A / B / C; ORS composition |
-| Goldman RD et al. *Pediatrics* 2008;122(3) | [10.1542/peds.2007-2376](https://doi.org/10.1542/peds.2007-2376) | CDS validation |
+| WHO. *Pocket Book of Hospital Care for Children*, 2nd ed. 2013 | [who.int](https://www.who.int/publications/i/item/978-92-4-154837-3) | Plans A–C; SAM dehydration and shock (Chart 8) |
+| WHO. Guideline on wasting and nutritional oedema, 2023 | [iris.who.int](https://iris.who.int/handle/10665/376075) | SAM criteria; rehydration fluid (B6–B8) |
+| King CK et al. *MMWR* 2003;52(RR-16) | [cdc.gov](https://www.cdc.gov/mmwr/preview/mmwrhtml/rr5216a1.htm) | Ongoing-loss replacement; CDC/AAP severity table |
+| Goldman RD et al. *Pediatrics* 2008;122(3) | [10.1542/peds.2007-3141](https://doi.org/10.1542/peds.2007-3141) | CDS validation |
 | Holliday MA, Segar WE. *Pediatrics* 1957;19(5) | [10.1542/peds.19.5.823](https://doi.org/10.1542/peds.19.5.823) | Holliday–Segar maintenance formula |
 | NICE CG84 (2009) | [nice.org.uk/cg84](https://www.nice.org.uk/guidance/cg84) | Gastroenteritis in under-5s |
 | Guarino A et al. *JPGN* 2014;59(1) | [10.1097/MPG.0000000000000375](https://doi.org/10.1097/MPG.0000000000000375) | ESPGHAN/ESPID guidelines; ESPGHAN ORS |
 | Lazzerini M, Wanzira H. *Cochrane* 2016 | [10.1002/14651858.CD005436.pub5](https://doi.org/10.1002/14651858.CD005436.pub5) | Oral zinc for childhood diarrhoea |
 | Feizizadeh S et al. *Pediatrics* 2014;134(1) | [10.1542/peds.2013-3950](https://doi.org/10.1542/peds.2013-3950) | *S. boulardii* for acute diarrhoea |
-| Florez ID et al. *PLOS ONE* 2020;15(3) | [10.1371/journal.pone.0229482](https://doi.org/10.1371/journal.pone.0229482) | Diosmectite meta-analysis |
+| Pérez-Gaxiola G et al. *Cochrane* 2018 | [10.1002/14651858.CD011526.pub2](https://doi.org/10.1002/14651858.CD011526.pub2) | Smectite for acute diarrhoea |
+| Liang Y et al. *Cochrane* 2019 | [10.1002/14651858.CD009359.pub2](https://doi.org/10.1002/14651858.CD009359.pub2) | Racecadotril (little benefit) |
+| Fedorowicz Z et al. *Cochrane* 2011 | [10.1002/14651858.CD005506.pub5](https://doi.org/10.1002/14651858.CD005506.pub5) | Ondansetron |
+| Schnadower D; Freedman SB et al. *NEJM* 2018 | [LGG](https://doi.org/10.1056/NEJMoa1802598) · [combination](https://doi.org/10.1056/NEJMoa1802597) | Probiotic RCTs (no benefit) |
+| MSF, ACF, MoHFW India, Kenya MoH | see [`docs/SAM-PROTOCOLS.md`](./docs/SAM-PROTOCOLS.md) | SAM protocols |
+| GASTROSAM. *Lancet Child Adolesc Health* 2026 | [10.1016/S2352-4642(25)00371-2](https://doi.org/10.1016/S2352-4642(25)00371-2) | ORS vs ReSoMal in SAM |
 
 ---
 
 ## Languages
 
-The full UI — every label, tooltip, plan text, and education section — is translated into
-five languages. Language is persisted across sessions.
+The UI is translated into five languages; English, French and Korean are complete for
+v1.4. Russian and Chinese show the v1.4 additions (SAM pathway, show-the-maths, setup link,
+reference tables) in English until reviewed translations are added. Language is detected
+from the browser on first visit and persisted across sessions.
 
 | Flag | Code | Language | Notes |
 |------|------|----------|-------|
@@ -128,8 +168,8 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 | IV fluid (Plan C) | Ringer's lactate · Normal saline · Plasma-Lyte | Ringer's lactate |
 | ORS dose (Plan B) | 50 mL/kg · **60 mL/kg** · 75 mL/kg · 100 mL/kg | 75 mL/kg |
 | Rehydration duration (Plan B) | 3 h · **4 h** · 6 h | 4 h |
-| Plan C approach | WHO 30/70 schedule · AAP bolus-first | WHO |
-| "Some" dehydration deficit | 2–9% (adjustable) | 7.5% |
+| Plan C approach | WHO 30/70 schedule · AAP bolus-first | Bolus-first |
+| "Some" dehydration deficit | 1–9% (adjustable) | 6% |
 | "Severe" dehydration deficit | 5–15% (adjustable) | 10% |
 | Zinc reminder | On / Off | On |
 | Ondansetron note | On / Off | On |
@@ -137,6 +177,21 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 | Racecadotril note | On / Off | Off |
 | Smectite / diosmectite note | On / Off | Off |
 | *S. boulardii* / probiotic note | On / Off | Off |
+| Malnutrition screen | Optional · Required before any plan · Off | Optional |
+| SAM protocol | WHO · MSF · ACF · India · Kenya | WHO |
+| Oral fluid for SAM | As the protocol specifies · Low-osmolarity ORS (no ReSoMal) | As protocol |
+
+**Setup link.** *Settings → Setup link* turns the current settings into a URL, for example
+
+```
+https://prhehydrate.robbiemed.org/?lang=fr&method=who&name=CHR%20Saint-Louis&dept=P%C3%A9diatrie&cAppr=who&sam=required&samp=who
+```
+
+Parameters: `lang` (en·kr·fr·ru·zh), `method` (cds·who·weight·percent), `name`, `dept`,
+`iv` (rl·ns·plasmalyte), `bRate` (50·60·75·100), `bHours` (3·4·6), `cAppr` (who·bolus),
+`some` (1–9), `severe` (5–15), `zinc`·`onda`·`ng`·`race`·`smec`·`sbou` (0·1),
+`sam` (off·optional·required), `samp` (who·msf·acf·india·kenya), `samf` (auto·ors).
+Invalid values are ignored; the query is removed from the address bar once applied.
 
 The **60 mL/kg** option follows ESPGHAN moderate-dehydration guidance (European standard).
 The **3-hour** rapid schedule is used in some high-volume ED settings.
@@ -150,8 +205,16 @@ Plain HTML + CSS + vanilla JS. **No framework. No build step. No dependencies.**
 ```
 index.html              # single-page app shell; all panels rendered by JS
 css/styles.css          # CSS custom properties for theming; no preprocessor
-js/i18n.js              # window.I18N — 5 × 203 translation keys, loaded first
-js/app.js               # all logic: scoring, calculation, rendering, persistence
+js/i18n.js              # window.I18N — core strings, 5 languages
+js/i18n-sam.js          # v1.4 strings (SAM, show-the-maths, setup link) — EN · FR · KR
+js/calc.js              # every formula, as pure functions returning their working
+js/sam.js               # the five SAM protocols, with page-level sources
+js/app.js               # UI, state, persistence, rendering
+tables.html             # clinical reference tables page
+js/tables.js            # reference tables as data (EN · FR) + live formula source
+js/tables-kr.js         # Korean strings for the tables page
+tests/calc.test.js      # node tests for calc.js and sam.js (no dependencies)
+docs/SAM-PROTOCOLS.md   # source excerpts behind every SAM number
 manifest.webmanifest    # PWA metadata: name, icons, display, theme colours
 sw.js                   # service worker: cache-first assets, network-first HTML
 icon.svg                # app icon (standard)
@@ -174,6 +237,8 @@ cd rhehydrate
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
+
+Run the formula tests with `node tests/calc.test.js`.
 
 The service worker requires `http://localhost` (or HTTPS) to register. Any static file
 server works — `npx serve`, `caddy file-server`, etc.

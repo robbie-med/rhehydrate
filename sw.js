@@ -11,6 +11,8 @@ var ASSETS = [
   "./js/i18n-sam.js",
   "./js/calc.js",
   "./js/sam.js",
+  "./js/tables.js",
+  "./js/tables-kr.js",
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-maskable.svg"

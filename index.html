@@ -72,6 +72,83 @@
           </label>
         </div>
 
+        <!-- SAM screen (hidden when institution setting = off) -->
+        <div class="sam-screen" id="samScreen">
+          <h3 class="sub-h" data-i18n="sam.screen.title">Malnutrition screen (SAM)</h3>
+          <p class="hint" data-i18n="sam.screen.help"></p>
+          <div class="grid2">
+            <label class="field">
+              <span class="field-l" data-i18n="sam.muac">MUAC</span>
+              <span class="inputwrap">
+                <input id="samMuac" type="number" inputmode="numeric" min="50" max="250" step="1" data-i18n-ph="sam.muac.ph" placeholder="e.g. 118" />
+                <span class="suffix">mm</span>
+              </span>
+            </label>
+            <div class="field">
+              <span class="field-l" data-i18n="sam.whz">Weight-for-height &lt; −3 SD</span>
+              <div class="segmented small" id="samWhzSeg">
+                <button class="seg" data-val="yes" data-i18n="sam.yes">Yes</button>
+                <button class="seg" data-val="no" data-i18n="sam.no">No</button>
+                <button class="seg" data-val="" data-i18n="sam.whz.unk">Not measured</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-l" data-i18n="sam.oedema">Bilateral pitting oedema</span>
+            <div class="segmented small" id="samOedemaSeg">
+              <button class="seg" data-val="0" data-i18n="sam.oedema.0">None</button>
+              <button class="seg" data-val="1">+</button>
+              <button class="seg" data-val="2">++</button>
+              <button class="seg" data-val="3">+++</button>
+            </div>
+          </div>
+          <div class="sam-status" id="samStatus" aria-live="polite"></div>
+
+          <!-- SAM-specific assessment (only when screen is positive) -->
+          <div class="sam-extra" id="samExtra" hidden>
+            <p class="hint sam-warn" data-i18n="sam.diag.common"></p>
+            <div class="field">
+              <span class="field-l" data-i18n="sam.hyd">Hydration status (clinician judgement)</span>
+              <div class="segmented small" id="samHydSeg">
+                <button class="seg" data-val="none" data-i18n="sam.hyd.none">None</button>
+                <button class="seg" data-val="some" data-i18n="sam.hyd.some">Some</button>
+                <button class="seg" data-val="severe" data-i18n="sam.hyd.severe">Severe</button>
+              </div>
+              <span class="hint" id="samHydHint"></span>
+            </div>
+            <div class="field">
+              <span class="field-l" data-i18n="sam.shock">Signs of shock</span>
+              <div class="segmented small" id="samShockSeg">
+                <button class="seg" data-val="1" data-i18n="sam.yes">Yes</button>
+                <button class="seg" data-val="0" data-i18n="sam.no">No</button>
+              </div>
+              <span class="hint" id="samShockDef"></span>
+            </div>
+            <div class="field">
+              <span class="field-l" data-i18n="sam.oralOk">Can drink or take NG fluids</span>
+              <div class="segmented small" id="samOralSeg">
+                <button class="seg" data-val="1" data-i18n="sam.yes">Yes</button>
+                <button class="seg" data-val="0" data-i18n="sam.no">No</button>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-l" data-i18n="sam.cholera">Suspected cholera / profuse watery diarrhoea</span>
+              <div class="segmented small" id="samCholSeg">
+                <button class="seg" data-val="1" data-i18n="sam.yes">Yes</button>
+                <button class="seg" data-val="0" data-i18n="sam.no">No</button>
+              </div>
+            </div>
+            <label class="field">
+              <span class="field-l" data-i18n="sam.preW">Pre-diarrhoea weight (if known)</span>
+              <span class="inputwrap">
+                <input id="samPreW" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" />
+                <span class="suffix">kg</span>
+              </span>
+              <span class="hint" data-i18n="sam.preW.help"></span>
+            </label>
+          </div>
+        </div>
+
         <!-- method selector -->
         <div class="field">
           <span class="field-l" data-i18n="in.method">Severity assessment</span>
@@ -318,6 +395,48 @@
             <button class="seg active" data-val="0" data-i18n="inst.off">Off</button>
           </div>
         </div>
+        <!-- Malnutrition (SAM) -->
+        <h3 class="set-section-h" data-i18n="inst.sam.title">Malnutrition (SAM)</h3>
+        <div class="setrow">
+          <span data-i18n="inst.samScreen">Malnutrition screen</span>
+          <select id="instSamScreen" class="set-select">
+            <option value="optional" data-i18n="inst.samScreen.optional">Shown, optional</option>
+            <option value="required" data-i18n="inst.samScreen.required">Required before any plan</option>
+            <option value="off" data-i18n="inst.samScreen.off">Off</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span data-i18n="inst.samProtocol">SAM rehydration protocol</span>
+          <select id="instSamProtocol" class="set-select">
+            <option value="who" data-i18n="sam.p.who">WHO</option>
+            <option value="msf" data-i18n="sam.p.msf">MSF</option>
+            <option value="acf" data-i18n="sam.p.acf">ACF</option>
+            <option value="india" data-i18n="sam.p.india">India</option>
+            <option value="kenya" data-i18n="sam.p.kenya">Kenya</option>
+          </select>
+        </div>
+        <div class="setrow set-sources">
+          <ul class="src-list" id="samProtocolSources"></ul>
+        </div>
+        <div class="setrow last">
+          <span data-i18n="inst.samFluid">Oral fluid for SAM</span>
+          <select id="instSamFluid" class="set-select">
+            <option value="auto" data-i18n="inst.samFluid.auto">As the protocol specifies</option>
+            <option value="ors" data-i18n="inst.samFluid.ors">Low-osmolarity ORS (no ReSoMal)</option>
+          </select>
+        </div>
+
+        <!-- Setup link -->
+        <h3 class="set-section-h" data-i18n="inst.link.title">Setup link</h3>
+        <p class="hint" data-i18n="inst.link.help"></p>
+        <div class="setrow">
+          <button class="btn ghost small" id="linkMakeBtn" data-i18n="inst.link.make">Create link from these settings</button>
+        </div>
+        <div class="setrow last" id="linkRow" hidden>
+          <input id="linkOut" type="text" readonly class="link-out" aria-label="Setup link" />
+          <button class="btn ghost small" id="linkCopyBtn" data-i18n="inst.link.copy">Copy</button>
+        </div>
+
         <div class="setrow">
           <button class="btn ghost small" id="instResetBtn" data-i18n="inst.reset">Reset to defaults</button>
         </div>
@@ -328,7 +447,12 @@
     </div>
   </div>
 
+  <div class="toast" id="toast" role="status" hidden></div>
+
   <script src="js/i18n.js"></script>
+  <script src="js/i18n-sam.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/sam.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

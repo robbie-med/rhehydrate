@@ -525,8 +525,104 @@ input:hover:not(:focus), select:hover:not(:focus) {
 .version-line { margin-top: 16px; font-size: 12px; color: var(--text-3); }
 
 /* ── print ───────────────────────────────────────────────────── */
+/* ── v1.4: SAM screen ─────────────────────────────────────────── */
+.sam-screen {
+  margin: 0 0 16px; padding: 12px 14px 4px;
+  border: 1px solid var(--line); border-radius: var(--radius-s);
+  background: var(--card-2);
+}
+.sam-screen[hidden] { display: none; }
+.sam-screen .sub-h { margin-top: 0; }
+.sam-screen .segmented.small { flex-wrap: wrap; }
+.sam-status {
+  display: flex; flex-direction: column; gap: 3px;
+  margin: 0 0 12px; font-size: 12.5px; line-height: 1.45;
+}
+.sam-status:empty { display: none; }
+.sam-status strong { font-weight: 700; }
+.sam-status.st-pos strong        { color: var(--danger); }
+.sam-status.st-neg strong        { color: var(--ok); }
+.sam-status.st-incomplete strong { color: var(--text-2); }
+.sam-extra { border-top: 1px dashed var(--line); padding-top: 12px; }
+.sam-extra[hidden] { display: none; }
+.sam-warn {
+  margin: 0 0 12px; padding: 8px 10px; border-radius: var(--radius-xs);
+  background: var(--warn-soft); color: var(--text);
+}
+.sam-msg { color: var(--text); }
+.sam-note { color: var(--text-2); }
+.sam-evidence {
+  padding: 10px 12px; border-left: 3px solid var(--accent);
+  background: var(--accent-soft); color: var(--text);
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0; line-height: 1.5;
+}
+
+.sev-sam { background: var(--danger-soft); border-color: var(--danger); }
+.sev-sam .dot { background: var(--danger); }
+.sev-sam .sev-name { color: var(--danger); }
+.plan-sam { border-top-color: var(--danger); }
+.plan-phase.tone-danger .plan-phase-label { background: var(--danger-soft); color: var(--danger); }
+.plan-phase.tone-warn   .plan-phase-label { background: var(--warn-soft);   color: var(--warn); }
+.plan-phase.tone-info   .plan-phase-label { background: var(--card-2);      color: var(--text-2); }
+.plan-phase > .working { margin: 0 12px 10px; }
+
+.sam-sources, .set-sources { font-size: 12px; }
+.sam-sources h4 { margin: 14px 0 6px; font-size: 12px; font-weight: 800; color: var(--text-2); }
+.src-list { margin: 0; padding-left: 18px; }
+.src-list li { margin: 4px 0; font-size: 12px; line-height: 1.45; color: var(--text-2); }
+.src-list a, .work-list a, .wk-foot a, .prose a { color: var(--accent); overflow-wrap: anywhere; }
+.set-sources { padding-top: 0; }
+.set-sources .src-list { width: 100%; }
+
+/* ── v1.4: show the maths ─────────────────────────────────────── */
+.working {
+  margin: 8px 0 12px; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-xs); background: var(--bg-2);
+}
+.working > summary {
+  cursor: pointer; padding: 7px 12px; font-size: 12px; font-weight: 700;
+  color: var(--accent); list-style: none;
+}
+.working > summary::-webkit-details-marker { display: none; }
+.working > summary::before { content: "∑ "; }
+.working[open] > summary { border-bottom: 1px solid var(--line-soft); }
+.work-list { list-style: none; margin: 0; padding: 6px 12px; }
+.work-list li {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px;
+  padding: 6px 0; border-bottom: 1px dotted var(--line-soft); font-size: 12.5px;
+}
+.work-list li:last-child { border-bottom: none; }
+.wk-l { font-weight: 700; color: var(--text); min-width: 9em; }
+.wk-x {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px; color: var(--text); overflow-wrap: anywhere;
+}
+.wk-f { flex-basis: 100%; font-size: 11.5px; color: var(--text-3); }
+.wk-src { font-size: 11.5px; }
+.wk-foot { margin: 0; padding: 6px 12px 9px; font-size: 11.5px; color: var(--text-3); line-height: 1.5; }
+
+.bolus-given {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+  margin: 8px 12px 0; font-size: 12.5px; font-weight: 600; color: var(--text);
+}
+.bolus-given .set-select { max-width: 100%; }
+
+/* ── v1.4: setup link, toast ──────────────────────────────────── */
+.link-out {
+  flex: 1; min-width: 0; font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+  max-width: calc(100% - 32px); z-index: 50;
+  padding: 10px 16px; border-radius: var(--radius-s);
+  background: var(--card); color: var(--text); border: 1px solid var(--accent);
+  box-shadow: var(--shadow); font-size: 13px;
+}
+.toast[hidden] { display: none; }
+
 @media print {
-  .topbar, .topnav, .actions, .foot, .overlay,
+  .topbar, .topnav, .actions, .foot, .overlay, .toast, .bolus-given select,
   .losses summary, #printBtn, .col-input { display: none !important; }
   body { background: #fff !important; color: #000; font-size: 13px; }
   .layout { display: block; max-width: none; padding: 0; }

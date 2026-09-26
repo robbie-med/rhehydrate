@@ -1,6 +1,6 @@
 /* Rhehydrate service worker — offline-first.
  * Bump CACHE on any asset change to roll the cache. */
-var CACHE = "rhehydrate-v1.3.1";
+var CACHE = "rhehydrate-v1.4.0";
 var ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,9 @@ var ASSETS = [
   "./css/styles.css",
   "./js/app.js",
   "./js/i18n.js",
+  "./js/i18n-sam.js",
+  "./js/calc.js",
+  "./js/sam.js",
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-maskable.svg"

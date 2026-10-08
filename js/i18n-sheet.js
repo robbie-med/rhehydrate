@@ -1,15 +1,11 @@
-/* PRhehydrate — strings added in v1.5: bedside rehydration sheet and
- * institution logo. EN, FR and KR; RU/ZH fall back to English via t()
- * until reviewed translations are added (same convention as i18n-sam.js).
- * The sheet only re-lays-out the plan; clinical wording stays in i18n.js /
- * i18n-sam.js. */
+/* Strings: bedside sheet, logo. EN/FR/KR; RU/ZH fall back to EN. */
 (function (I) {
   "use strict";
 
   Object.assign(I.en, {
     "bs.btn": "Bedside sheet",
     "bs.print": "Print",
-    "bs.preview.help": "This is the sheet that will print (A4 or Letter, black and white). Write the child's name on the paper — it is never typed into the app. No printer? Copy the lines onto paper by hand.",
+    "bs.preview.help": "A4 or Letter. Write the child's name by hand.",
     "bs.needAge": "Enter the child's age first: the IV schedule and the zinc dose on the sheet depend on it.",
     "bs.title": "Rehydration sheet",
     "bs.f.inst": "Facility: ____________________",
@@ -62,7 +58,6 @@
     "bs.ccol.planOpts": "A   B   C   SAM",
     "bs.foot": "PRhehydrate {v} · printed {date} · Decision support only — check every volume against the doctor's order.",
     "inst.logo": "Logo",
-    "inst.logo.help": "Printed at the top of the bedside sheet. Saved on this device only — not included in the setup link.",
     "inst.logo.choose": "Choose image", "inst.logo.remove": "Remove",
     "inst.logo.err": "This image could not be read.",
     "w.zinc": "Zinc dose", "w.ors": "ORS rate"
@@ -71,7 +66,7 @@
   Object.assign(I.fr, {
     "bs.btn": "Fiche de chevet",
     "bs.print": "Imprimer",
-    "bs.preview.help": "Voici la fiche qui sera imprimée (A4 ou Letter, noir et blanc). Le nom de l'enfant s'écrit à la main sur le papier — il n'est jamais saisi dans l'application. Pas d'imprimante ? Recopier les lignes à la main.",
+    "bs.preview.help": "A4 ou Letter. Écrire le nom de l'enfant à la main.",
     "bs.needAge": "Saisir d'abord l'âge de l'enfant : le calendrier IV et la dose de zinc de la fiche en dépendent.",
     "bs.title": "Fiche de réhydratation",
     "bs.f.inst": "Établissement : ____________________",
@@ -124,7 +119,6 @@
     "bs.ccol.planOpts": "A   B   C   MAS",
     "bs.foot": "PRhehydrate {v} · imprimé le {date} · Aide à la décision uniquement — vérifier chaque volume avec la prescription du médecin.",
     "inst.logo": "Logo",
-    "inst.logo.help": "Imprimé en haut de la fiche de chevet. Enregistré sur cet appareil uniquement — non inclus dans le lien de configuration.",
     "inst.logo.choose": "Choisir une image", "inst.logo.remove": "Retirer",
     "inst.logo.err": "Impossible de lire cette image.",
     "w.zinc": "Dose de zinc", "w.ors": "Débit de SRO"
@@ -133,7 +127,7 @@
   Object.assign(I.kr, {
     "bs.btn": "병상 기록지",
     "bs.print": "인쇄",
-    "bs.preview.help": "인쇄될 기록지입니다 (A4 또는 Letter, 흑백). 환아 이름은 종이에 손으로 적습니다 — 앱에는 입력하지 않습니다. 프린터가 없으면 각 줄을 종이에 옮겨 적으십시오.",
+    "bs.preview.help": "A4 또는 Letter. 환아 이름은 손으로 적습니다.",
     "bs.needAge": "먼저 나이를 입력하십시오: 기록지의 정맥 수액 일정과 아연 용량이 나이에 따라 달라집니다.",
     "bs.title": "수액 치료 기록지",
     "bs.f.inst": "기관: ____________________",
@@ -186,7 +180,6 @@
     "bs.ccol.planOpts": "A   B   C   SAM",
     "bs.foot": "PRhehydrate {v} · 인쇄 {date} · 임상 판단 보조용 — 모든 용량을 의사 처방과 대조하십시오.",
     "inst.logo": "로고",
-    "inst.logo.help": "병상 기록지 상단에 인쇄됩니다. 이 기기에만 저장되며 설정 링크에는 포함되지 않습니다.",
     "inst.logo.choose": "이미지 선택", "inst.logo.remove": "삭제",
     "inst.logo.err": "이 이미지를 읽을 수 없습니다.",
     "w.zinc": "아연 용량", "w.ors": "ORS 속도"

@@ -1,17 +1,5 @@
-/* PRhehydrate — severe acute malnutrition (SAM) rehydration protocols.
- *
- * Five protocols, each transcribed from its primary document (page/section
- * given in `sources`). Every volume is computed with RH_CALC.perKg / line so
- * the working is shown next to the order. Text lives in i18n (keys "sam.*");
- * numeric placeholders are filled here and formatted by the app.
- *
- * ctx = { w: kg, months: number|null, hyd: "none"|"some"|"severe",
- *         shock: bool, cholera: bool, oralOk: bool, preW: kg|null,
- *         oedema: 0–3, fluid: "resomal"|"ors"|"orsK" }
- * build(ctx) → [ { h: key, hv: vars, tone, items: [[key, vars], …], work: [lines] } ]
- *
- * Full source excerpts: docs/SAM-PROTOCOLS.md.
- */
+/* PRhehydrate — SAM rehydration protocols (excerpts: docs/SAM-PROTOCOLS.md).
+ * ctx = { w, months, hyd: none|some|severe, shock, cholera, oralOk, preW, oedema, fluid } */
 (function (root) {
   "use strict";
   var C = root.RH_CALC, S = C.SRC, perKg = C.perKg, line = C.line, n = C.n;
@@ -22,7 +10,7 @@
   function fluidVar(ctx) { return { fluid: { key: "sam.fluid." + ctx.fluid } }; }
   function mix(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
 
-  // target weight: pre-diarrhoea weight if known and above current, else current × factor
+  // pre-diarrhoea weight if higher than current, else current × factor
   function targetWeight(ctx, factor, src, fn) {
     if (ctx.preW && ctx.preW > ctx.w) {
       return { v: ctx.preW, basis: "sam.basis.pre",
@@ -55,7 +43,6 @@
     return out;
   }
 
-  // ═════════════════════════════════════════════════════════════════════
   var PROTOCOLS = {
 
     // ── WHO Pocket Book 2013 (+ WHO 2023 wasting guideline) — default ──
@@ -294,7 +281,7 @@
 
   var ORDER = ["who", "msf", "acf", "india", "kenya"];
 
-  // Entry point: returns { protocol, fluid, blocks }
+  // → { protocol, fluid, blocks }
   function plan(protocolId, ctx) {
     var p = PROTOCOLS[protocolId] || PROTOCOLS.who;
     var c = mix(ctx, {});

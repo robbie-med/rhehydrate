@@ -1,10 +1,8 @@
-/* PRhehydrate — application logic (vanilla, offline-first).
- * Calculations live in js/calc.js (standard plans) and js/sam.js (SAM
- * protocols); this file handles UI, state, persistence and rendering. */
+/* PRhehydrate — UI, state, persistence, rendering. */
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.0";
+  var APP_VERSION = "1.6.1";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -35,11 +33,11 @@
     { url: "https://doi.org/10.1016/S2352-4642(25)00371-2",      key: "edu.refs.17" }
   ];
 
-  // ── default institution config ──────────────────────────────────────
+  // ── institution defaults ──
   var INST_DEFAULTS = {
     name:             "",
     dept:             "",
-    logo:             "",           // PNG data URL, this device only (never in the setup link)
+    logo:             "", // PNG data URL; not in the setup link
     ivFluid:          "rl",
     planBRate:        75,
     planBHours:       4,
@@ -54,7 +52,7 @@
     showSboulardii:   false,
     samScreen:        "optional",   // off | optional | required
     samProtocol:      "who",        // who | msf | acf | india | kenya
-    samFluid:         "auto"        // auto (protocol's fluid) | ors (ReSoMal unavailable, WHO 2023 B7)
+    samFluid:         "auto"        // auto | ors
   };
 
   function samDefaults() {
@@ -111,7 +109,6 @@
       el.setAttribute("title", v); el.setAttribute("aria-label", v);
     });
     $("#langToggle").textContent = FLAGS[state.lang] || state.lang.toUpperCase();
-    // update selects that carry data-i18n on options
     $$("select option[data-i18n]").forEach(function (o) {
       o.textContent = t(o.getAttribute("data-i18n"));
     });
@@ -205,7 +202,7 @@
     $("#cdsScore").textContent = s + " / 8";
   }
 
-  // ── severity logic (formulas in calc.js) ─────────────────────────────
+  // ── severity ──
   function sevLine(key, pct) {
     return C.line("w.sevPct", "institution setting: " + key + " → deficit %", key, pct, "%", null, "deriveSeverity");
   }
@@ -249,8 +246,7 @@
     return C.samScreen({ muac: state.sam.muac, oedema: state.sam.oedema, whz: state.sam.whz, months: months });
   }
 
-  // The plan follows the inputs live (quiet); the Calculate button calls it
-  // loudly, which also points at a missing weight.
+  // quiet = live update; the Calculate button also flags a missing weight
   function calculate(quiet) {
     var weight = parseFloat($("#weight").value);
     var months = ageMonths();
@@ -262,7 +258,7 @@
       return;
     }
 
-    // SAM gate: a positive screen replaces Plans A/B/C with the SAM pathway
+    // positive SAM screen → SAM pathway instead of Plans A/B/C
     if (screen && screen.status === "pos") {
       if (!state.sam.hyd) { lastResult = null; renderMessage("res.sam.needHyd"); persist(); return; }
       lastResult = { sam: true, weight: weight, months: months, screen: screen, generic: deriveSeverity(weight) };
@@ -345,7 +341,6 @@
     return ul;
   }
 
-  // "Show the maths": every line = label · expression = result unit · formula · source
   function workDetails(lines, codeFile) {
     var d = txt("details", "working");
     d.appendChild(txt("summary", null, t("w.show")));
@@ -379,7 +374,6 @@
 
     if (inst.name || inst.logo) body.appendChild(instHeader());
 
-    // severity banner
     var banner = el("div", "sev-banner sev-" + key);
     banner.appendChild(el("span", "dot"));
     var bt = el("div");
@@ -388,13 +382,11 @@
     banner.appendChild(bt);
     body.appendChild(banner);
 
-    // SAM screen outcome (standard plans assume no SAM)
     if (R.screen) {
       body.appendChild(txt("p", "note sam-note", t(R.screen.status === "neg" ? "res.sam.neg" : "res.sam.incomplete")));
       R.screen.notes.forEach(function (k) { body.appendChild(txt("p", "note sam-note", t(k))); });
     }
 
-    // metrics grid
     var metrics = el("div", "metrics");
     metrics.appendChild(metric(t("res.deficitPct"),  fmt(R.sev.pct) + "<small>%</small>"));
     metrics.appendChild(metric(t("res.deficitVol"),  fmt(R.deficitVol) + "<small> mL</small>"));
@@ -414,7 +406,6 @@
     setResultBtns(true);
   }
 
-  // institution name / ward, with the logo if one is set
   function instHeader() {
     var ins = state.inst, h = txt("div", "plan-inst");
     if (ins.logo) { var i = txt("img", "plan-inst-logo"); i.src = ins.logo; i.alt = ""; h.appendChild(i); }
@@ -469,7 +460,6 @@
 
       if (ins.planCAppr === "bolus") {
         var pc = C.planCBolus(w, R.deficitVol, R.maintHr, state.bolusCount);
-        // Phase 1 — Acute resuscitation
         var ph1 = el("div", "plan-phase");
         ph1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
         ph1.appendChild(el("div", "plan-dose",
@@ -481,7 +471,6 @@
         ]));
         body.appendChild(ph1);
 
-        // Phase 2 — Post-resuscitation (deficit net of the boluses actually given)
         var ph2 = el("div", "plan-phase plan-phase-2");
         ph2.appendChild(el("div", "plan-phase-label", t("plan.c.phase2.label")));
         ph2.appendChild(bolusSelect(w));
@@ -501,7 +490,6 @@
         body.appendChild(ph2);
         body.appendChild(workDetails(pc.work));
 
-        // Variants
         var varDiv = el("div", "plan-variants");
         varDiv.appendChild(el("div", "plan-variants-h", t("plan.c.var.h")));
         varDiv.appendChild(liList([
@@ -512,7 +500,6 @@
         body.appendChild(varDiv);
 
       } else {
-        // WHO 100 mL/kg 30/70 approach
         var wc = C.planCWho(w, R.months);
         body.appendChild(el("div", "plan-dose",
           t("plan.c.fluid", { vol: fmt(wc.total), fluid: fluidName })));
@@ -539,12 +526,12 @@
     return plan;
   }
 
-  // zinc dose for the child's age (calc.js); the 10–20 mg range if age is unknown
+  // range if age unknown
   function zincLine(R) {
     return R.months == null ? t("plan.a.4") : t("plan.zinc", { mg: String(C.zinc(R.months).mg) });
   }
 
-  // how many 20 mL/kg boluses were actually given (drives Phase 2)
+  // boluses given → phase 2
   function bolusSelect(w) {
     var wrap = txt("label", "bolus-given");
     wrap.appendChild(txt("span", null, t("plan.c.bolusGiven")));
@@ -619,7 +606,6 @@
 
     body.appendChild(txt("p", "note sam-evidence", t("res.sam.evidence")));
 
-    // sources for everything shown
     var src = el("div", "sam-sources");
     src.appendChild(txt("h4", null, t("res.sam.sources")));
     var ul = txt("ul", "src-list");
@@ -640,8 +626,6 @@
   }
 
   // ── bedside sheet ────────────────────────────────────────────────────
-  // Same plan as on screen, laid out as a checklist (js/sheet.js). The
-  // child's name is handwritten on the paper; nothing here stores it.
   function buildSheet() {
     var R = lastResult, ins = state.inst, s = state.sam, sc = R.screen;
     var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
@@ -680,7 +664,7 @@
     openPanel("bedside");
     renderSheetPreview();
   }
-  // Any print while the preview is open (button or Ctrl+P) prints the sheet only
+  // printing with the preview open prints the sheet only
   window.addEventListener("beforeprint", function () {
     if (!sheetOpen() || !lastResult) return;
     var box = $("#printSheet"); box.innerHTML = "";
@@ -702,7 +686,6 @@
     box.appendChild(txt("strong", null, head));
     screen.notes.forEach(function (k) { box.appendChild(txt("span", "hint", t(k))); });
     $("#samExtra").hidden = screen.status !== "pos";
-    // generic scale result, shown for reference only
     var g = $("#samHydHint"); g.textContent = "";
     if (screen.status === "pos") {
       var w = parseFloat($("#weight").value), sev = w ? deriveSeverity(w) : null;
@@ -927,7 +910,7 @@
     });
   }
 
-  // Logo → PNG data URL, at most 320 px on its longer side, kept in localStorage
+  // logo → PNG data URL, ≤ 320 px
   function readLogo(file) {
     function fail() { toast(t("inst.logo.err")); }
     var fr = new FileReader();
@@ -950,8 +933,7 @@
     fr.readAsDataURL(file);
   }
 
-  // ── setup link: settings ↔ URL query ────────────────────────────────
-  // Short keys keep links readable. Every value is validated on the way in.
+  // ── setup link ──
   var URL_MAP = {
     name:   { k: "name",             type: "str" },
     dept:   { k: "dept",             type: "str" },
@@ -1110,7 +1092,6 @@
     });
   }
 
-  // browser language → app language (ko→kr; fr, ru, zh as-is; else English)
   function detectLang() {
     var nl = (navigator.language || "en").toLowerCase();
     if (nl.indexOf("ko") === 0) return "kr";
@@ -1129,7 +1110,7 @@
 
     loadInst();
     restoreInputs();
-    var fromLink = applyUrlConfig();   // a setup link overrides saved settings
+    var fromLink = applyUrlConfig();
     applyTheme();
     setMethod(state.method);
     applyI18n();
@@ -1137,49 +1118,41 @@
     updateInstTag();
     if (fromLink) toast(t("toast.linkApplied") + (state.inst.name ? " — " + state.inst.name : ""));
 
-    // language toggle (topbar) — cycles through LANGS
     $("#langToggle").addEventListener("click", function () {
       var idx = LANGS.indexOf(state.lang);
       state.lang = LANGS[(idx + 1) % LANGS.length];
       try { localStorage.setItem(LS.lang, state.lang); } catch(e) {}
       applyI18n(); syncSeg("#langSeg", "lang", state.lang);
     });
-    // language seg (settings)
     $("#langSeg").addEventListener("click", function (e) {
       var b = e.target.closest(".seg"); if (!b) return;
       state.lang = b.getAttribute("data-lang");
       try { localStorage.setItem(LS.lang, state.lang); } catch(e) {}
       applyI18n(); syncSeg("#langSeg", "lang", state.lang);
     });
-    // theme
     $("#themeSeg").addEventListener("click", function (e) {
       var b = e.target.closest(".seg"); if (!b) return;
       state.theme = b.getAttribute("data-theme");
       try { localStorage.setItem(LS.theme, state.theme); } catch(e) {}
       applyTheme();
     });
-    // method
     $("#methodSeg").addEventListener("click", function (e) {
       var b = e.target.closest(".seg"); if (!b) return;
       setMethod(b.getAttribute("data-method"));
       persist();
       recalc();
     });
-    // percent range
     $("#pctRange").addEventListener("input", function () {
       $("#pctOut").textContent = this.value + "%"; persist();
     });
-    // panels
     $$(".iconbtn[data-panel]").forEach(function (b) {
       b.addEventListener("click", function () { openPanel(b.getAttribute("data-panel")); });
     });
     $("#sheetClose").addEventListener("click", closePanel);
     $("#overlay").addEventListener("click", function (e) { if (e.target === this) closePanel(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
-    // calc / reset / print
     $("#calcBtn").addEventListener("click", function () {
       calculate(false);
-      // mobile: the plan is below the inputs — take the user there
       if (lastResult && window.matchMedia("(max-width: 767px)").matches) {
         $(".col-results").scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -1188,7 +1161,6 @@
     $("#printBtn").addEventListener("click", function () { window.print(); });
     $("#sheetBtn").addEventListener("click", openSheet);
     $("#sheetPrintBtn").addEventListener("click", function () { window.print(); });
-    // settings actions
     $("#clearBtn").addEventListener("click", function () {
       clearInputs();
       var self = this; self.textContent = t("set.cleared");
@@ -1209,7 +1181,7 @@
       n.addEventListener("change", recalc);
     });
 
-    recalc();   // saved inputs → plan straight away
+    recalc();
     registerSW();
     window.addEventListener("online",  buildAbout);
     window.addEventListener("offline", buildAbout);

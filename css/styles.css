@@ -1,13 +1,4 @@
-/* PRhehydrate — styles. Theme via [data-theme] on <html>.
- *
- * v1.6 layout: flat. No cards, no shadows, no boxes inside boxes — sections
- * are separated by space and the odd hairline, and hierarchy comes from type.
- * Two modes:
- *   ≥ 768 px (desktop / tablet): inputs in a left column that scrolls on its
- *     own, the plan on the right, one hairline between them.
- *   < 768 px (mobile): one column; Calculate stays pinned to the bottom of the
- *     screen while the inputs are in view and jumps to the plan.
- * Dark is true black. */
+/* PRhehydrate — styles. Theme via [data-theme]; mobile below 768 px. */
 :root {
   --bg:          #000000;
   --bg-2:        #0f0f0f;   /* inputs, segmented track */
@@ -67,6 +58,7 @@
 /* ── reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -143,7 +135,7 @@ button { font: inherit; color: inherit; }
   .col-results { padding-left: 24px; }
 }
 
-/* ── sections (formerly cards: now flat) ─────────────────────── */
+/* ── sections ── */
 .card { background: none; border: 0; padding: 0; box-shadow: none; }
 .card-h { margin: 0 0 16px; font-size: 20px; font-weight: 700; letter-spacing: -.3px; color: var(--text); }
 .sub-h { margin: 0 0 4px; font-size: 13px; font-weight: 700; color: var(--text); }
@@ -154,7 +146,6 @@ button { font: inherit; color: inherit; }
 .field.full { width: 100%; margin-bottom: 0; }
 .field-l { font-size: 13px; font-weight: 600; color: var(--text-2); }
 .hint { font-size: 12.5px; color: var(--text-3); margin: 0; line-height: 1.45; }
-.inputs > .grid2 > .field > .hint { display: none; }   /* weight / age: the labels say enough */
 
 .inputwrap {
   display: flex; align-items: stretch;
@@ -233,7 +224,7 @@ input[type="number"] { -moz-appearance: textfield; }
 /* ── severity method + scales ────────────────────────────────── */
 .method-seg + * { margin-top: 0; }
 .method-panel { margin: 0 0 8px; padding-top: 14px; border-top: 1px solid var(--line); }
-.method-panel > .sub-h { display: none; }   /* the selected tab already names it */
+.method-panel > .sub-h { display: none; }
 .scale { display: flex; flex-direction: column; gap: 18px; margin-top: 14px; }
 .scale-item > .si-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
 .opts { display: flex; flex-direction: column; gap: 2px; }
@@ -300,7 +291,7 @@ input[type="number"] { -moz-appearance: textfield; }
 
 .plan-inst { color: var(--text-3); font-size: 13px; font-weight: 600; margin-bottom: 14px; }
 
-/* severity: a heading, not a box */
+/* severity */
 .sev-banner { display: flex; align-items: flex-start; gap: 12px; margin: 0 0 6px; }
 .sev-banner .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; margin-top: 9px; }
 .sev-banner .sev-name { font-size: 26px; font-weight: 750; line-height: 1.2; letter-spacing: -.4px; }
@@ -311,7 +302,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .sev-severe .sev-name, .sev-sam .sev-name { color: var(--danger); }
 .sam-note { color: var(--text-3); margin: 4px 0 0 24px; }
 
-/* key numbers: one quiet row */
+/* metrics */
 .metrics {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 16px 24px; margin: 22px 0 6px; padding: 18px 0; border-block: 1px solid var(--line);
@@ -363,7 +354,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .src-list a, .work-list a, .wk-foot a, .prose a { color: var(--accent); overflow-wrap: anywhere; }
 .set-sources .src-list { width: 100%; }
 
-/* show the maths: a quiet disclosure */
+/* show the maths */
 .working { margin: 10px 0 0; }
 .working > summary {
   display: inline-flex; cursor: pointer; padding: 4px 0; font-size: 13px; font-weight: 600;
@@ -461,7 +452,7 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 .toast[hidden] { display: none; }
 
-/* ══ mobile (< 768 px): one column ═══════════════════════════════ */
+/* ── mobile ── */
 @media (max-width: 767px) {
   .layout { display: block; padding: 0 var(--pad-x); }
   .col-input { position: static; max-height: none; overflow: visible; padding: 20px 0 0; border-right: 0; }
@@ -489,10 +480,7 @@ input[type="number"] { -moz-appearance: textfield; }
   .sev-banner, .plan-phase, .redflags, .metrics { break-inside: avoid; }
 }
 
-/* ── v1.5: bedside sheet ─────────────────────────────────────────
-   Paper layout in mm/pt so it fits A4 and Letter alike (12 mm margins →
-   at most 186 × 255 mm). Black on white only: ward printers and
-   photocopiers are rarely colour. Used for the preview and the print. */
+/* ── bedside sheet: mm/pt, fits A4 and Letter ── */
 .results-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .results-btns .btn, .bs-bar .btn { flex: none; }
 .plan-inst { display: flex; align-items: center; gap: 10px; }
@@ -592,28 +580,14 @@ input[type="number"] { -moz-appearance: textfield; }
   html.print-sheet #printSheet { display: block !important; }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   TABLES PAGE (tables.html)
-   ══════════════════════════════════════════════════════════════ */
+/* ══ tables.html ══ */
 
 /* ── page wrapper ────────────────────────────────────────────── */
 .tables-page {
   max-width: 980px;
-  width: 100%; min-width: 0; /* body is a flex column: don't let wide tables stretch the page */
+  width: 100%; min-width: 0;
   margin: 0 auto;
   padding: 20px var(--pad-x) 60px;
-}
-
-/* ── intro paragraph ─────────────────────────────────────────── */
-.tables-intro {
-  color: var(--text-2);
-  font-size: 13.5px;
-  line-height: 1.65;
-  margin: 0 0 36px;
-  padding: 14px 16px;
-  border-left: 3px solid var(--accent);
-  background: var(--accent-soft);
-  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
 }
 
 /* ── section wrapper ─────────────────────────────────────────── */
@@ -642,11 +616,6 @@ input[type="number"] { -moz-appearance: textfield; }
   color: var(--text);
   letter-spacing: -.2px;
   line-height: 1.2;
-}
-.ref-sub {
-  font-size: 12px;
-  color: var(--text-3);
-  font-weight: 500;
 }
 
 /* ── table scroll wrapper ────────────────────────────────────── */
@@ -828,9 +797,9 @@ input[type="number"] { -moz-appearance: textfield; }
   }
 }
 
-/* ── v1.4: tables page additions ──────────────────────────────── */
+
 .ref-toc {
-  margin: -20px 0 32px; padding: 12px 16px 12px 34px;
+  margin: 4px 0 32px; padding: 12px 16px 12px 34px;
   border: 1px solid var(--line); border-radius: var(--radius-s);
   background: var(--card); columns: 2 220px; column-gap: 24px;
 }

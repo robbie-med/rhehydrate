@@ -1,22 +1,10 @@
-/* PRhehydrate — bedside rehydration sheet (printable checklist).
- *
- * build(input) turns the plan already on screen into a model the nurse can
- * work through on paper: timed rows with a box for the time given, the
- * amount taken and initials, reassessment rows, stop signs, a stool/vomit
- * tally, zinc days and a "plan changed" line. It adds no clinical content of
- * its own: every volume comes from js/calc.js or js/sam.js, and evenly split
- * slots always add up to the plan total (tests/calc.test.js checks this).
- * render(model, head, t) draws it; the same DOM is used for the on-screen
- * preview and for printing (A4 or Letter, black and white).
- *
- * input = { w, months, sev: "none"|"some"|"severe", deficitVol, maintHr,
- *           inst: institution settings, samCtx: ctx for RH_SAM.plan | null }
- */
+/* PRhehydrate — bedside sheet. build() turns a plan into checklist rows
+ * (volumes from calc.js / sam.js only); render() draws them for screen and print. */
 (function (root) {
   "use strict";
   var C = root.RH_CALC, SAM = root.RH_SAM;
 
-  // stop/overload items move from the orders into the boxed "stop" section
+  // shown in the stop box instead of the orders
   var STOP_KEYS = ["sam.who.oral.5", "sam.who.shock.5", "sam.msf.overload", "sam.msf.b.4",
     "sam.acf.stop", "sam.ind.oral.4", "sam.ind.shock.5"];
   var RED_FLAGS = [["rf.1", {}], ["rf.2", {}], ["rf.3", {}], ["rf.4", {}], ["rf.5", {}]];
@@ -28,7 +16,6 @@
   }
   function span(a, b) { return hm(a) + "–" + hm(b); }
 
-  // rows: { type: "head"|"dose"|"check"|"task"|"opt"|"blank", when, text: [key, vars], v, cum, approx }
   // `total` mL split evenly over `n` slots of `step` minutes from `t0`
   function slots(total, n, step, t0, cum0, text) {
     var rows = [], per = total / n;
@@ -47,7 +34,6 @@
     return null;
   }
 
-  // ── standard WHO plans ────────────────────────────────────────────────
   function standard(o) {
     var w = o.w, ins = o.inst, fluid = { key: "inst.ivFluid." + ins.ivFluid, short: true };
     var loss = C.ongoingLosses(0, 0, w);
@@ -75,9 +61,8 @@
       return m;
     }
 
-    // severe — IV, with pulse / breathing / urine at every row
     m.vitals = ["pulse", "rr", "urine"];
-    m.loss = { perStool: null, perEmesis: null };   // Plan C gives no per-episode volume
+    m.loss = { perStool: null, perEmesis: null };
     var ors = C.perKg("w.ors", 5, "mL/kg/h", w, "mL/h");
     m.rows.push({ type: "task", when: hm(0), text: ["bs.row.base", {}] });
     m.rows.push({ type: "task", when: "", text: ["bs.row.labs", {}] });
@@ -114,7 +99,6 @@
     return m;
   }
 
-  // ── SAM: the protocol's own orders + a monitoring grid ────────────────
   function sam(o) {
     var P = SAM.plan(o.inst.samProtocol, o.samCtx);
     var m = { kind: "sam", protocol: P.protocol, fluid: P.fluid, vitals: ["weight", "pulse", "rr", "urine"],
@@ -122,7 +106,7 @@
       loss: { perStool: null, perEmesis: null }, zinc: null };
 
     P.blocks.forEach(function (b) {
-      if (b.tone === "info") return;               // assessment guidance stays on screen
+      if (b.tone === "info") return;
       var items = [];
       b.items.forEach(function (it) {
         (STOP_KEYS.indexOf(it[0]) >= 0 ? m.stop.items : items).push(it);
@@ -131,8 +115,7 @@
     });
 
     m.rows.push({ type: "task", when: hm(0), text: ["bs.row.base.sam", {}] });
-    // WHO and India oral/NG schedules: 5 mL/kg every 30 min for 2 h, then 5–10 mL/kg
-    // in alternate hours (with F-75 / starter diet) up to 10 h
+    // WHO / India oral: 4 doses q30 min, then hourly to 10 h
     var d = findItem(P, "sam.who.oral.1") || findItem(P, "sam.ind.oral.1");
     var r = findItem(P, "sam.who.oral.2") || findItem(P, "sam.ind.oral.2");
     if (d && r && !o.samCtx.cholera) {
@@ -153,9 +136,7 @@
 
   function build(o) { return o.samCtx ? sam(o) : standard(o); }
 
-  // ════════════════════════════════════════════════════════════════════
-  // Rendering (browser only). head = { logo, inst, dept, age, weight,
-  //   classLabel, samLabel, protocolLabel, footer }
+  // head = { logo, inst, dept, age, weight, classLabel, samLabel, protocolLabel, footer }
   function render(M, head, t) {
     function el(tag, cls, text) {
       var e = document.createElement(tag);
@@ -163,7 +144,7 @@
       if (text != null) e.textContent = text;
       return e;
     }
-    // {key, short: true} → the label without its "(…)" note, e.g. "Ringer's lactate"
+    // {key, short: true} → label without its "(…)" note
     function tx(pair) {
       var src = pair[1] || {}, vars = {};
       Object.keys(src).forEach(function (k) {
@@ -187,7 +168,6 @@
 
     var root = el("div", "bs");
 
-    // header: logo · facility · title
     var top = el("header", "bs-top");
     if (head.logo) {
       var img = el("img", "bs-logo"); img.src = head.logo; img.alt = "";
@@ -200,7 +180,7 @@
     top.appendChild(el("div", "bs-title", t("bs.title")));
     root.appendChild(top);
 
-    // patient box (the name is handwritten — never entered in the app)
+    // the name is handwritten, never entered
     var pt = el("div", "bs-pt");
     [
       [t("bs.f.name"), "", true], [t("bs.f.bed"), ""], [t("bs.f.date"), ""],
@@ -211,7 +191,6 @@
     ].forEach(function (f) { pt.appendChild(field(f[0], f[1], f[2])); });
     root.appendChild(pt);
 
-    // stop signs — boxed, near the top
     if (M.stop.items.length) {
       var st = section("bs-stop", "⚠\uFE0E " + t(M.stop.h));
       var su = el("ul");
@@ -220,7 +199,6 @@
       root.appendChild(st);
     }
 
-    // orders
     if (M.orders.length) {
       var od = section("bs-orders", t("bs.orders.h"));
       M.orders.forEach(function (g) {
@@ -232,7 +210,6 @@
       root.appendChild(od);
     }
 
-    // schedule table
     if (M.rows.length) {
       var tl = section("bs-tl", t("bs.tl.h"));
       tl.appendChild(el("p", "bs-note", t("bs.tl.note")));
@@ -273,7 +250,6 @@
       root.appendChild(tl);
     }
 
-    // stools / vomiting tally + zinc, side by side
     var pair = el("div", "bs-pair");
     var ls = section("bs-loss", t("bs.loss.h"));
     if (M.loss.perStool != null) {
@@ -308,7 +284,6 @@
     }
     root.appendChild(pair);
 
-    // plan changed
     var ch = section("bs-change", t("bs.change.h"));
     var ct = el("table", "bs-table"), chr = el("tr");
     ["when", "plan", "why", "sign"].forEach(function (c) { chr.appendChild(el("th", "c-ch" + c, t("bs.ccol." + c))); });

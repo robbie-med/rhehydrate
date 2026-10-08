@@ -11,9 +11,8 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="css/styles.css?v=1.6.0" />
+  <link rel="stylesheet" href="css/styles.css?v=1.6.1" />
   <script>
-    /* set the theme before first paint (no dark→light flash) */
     try { var th = localStorage.getItem("rh.theme") || "system";
       if (th === "system") th = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", th); } catch (e) {}
@@ -21,7 +20,6 @@
 </head>
 <body>
 
-  <!-- ============ TOP BAR ============ -->
   <header class="topbar">
     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
       <a href="index.html" class="iconbtn" id="backBtn" aria-label="Back to calculator" title="Back to calculator">
@@ -45,7 +43,6 @@
     </nav>
   </header>
 
-  <!-- ============ CONTENT (rendered by js/tables.js) ============ -->
   <div class="tables-page" id="tablesRoot"></div>
 
   <footer class="foot" id="footText">
@@ -99,10 +96,10 @@
       });
     })();
   </script>
-  <script src="js/calc.js?v=1.6.0"></script>
-  <script src="js/sam.js?v=1.6.0"></script>
-  <script src="js/tables-kr.js?v=1.6.0"></script>
-  <script src="js/tables.js?v=1.6.0"></script>
+  <script src="js/calc.js?v=1.6.1"></script>
+  <script src="js/sam.js?v=1.6.1"></script>
+  <script src="js/tables-kr.js?v=1.6.1"></script>
+  <script src="js/tables.js?v=1.6.1"></script>
 
 </body>
 </html>

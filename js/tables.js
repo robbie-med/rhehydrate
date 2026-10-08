@@ -1,9 +1,4 @@
-/* PRhehydrate — clinical reference tables (tables.html).
- * Tables are data: each cell is a string (language-neutral) or {en, fr}.
- * Korean comes from js/tables-kr.js (keyed by the English text); RU/ZH fall
- * back to English. Every table cites its source with a link.
- * The "Formulas & code" section prints the live source of js/calc.js and
- * js/sam.js — the exact code the calculator runs. */
+/* PRhehydrate — reference tables. Cells: string or {en, fr}; Korean in tables-kr.js. */
 (function () {
   "use strict";
   var C = window.RH_CALC, S = C.SRC, SAM = window.RH_SAM;
@@ -22,8 +17,6 @@
 
   var UI = {
     title:  { en: "Clinical Reference Tables", fr: "Tableaux de référence clinique" },
-    intro:  { en: "Reference tables for dehydration assessment and rehydration, led by WHO guidance, including severe acute malnutrition (SAM). Every table links to its source. For use alongside the PRhehydrate calculator.",
-              fr: "Tableaux de référence pour l'évaluation de la déshydratation et la réhydratation, fondés d'abord sur les recommandations de l'OMS, y compris la malnutrition aiguë sévère (MAS). Chaque tableau renvoie à sa source. À utiliser avec le calculateur PRhehydrate." },
     back:   { en: "Back to calculator", fr: "Retour au calculateur" },
     source: { en: "Source", fr: "Source" },
     sources:{ en: "Sources", fr: "Sources" },
@@ -31,17 +24,13 @@
               fr: "Pour référence clinique uniquement. Vérifiez toutes les valeurs auprès de sources faisant autorité avant usage. PRhehydrate ne remplace pas le jugement clinique." },
     theme:  { en: ["System", "Light", "Dark"], fr: ["Système", "Clair", "Sombre"], kr: ["시스템", "밝게", "어둡게"] },
     code:   { en: "Source code", fr: "Code source" },
-    liveCode: { en: "This is the code running in your browser now, printed from the loaded file.",
-                fr: "Voici le code qui s'exécute actuellement dans votre navigateur, affiché depuis le fichier chargé." }
   };
 
-  // ═══════════════════════════════════════════════════════════════════
   var SECTIONS = [
 
-    // ── 1. WHO assessment (lead) ──────────────────────────────────────
+    // ── 1. WHO assessment ──────────────────────────────────────
     { id: "who-assess",
       title: { en: "WHO: Assessing dehydration", fr: "OMS : Évaluation de la déshydratation" },
-      sub:   { en: "Children with diarrhoea — columns A, B, C", fr: "Enfant avec diarrhée — colonnes A, B, C" },
       tables: [{
         cols: [{ t: { en: "Sign", fr: "Signe" }, cls: "col-sign" },
                { t: { en: "A — No dehydration", fr: "A — Pas de déshydratation" }, cls: "th-none" },
@@ -69,7 +58,6 @@
     // ── 2. WHO plans ──────────────────────────────────────────────────
     { id: "who-plans",
       title: { en: "WHO: Treatment plans A, B and C", fr: "OMS : Plans de traitement A, B et C" },
-      sub:   { en: "Volumes and timing", fr: "Volumes et durées" },
       tables: [{
         cols: [{ t: { en: "Plan", fr: "Plan" } }, { t: { en: "What to give", fr: "Quoi donner" } }],
         rows: [
@@ -95,10 +83,9 @@
         { t: "WHO. Pocket book of hospital care for children, 2013 — §5.2, Table 13, treatment plans A–C.", u: S.whoPb2013 }
       ] },
 
-    // ── 3. Severity by signs (existing table, kept) ───────────────────
+    // ── 3. Severity by signs ───────────────────
     { id: "cdc-signs",
       title: { en: "Severity of dehydration", fr: "Sévérité de la déshydratation" },
-      sub:   { en: "Signs & symptoms by category", fr: "Signes et symptômes par catégorie" },
       tables: [{
         cols: [{ t: { en: "Sign / Symptom", fr: "Signe / symptôme" }, cls: "col-sign" },
                { t: { en: "Minimal or No Dehydration", fr: "Déshydratation minime ou absente" }, small: { en: "<3% body weight loss; 3%–5% fluid deficit", fr: "perte de poids < 3 % ; déficit 3–5 %" }, cls: "th-none" },
@@ -122,10 +109,9 @@
       notes: [{ en: "US framework (CDC/AAP). WHO settings use the A/B/C table above.", fr: "Cadre américain (CDC/AAP). En contexte OMS, utiliser le tableau A/B/C ci-dessus." }],
       sources: [{ t: "King CK et al. Managing acute gastroenteritis among children. MMWR Recomm Rep 2003;52(RR-16):1–16 (CDC/AAP framework).", u: S.king2003 }] },
 
-    // ── 4. CDS (existing, kept) ───────────────────────────────────────
+    // ── 4. CDS ───────────────────────────────────────
     { id: "cds",
       title: { en: "Clinical Dehydration Scale (Goldman)", fr: "Échelle clinique de déshydratation (Goldman)" },
-      sub:   { en: "Scoring criteria and interpretation", fr: "Critères de score et interprétation" },
       grid: true,
       tables: [{
         cols: [{ t: { en: "Characteristic", fr: "Caractéristique" } }, { t: "0", center: true }, { t: "1", center: true }, { t: "2", center: true }],
@@ -149,11 +135,10 @@
     // ── 5. SAM criteria ───────────────────────────────────────────────
     { id: "sam-criteria",
       title: { en: "Severe acute malnutrition: who has it?", fr: "Malnutrition aiguë sévère : critères" },
-      sub:   { en: "Children 6–59 months", fr: "Enfants de 6 à 59 mois" },
       tables: [{
         cols: [{ t: { en: "Criterion", fr: "Critère" } }, { t: { en: "Severe (SAM)", fr: "Sévère (MAS)" }, cls: "th-severe" }, { t: { en: "Moderate wasting", fr: "Émaciation modérée" }, cls: "th-some" }],
         rows: [
-          [{ en: "MUAC", fr: "Périmètre brachial (PB)" }, "< 115 mm", "115 – < 125 mm"],
+          [{ en: "MUAC (6–59 months)", fr: "Périmètre brachial (PB, 6–59 mois)" }, "< 115 mm", "115 – < 125 mm"],
           [{ en: "Weight-for-height / length z-score", fr: "Poids-pour-taille (z-score)" }, "< −3 SD", "−3 to < −2 SD"],
           [{ en: "Bilateral pitting (nutritional) oedema", fr: "Œdèmes nutritionnels bilatéraux prenant le godet" }, { en: "Any grade (+, ++, +++) = SAM", fr: "Tout degré (+, ++, +++) = MAS" }, "—"],
           [{ en: "Rehydration", fr: "Réhydratation" }, { en: "SAM protocol (ReSoMal preferred; low-osmolarity ORS if unavailable)", fr: "Protocole MAS (ReSoMal de préférence ; SRO faible osmolarité sinon)" }, { en: "Standard WHO plans with low-osmolarity ORS", fr: "Plans OMS standard avec SRO faible osmolarité" }]
@@ -169,8 +154,7 @@
 
     // ── 6. Dehydration in SAM ─────────────────────────────────────────
     { id: "sam-dehyd",
-      title: { en: "Dehydration signs in SAM", fr: "Signes de déshydratation en cas de MAS" },
-      sub:   { en: "MSF table adapted for SAM — 2 or more signs", fr: "Tableau MSF adapté à la MAS — 2 signes ou plus" },
+      title: { en: "Dehydration signs in SAM (≥ 2 signs)", fr: "Signes de déshydratation en cas de MAS (≥ 2 signes)" },
       tables: [{
         cols: [{ t: { en: "Sign", fr: "Signe" }, cls: "col-sign" },
                { t: { en: "No dehydration", fr: "Pas de déshydratation" }, cls: "th-none" },
@@ -199,7 +183,6 @@
     // ── 7. SAM protocols compared ─────────────────────────────────────
     { id: "sam-protocols",
       title: { en: "SAM rehydration protocols compared", fr: "Protocoles de réhydratation MAS comparés" },
-      sub:   { en: "The five protocols selectable in Settings", fr: "Les cinq protocoles sélectionnables dans les Paramètres" },
       tables: [{
         wide: true,
         cols: [{ t: "", cls: "col-sign" }, { t: { en: "WHO 2013/2023 (default)", fr: "OMS 2013/2023 (défaut)" } }, { t: "MSF 2024" }, { t: "ACF 2011" }, { t: { en: "India 2011", fr: "Inde 2011" } }, { t: "Kenya 2022" }],
@@ -253,10 +236,9 @@
         { t: "GASTROSAM trial. Lancet Child Adolesc Health 2026.", u: S.gastrosam }
       ] },
 
-    // ── 8. ORS comparison (existing, kept) ────────────────────────────
+    // ── 8. ORS comparison ────────────────────────────
     { id: "ors",
       title: { en: "ORS Comparison", fr: "Comparaison des SRO" },
-      sub:   { en: "Composition of common oral rehydration solutions", fr: "Composition des solutions de réhydratation orale courantes" },
       tables: [{
         cols: [{ t: { en: "ORS Product", fr: "Produit" } }, { t: { en: "Carbs (g/L)", fr: "Glucides (g/L)" } }, { t: "Na⁺ (mEq/L)" }, { t: "K⁺ (mEq/L)" }, { t: "Cl⁻ (mEq/L)" }, { t: "HCO₃⁻ (mEq/L)" }, { t: { en: "Osmolarity (mOsm/L)", fr: "Osmolarité (mOsm/L)" } }],
         hl: [0],
@@ -282,7 +264,6 @@
     // ── 9. ReSoMal & SAM solutions ────────────────────────────────────
     { id: "resomal",
       title: { en: "ReSoMal and other SAM solutions", fr: "ReSoMal et autres solutés pour la MAS" },
-      sub:   { en: "Composition per litre", fr: "Composition par litre" },
       tables: [{
         wide: true,
         cols: [{ t: { en: "Solution", fr: "Soluté" } }, { t: "Na⁺" }, { t: "K⁺" }, { t: "Cl⁻" }, { t: { en: "Citrate", fr: "Citrate" } }, { t: "Mg²⁺" }, { t: "Zn²⁺" }, { t: "Cu²⁺" }, { t: { en: "Sugars", fr: "Sucres" } }, { t: { en: "Osmolarity", fr: "Osmolarité" } }],
@@ -309,7 +290,6 @@
     // ── 10. Preparation ───────────────────────────────────────────────
     { id: "prep",
       title: { en: "Preparing solutions", fr: "Préparation des solutés" },
-      sub:   { en: "Recipes as given in the sources", fr: "Recettes telles que données par les sources" },
       tables: [{
         cols: [{ t: { en: "Solution", fr: "Soluté" } }, { t: { en: "Recipe", fr: "Recette" } }, { t: { en: "Notes", fr: "Remarques" } }],
         rows: [
@@ -337,13 +317,11 @@
 
     // ── 11. Formulas & code ───────────────────────────────────────────
     { id: "formulas", formulas: true,
-      title: { en: "Formulas & code", fr: "Formules et code" },
-      sub:   { en: "Every calculation the app performs", fr: "Tous les calculs effectués par l'application" } },
+      title: { en: "Formulas & code", fr: "Formules et code" } },
 
-    // ── 12. Sports drinks (existing, kept) ────────────────────────────
+    // ── 12. Sports drinks ────────────────────────────
     { id: "sports",
       title: { en: "Sports Drinks Comparison", fr: "Comparaison des boissons pour sportifs" },
-      sub:   { en: "Nutritional composition per serving (US products)", fr: "Composition nutritionnelle par portion (produits américains)" },
       tables: [{
         sticky: true,
         cols: [{ t: { en: "Brand", fr: "Marque" }, cls: "sticky-col" }, { t: { en: "Serving", fr: "Portion" } }, { t: "Cal" }, { t: { en: "Carbs (g)", fr: "Glucides (g)" } }, { t: { en: "% Carb", fr: "% glucides" } }, { t: { en: "Sugars (g)", fr: "Sucres (g)" } }, { t: "Na (mg)" }, { t: "K (mg)" }, { t: { en: "Other Key Ingredients", fr: "Autres ingrédients" } }],
@@ -370,7 +348,7 @@
       sources: [{ t: { en: "Manufacturer nutrition labels; data as published.", fr: "Étiquettes nutritionnelles des fabricants ; données telles que publiées." }, u: null }] }
   ];
 
-  // Formulas: description, source, and the function object itself (printed live)
+  // the function source is printed live
   var FORMULAS = [
     { name: "maintenance(w)", fn: C.maintenance, file: "js/calc.js",
       d: { en: "Holliday–Segar: 100 mL/kg for the first 10 kg + 50 mL/kg for the next 10 kg + 20 mL/kg per kg above 20; hourly = daily ÷ 24.", fr: "Holliday–Segar : 100 mL/kg pour les 10 premiers kg + 50 mL/kg pour les 10 suivants + 20 mL/kg par kg au-delà de 20 ; horaire = quotidien ÷ 24." }, s: S.holliday },
@@ -401,7 +379,6 @@
       d: { en: "SAM protocol: " + p.sources[0].t, fr: "Protocole MAS : " + p.sources[0].t, kr: "SAM 프로토콜: " + p.sources[0].t }, s: p.sources[0].u });
   });
 
-  // ═══════════════════════════════════════════════════════════════════
   function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -411,7 +388,7 @@
   function a(href, text) {
     var x = el("a", null, text); x.href = href; x.target = "_blank"; x.rel = "noopener noreferrer"; return x;
   }
-  // cell content: plain / {en,fr} / {b: bold}; the few <sup> markers in sports rows are fixed, trusted strings
+  // cell content: plain / {en,fr} / {b: bold}; <sup> markers are fixed strings
   function fill(td, c) {
     if (c && typeof c === "object" && "b" in c) { td.appendChild(el("strong", null, L(c.b))); return; }
     var s = L(c);
@@ -461,7 +438,6 @@
   }
 
   function renderFormulas(sec) {
-    sec.appendChild(el("p", "ref-source", L(UI.liveCode)));
     FORMULAS.forEach(function (f) {
       var box = el("div", "formula");
       box.appendChild(el("h4", "formula-h", f.name));
@@ -491,8 +467,6 @@
     document.getElementById("footText").textContent = L(UI.foot);
 
     var root = document.getElementById("tablesRoot"); root.innerHTML = "";
-    var intro = el("p", "tables-intro", L(UI.intro));
-    root.appendChild(intro);
 
     var toc = el("ol", "ref-toc");
     SECTIONS.forEach(function (s) {
@@ -505,7 +479,6 @@
       var h = el("div", "ref-section-h");
       h.appendChild(el("span", "ref-num", String(i + 1)));
       h.appendChild(el("span", "ref-label", L(s.title)));
-      h.appendChild(el("span", "ref-sub", L(s.sub)));
       sec.appendChild(h);
       if (s.formulas) { renderFormulas(sec); root.appendChild(sec); return; }
       var holder = s.grid ? el("div", "cds-grid") : sec;

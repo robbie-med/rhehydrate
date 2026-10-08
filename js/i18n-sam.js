@@ -1,7 +1,4 @@
-/* PRhehydrate — strings added in v1.4: SAM pathway, "show the maths",
- * setup link, extra references. EN, FR and KR; RU/ZH fall back to English
- * via t() until reviewed translations are added.
- * Clinical wording follows the cited sources (see docs/SAM-PROTOCOLS.md). */
+/* Strings: SAM, show the maths, setup link. EN/FR/KR; RU/ZH fall back to EN. */
 (function (I) {
   "use strict";
 
@@ -219,7 +216,7 @@
     "inst.samFluid": "Oral fluid for SAM",
     "inst.samFluid.auto": "As the protocol specifies", "inst.samFluid.ors": "Low-osmolarity ORS (no ReSoMal stocked)",
     "inst.link.title": "Setup link",
-    "inst.link.help": "Creates a link that opens the app with these institution settings, language and assessment method. Share it with your team; opening it saves the settings on that device.",
+    "inst.link.help": "Opens the app with these settings on another device.",
     "inst.link.make": "Create link from these settings",
     "inst.link.copy": "Copy", "inst.link.copied": "Copied",
     "toast.linkApplied": "Settings applied from setup link",
@@ -441,7 +438,7 @@
     "inst.samFluid": "Soluté oral en cas de MAS",
     "inst.samFluid.auto": "Selon le protocole", "inst.samFluid.ors": "SRO à faible osmolarité (pas de ReSoMal en stock)",
     "inst.link.title": "Lien de configuration",
-    "inst.link.help": "Crée un lien qui ouvre l'application avec ces paramètres d'institution, la langue et la méthode d'évaluation. Partagez-le avec votre équipe ; l'ouvrir enregistre ces paramètres sur l'appareil.",
+    "inst.link.help": "Ouvre l'application avec ces paramètres sur un autre appareil.",
     "inst.link.make": "Créer un lien à partir de ces paramètres",
     "inst.link.copy": "Copier", "inst.link.copied": "Copié",
     "toast.linkApplied": "Paramètres appliqués depuis le lien de configuration",
@@ -662,7 +659,7 @@
     "inst.samFluid": "SAM 경구 수액",
     "inst.samFluid.auto": "프로토콜 지정대로", "inst.samFluid.ors": "저삼투압 ORS (ReSoMal 재고 없음)",
     "inst.link.title": "설정 링크",
-    "inst.link.help": "이 기관 설정, 언어, 평가 방법으로 앱을 여는 링크를 만듭니다. 팀과 공유하면, 링크를 연 기기에 설정이 저장됩니다.",
+    "inst.link.help": "다른 기기에서 이 설정으로 앱을 엽니다.",
     "inst.link.make": "이 설정으로 링크 만들기",
     "inst.link.copy": "복사", "inst.link.copied": "복사됨",
     "toast.linkApplied": "설정 링크의 설정을 적용했습니다",

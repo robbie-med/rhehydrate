@@ -1,7 +1,4 @@
-/* Run: node tests/calc.test.js
- * Checks every formula in js/calc.js and every protocol in js/sam.js against
- * hand-worked values, and that each displayed expression evaluates to the
- * number the app uses (so the "show the maths" working cannot drift). */
+/* node tests/calc.test.js */
 "use strict";
 var assert = require("assert");
 var C = require("../js/calc.js");
@@ -11,7 +8,7 @@ var passed = 0;
 function t(name, fn) { fn(); passed++; console.log("ok  " + name); }
 function close(a, b) { assert.ok(Math.abs(a - b) < 1e-9, a + " ≠ " + b); }
 
-// Evaluate a working expression like "(10 × 100) + (12 − 10) × 50"
+// evaluate e.g. "(10 × 100) + (12 − 10) × 50"
 function evalExpr(x) {
   var js = x.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")
     .replace(/mL\/kg\/h|mL\/kg|mg\/kg|kg|mL|%/g, "").replace(/max\(/g, "Math.max(");
@@ -20,7 +17,7 @@ function evalExpr(x) {
 function checkWork(work) {
   work.forEach(function (l) {
     if (typeof l.v !== "number" || /[<≥]|→|,|weight|months/.test(l.x)) return;
-    // expressions show operands rounded to 2 dp; allow that rounding (≤ 0.1%)
+    // operands are shown to 2 dp
     var e = evalExpr(l.x);
     assert.ok(Math.abs(e - l.v) <= Math.max(0.05, Math.abs(l.v) * 0.001), l.k + ": " + l.x + " = " + e + " ≠ " + l.v);
   });
@@ -147,7 +144,7 @@ t("Cholera overrides protocol: 20 mL/kg + 70 mL/kg over 6 h", function () {
   close(find(S.plan("acf", base({ cholera: true })), "sam.chol.b").v, 600);
 });
 
-// ── bedside sheet: every slot comes from the plan and adds up to it ──
+// ── bedside sheet ──
 var SH = require("../js/sheet.js");
 var INST = { planBRate: 75, planBHours: 4, planCAppr: "who", ivFluid: "rl", showZinc: true,
   showOnda: true, showNgOrs: true, samProtocol: "who", samFluid: "auto" };
@@ -228,7 +225,6 @@ t("every string the sheet uses exists in EN, FR and KR", function () {
       });
     });
   });
-  // plus every literal "bs.*" / "inst.logo*" key in sheet.js and app.js
   ["js/sheet.js", "js/app.js"].forEach(function (f) {
     var src = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
     (src.match(/"(bs\.[\w.]+|inst\.logo[\w.]*)"/g) || []).forEach(function (k) { keys[k.slice(1, -1)] = 1; });
@@ -239,7 +235,7 @@ t("every string the sheet uses exists in EN, FR and KR", function () {
     cols.forEach(function (c) { keys["bs." + g + "." + c] = 1; });
   });
   Object.keys(keys).forEach(function (k) {
-    if (/\.$/.test(k)) return;   // prefix used to build a key, checked above
+    if (/\.$/.test(k)) return;   // prefix
     ["en", "fr", "kr"].forEach(function (l) { assert.ok(k in I[l], l + " missing " + k); });
   });
 });
@@ -251,7 +247,7 @@ t("on-screen zinc line and the mL/day unit exist in all five languages", functio
   });
 });
 
-// ── release consistency: versioned URLs must match the service worker ──
+// ── release versions ──
 t("release versions agree (sw.js, app.js, ?v= in HTML) and every script is precached", function () {
   var fs = require("fs"), path = require("path"), root = path.join(__dirname, "..");
   var sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");

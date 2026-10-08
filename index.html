@@ -11,9 +11,8 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="css/styles.css?v=1.6.0" />
+  <link rel="stylesheet" href="css/styles.css?v=1.6.1" />
   <script>
-    /* set the theme before first paint (no dark→light flash) */
     try { var th = localStorage.getItem("rh.theme") || "system";
       if (th === "system") th = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", th); } catch (e) {}
@@ -21,7 +20,6 @@
 </head>
 <body>
 
-  <!-- ============ TOP BAR ============ -->
   <header class="topbar">
     <div class="brand">
       <img src="icon.svg" alt="" class="brand-mark" width="28" height="28" />
@@ -48,10 +46,8 @@
     </nav>
   </header>
 
-  <!-- ============ MAIN LAYOUT ============ -->
   <main class="layout">
 
-    <!-- ===== LEFT / INPUT COLUMN ===== -->
     <section class="col col-input">
       <div class="card inputs" aria-labelledby="inHead">
         <h2 id="inHead" class="card-h" data-i18n="in.section">Patient</h2>
@@ -63,7 +59,6 @@
               <input id="weight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="in.weight.ph" placeholder="e.g. 12" />
               <span class="suffix">kg</span>
             </span>
-            <span class="hint" data-i18n="in.weight.help"></span>
           </label>
           <label class="field">
             <span class="field-l" data-i18n="in.age">Age</span>
@@ -74,11 +69,9 @@
                 <option value="years" data-i18n="in.ageUnit.years">years</option>
               </select>
             </span>
-            <span class="hint" data-i18n="in.age.help"></span>
           </label>
         </div>
 
-        <!-- SAM screen (hidden when institution setting = off) -->
         <div class="sam-screen" id="samScreen">
           <h3 class="sub-h" data-i18n="sam.screen.title">Malnutrition screen (SAM)</h3>
           <p class="hint" data-i18n="sam.screen.help"></p>
@@ -110,7 +103,6 @@
           </div>
           <div class="sam-status" id="samStatus" aria-live="polite"></div>
 
-          <!-- SAM-specific assessment (only when screen is positive) -->
           <div class="sam-extra" id="samExtra" hidden>
             <p class="hint sam-warn" data-i18n="sam.diag.common"></p>
             <div class="field">
@@ -155,7 +147,6 @@
           </div>
         </div>
 
-        <!-- method selector -->
         <div class="field">
           <span class="field-l" data-i18n="in.method">Severity assessment</span>
           <div class="segmented method-seg" id="methodSeg" role="tablist">
@@ -166,7 +157,6 @@
           </div>
         </div>
 
-        <!-- CDS -->
         <div class="method-panel" data-mpanel="cds">
           <h3 class="sub-h" data-i18n="cds.title">Clinical Dehydration Scale (CDS)</h3>
           <p class="hint" data-i18n="cds.help"></p>
@@ -174,14 +164,12 @@
           <div class="scorebar"><span data-i18n="cds.score">CDS score</span><strong id="cdsScore">0 / 8</strong></div>
         </div>
 
-        <!-- WHO -->
         <div class="method-panel" data-mpanel="who" hidden>
           <h3 class="sub-h" data-i18n="who.title">WHO clinical signs</h3>
           <p class="hint" data-i18n="who.help"></p>
           <div class="scale" id="whoScale"></div>
         </div>
 
-        <!-- Weight loss -->
         <div class="method-panel" data-mpanel="weight" hidden>
           <h3 class="sub-h" data-i18n="wl.title">Measured weight loss</h3>
           <p class="hint" data-i18n="wl.help"></p>
@@ -194,7 +182,6 @@
           </label>
         </div>
 
-        <!-- Percent -->
         <div class="method-panel" data-mpanel="percent" hidden>
           <h3 class="sub-h" data-i18n="pct.title">Estimated fluid deficit</h3>
           <p class="hint" data-i18n="pct.help"></p>
@@ -204,7 +191,6 @@
           </label>
         </div>
 
-        <!-- Ongoing losses -->
         <details class="losses">
           <summary data-i18n="loss.title">Ongoing losses (optional)</summary>
           <div class="grid2">
@@ -229,7 +215,6 @@
       </div>
     </section>
 
-    <!-- ===== RIGHT / RESULTS COLUMN ===== -->
     <section class="col col-results">
       <div class="card results" aria-labelledby="resHead" aria-live="polite">
         <div class="results-head">
@@ -251,24 +236,20 @@
     <span data-i18n="foot.disclaimer"></span>
   </footer>
 
-  <!-- ============ OVERLAY / PANELS ============ -->
   <div class="overlay" id="overlay" hidden>
     <div class="sheet" role="dialog" aria-modal="true" id="sheet">
       <button class="sheet-close" id="sheetClose" aria-label="Close">✕</button>
 
-      <!-- EDUCATION -->
       <div class="panel" data-panel-body="edu" hidden>
         <h2 data-i18n="edu.title">Education</h2>
         <article class="prose" id="eduBody"></article>
       </div>
 
-      <!-- ABOUT -->
       <div class="panel" data-panel-body="about" hidden>
         <h2 data-i18n="about.title">About</h2>
         <article class="prose" id="aboutBody"></article>
       </div>
 
-      <!-- BEDSIDE SHEET (preview of what prints) -->
       <div class="panel" data-panel-body="bedside" hidden>
         <div class="bs-bar">
           <h2 data-i18n="bs.btn">Bedside sheet</h2>
@@ -278,11 +259,9 @@
         <div class="bs-preview"><div class="bs-paper" id="sheetPreview"></div></div>
       </div>
 
-      <!-- SETTINGS -->
       <div class="panel" data-panel-body="settings" hidden>
         <h2 data-i18n="set.title">Settings</h2>
 
-        <!-- General -->
         <div class="setrow">
           <span data-i18n="set.lang">Language</span>
           <div class="segmented small" id="langSeg">
@@ -310,7 +289,6 @@
           <button class="btn ghost small" id="clearBtn" data-i18n="set.clear">Clear saved inputs</button>
         </div>
 
-        <!-- Institution parameters -->
         <h3 class="set-section-h" data-i18n="inst.title">Institution</h3>
 
         <div class="setrow">
@@ -337,7 +315,6 @@
               </label>
               <button class="btn ghost small" id="instLogoRemove" data-i18n="inst.logo.remove" hidden>Remove</button>
             </div>
-            <span class="hint" data-i18n="inst.logo.help"></span>
           </div>
         </div>
         <div class="setrow">
@@ -428,7 +405,6 @@
             <button class="seg active" data-val="0" data-i18n="inst.off">Off</button>
           </div>
         </div>
-        <!-- Malnutrition (SAM) -->
         <h3 class="set-section-h" data-i18n="inst.sam.title">Malnutrition (SAM)</h3>
         <div class="setrow">
           <span data-i18n="inst.samScreen">Malnutrition screen</span>
@@ -459,7 +435,6 @@
           </select>
         </div>
 
-        <!-- Setup link -->
         <h3 class="set-section-h" data-i18n="inst.link.title">Setup link</h3>
         <p class="hint" data-i18n="inst.link.help"></p>
         <div class="setrow">
@@ -482,15 +457,14 @@
 
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <!-- filled just before printing the bedside sheet; hidden on screen -->
   <div id="printSheet" aria-hidden="true"></div>
 
-  <script src="js/i18n.js?v=1.6.0"></script>
-  <script src="js/i18n-sam.js?v=1.6.0"></script>
-  <script src="js/i18n-sheet.js?v=1.6.0"></script>
-  <script src="js/calc.js?v=1.6.0"></script>
-  <script src="js/sam.js?v=1.6.0"></script>
-  <script src="js/sheet.js?v=1.6.0"></script>
-  <script src="js/app.js?v=1.6.0"></script>
+  <script src="js/i18n.js?v=1.6.1"></script>
+  <script src="js/i18n-sam.js?v=1.6.1"></script>
+  <script src="js/i18n-sheet.js?v=1.6.1"></script>
+  <script src="js/calc.js?v=1.6.1"></script>
+  <script src="js/sam.js?v=1.6.1"></script>
+  <script src="js/sheet.js?v=1.6.1"></script>
+  <script src="js/app.js?v=1.6.1"></script>
 </body>
 </html>

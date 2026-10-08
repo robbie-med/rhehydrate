@@ -1,21 +1,9 @@
-/* PRhehydrate — calculation engine (pure functions, no DOM).
- *
- * Every number the app shows is computed here. Each function returns its
- * result plus a `work` array that records the arithmetic exactly as it was
- * performed, so any figure on screen can be checked by hand:
- *
- *   { k: label key (i18n), f: formula, x: expression with this patient's
- *     numbers substituted, v: result, u: unit, src: source URL, fn: function }
- *
- * `x` and `v` are built from the same inputs in the same statement, so the
- * displayed working and the number the app uses cannot drift apart.
- * tables.html prints this file's function bodies verbatim ("Formulas & code").
- * Tests: `node tests/calc.test.js`.
- */
+/* PRhehydrate — formulas. Each returns its result plus `work` lines:
+ * { k: label key, f: formula, x: expression, v: value, u: unit, src, fn }. */
 (function (root) {
   "use strict";
 
-  // ── sources (every formula links to where it comes from) ─────────────
+  // ── sources ──
   var SRC = {
     whoTod:     "https://www.who.int/publications/i/item/9241593180",
     whoPb2013:  "https://www.who.int/publications/i/item/978-92-4-154837-3",
@@ -34,20 +22,18 @@
     gastrosam:  "https://doi.org/10.1016/S2352-4642(25)00371-2"
   };
 
-  // compact number for expressions (max 2 decimals, "." separator)
+  // ≤ 2 decimals, "." separator
   function n(x) { return String(Math.round(x * 100) / 100); }
 
   function line(k, f, x, v, u, src, fn) {
     return { k: k, f: f, x: x, v: v, u: u || "", src: src || null, fn: fn || null };
   }
 
-  // rate × weight — the workhorse of every weight-based dose
   function perKg(k, rate, rateUnit, w, u, src, fn) {
     return line(k, rate + " " + rateUnit + " × weight", n(rate) + " " + rateUnit + " × " + n(w) + " kg",
       rate * w, u, src, fn);
   }
 
-  // ── severity scores ───────────────────────────────────────────────────
   // Goldman CDS: 4 items, each 0–2. 0 = none, 1–4 = some, 5–8 = moderate/severe.
   function cdsSeverity(items) {
     var keys = ["appearance", "eyes", "mucous", "tears"], s = 0, parts = [];
@@ -80,7 +66,7 @@
     ]};
   }
 
-  // % dehydration from measured weight loss. Capped at 15% as in v1.x.
+  // % dehydration from weight loss, capped at 15%.
   function deficitFromWeightLoss(well, cur) {
     if (!well || !cur || well <= cur) return null;
     var p = (well - cur) / well * 100;
@@ -159,8 +145,7 @@
     return r;
   }
 
-  // Bolus-first: 20 mL/kg boluses (max ~60 mL/kg), then remaining deficit +
-  // 12 h maintenance over 12 h. `boluses` = number of 20 mL/kg boluses given (1–3).
+  // Bolus-first: 1–3 boluses of 20 mL/kg, then (deficit − boluses) + 12 h maintenance over 12 h.
   function planCBolus(w, deficitVol, maintHr, boluses) {
     var b = Math.max(1, Math.min(3, boluses || 1));
     var bolus = 20 * w, given = 20 * b * w;
@@ -189,10 +174,7 @@
     ]};
   }
 
-  // ── severe acute malnutrition (SAM) screen ───────────────────────────
-  // WHO 2023 / Pocket Book 2013: SAM = WHZ/WLZ < −3, or MUAC < 115 mm
-  // (6–59 months), or bilateral pitting (nutritional) oedema.
-  // o = { muac: mm|null, oedema: 0–3|null, whz: "yes"|"no"|null, months: number|null }
+  // SAM (WHO 2023): WHZ < −3, MUAC < 115 mm (6–59 months), or bilateral pitting oedema.
   function samScreen(o) {
     var reasons = [], notes = [];
     var m = o.months;

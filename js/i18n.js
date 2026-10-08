@@ -1,7 +1,4 @@
-/* PRhehydrate — i18n strings: EN · KR · FR · RU · ZH (v1.4 additions: js/i18n-sam.js)
- * Keys referenced via data-i18n / data-i18n-ph / data-i18n-title in HTML
- * and via t() in app.js. Numbers/units are locale-neutral.
- */
+/* PRhehydrate — UI strings: EN · KR · FR · RU · ZH. */
 window.I18N = {
 
 /* ═══════════════════════════════════════════════ ENGLISH ═══ */
@@ -14,9 +11,7 @@ en: {
 
   "in.section":"Patient",
   "in.weight":"Weight","in.weight.ph":"e.g. 12",
-  "in.weight.help":"Current measured weight in kilograms.",
   "in.age":"Age","in.age.ph":"months",
-  "in.age.help":"Used to tailor the WHO severe-dehydration IV schedule.",
   "in.ageUnit.months":"months","in.ageUnit.years":"years",
 
   "in.method":"Severity assessment",
@@ -216,9 +211,7 @@ kr: {
 
   "in.section":"환자",
   "in.weight":"체중","in.weight.ph":"예: 12",
-  "in.weight.help":"현재 측정한 체중(킬로그램).",
   "in.age":"나이","in.age.ph":"개월",
-  "in.age.help":"WHO 중증 탈수 정맥 수액 일정에 사용됩니다.",
   "in.ageUnit.months":"개월","in.ageUnit.years":"세",
 
   "in.method":"중증도 평가",
@@ -418,9 +411,7 @@ fr: {
 
   "in.section":"Patient",
   "in.weight":"Poids","in.weight.ph":"ex. 12",
-  "in.weight.help":"Poids mesuré actuel en kilogrammes.",
   "in.age":"Âge","in.age.ph":"mois",
-  "in.age.help":"Utilisé pour adapter le calendrier IV de déshydratation sévère de l'OMS.",
   "in.ageUnit.months":"mois","in.ageUnit.years":"ans",
 
   "in.method":"Évaluation de la sévérité",
@@ -620,9 +611,7 @@ ru: {
 
   "in.section":"Пациент",
   "in.weight":"Масса тела","in.weight.ph":"напр. 12",
-  "in.weight.help":"Текущая измеренная масса тела в килограммах.",
   "in.age":"Возраст","in.age.ph":"месяцев",
-  "in.age.help":"Используется для подбора внутривенной схемы ВОЗ при тяжёлом обезвоживании.",
   "in.ageUnit.months":"мес.","in.ageUnit.years":"лет",
 
   "in.method":"Оценка тяжести",
@@ -822,9 +811,7 @@ zh: {
 
   "in.section":"患者信息",
   "in.weight":"体重","in.weight.ph":"如 12",
-  "in.weight.help":"当前实测体重（千克）。",
   "in.age":"年龄","in.age.ph":"月",
-  "in.age.help":"用于根据WHO重度脱水静脉补液方案调整分龄给药。",
   "in.ageUnit.months":"个月","in.ageUnit.years":"岁",
 
   "in.method":"严重程度评估",
@@ -1014,4 +1001,4 @@ zh: {
   "foot.disclaimer":"仅供有资质的临床医师使用。仅为决策支持——不替代临床判断。"
 }
 
-}; /* end I18N */
+};

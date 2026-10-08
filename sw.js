@@ -1,11 +1,5 @@
-/* Rhehydrate service worker — offline-first.
- *
- * Releases: bump VERSION here, APP_VERSION in js/app.js, and the ?v= on every
- * <script>/<link> in index.html and tables.html (tests/calc.test.js checks
- * they agree). Versioned URLs mean a new release never reuses a cached file
- * from an older one — neither from this cache nor the browser's HTTP cache
- * (GitHub Pages sends max-age=14400 for .js/.css). */
-var VERSION = "1.6.0";
+/* PRhehydrate service worker. Release: bump VERSION, APP_VERSION and every ?v= (tested). */
+var VERSION = "1.6.1";
 var CACHE = "rhehydrate-v" + VERSION;
 var V = "?v=" + VERSION;
 var PAGES = ["./", "./index.html", "./tables.html"];
@@ -28,7 +22,7 @@ var ASSETS = [
 self.addEventListener("install", function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) {
-      // cache: "reload" bypasses the HTTP cache so a new release never stores stale files
+      // bypass the HTTP cache
       return Promise.all(PAGES.concat(ASSETS).map(function (u) {
         return fetch(new Request(u, { cache: "reload" })).then(function (res) {
           if (!res.ok) throw new Error(u + " " + res.status);
@@ -48,8 +42,7 @@ self.addEventListener("activate", function (e) {
       }));
     }).then(function () { return self.clients.claim(); })
       .then(function () {
-        // Replacing an older release: pages open now were served by the old worker
-        // and may run old scripts. Reload them once (inputs are saved locally).
+        // replacing an older release: reload open pages once
         if (!upgraded) return;
         return self.clients.matchAll({ type: "window" }).then(function (list) {
           return Promise.all(list.map(function (c) { return c.navigate(c.url).catch(function () {}); }));
@@ -62,10 +55,9 @@ self.addEventListener("fetch", function (e) {
   var req = e.request;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
-  if (url.origin !== self.location.origin) return; // only same-origin
+  if (url.origin !== self.location.origin) return;
 
-  // Pages: network-first (revalidated, so a deploy shows up at once), cached
-  // under their own path; offline falls back to that page, then to index.html.
+  // pages: network-first; offline → cached page → index.html
   if (req.mode === "navigate") {
     var key = url.pathname;
     e.respondWith(
@@ -82,7 +74,7 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  // Static assets: cache-first. URLs are versioned, so a hit is always the right release.
+  // assets: cache-first (versioned URLs)
   e.respondWith(
     caches.match(req).then(function (cached) {
       return cached || fetch(req).then(function (res) {

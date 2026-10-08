@@ -284,23 +284,21 @@ input[type="number"] { -moz-appearance: textfield; }
 .btn.ghost:hover { border-color: var(--text-3); }
 
 /* ── results ─────────────────────────────────────────────────── */
-.results-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
-.results-head .card-h { margin: 0; }
+.results-head { display: flex; justify-content: flex-end; }
+.results-head:has(.results-btns > :not([hidden])) { margin-bottom: 18px; }
 .empty { color: var(--text-3); font-size: 15px; padding: 56px 8px; text-align: center; line-height: 1.6; margin: 0; }
 .sam-msg { color: var(--text-2); }
 
 .plan-inst { color: var(--text-3); font-size: 13px; font-weight: 600; margin-bottom: 14px; }
 
 /* severity */
-.sev-banner { display: flex; align-items: flex-start; gap: 12px; margin: 0 0 6px; }
-.sev-banner .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; margin-top: 9px; }
+.sev-banner { margin: 0 0 6px; }
 .sev-banner .sev-name { font-size: 26px; font-weight: 750; line-height: 1.2; letter-spacing: -.4px; }
 .sev-banner .sev-sub  { font-size: 13px; color: var(--text-3); margin-top: 4px; }
-.sev-none   .dot { background: var(--ok); }     .sev-none   .sev-name { color: var(--ok); }
-.sev-some   .dot { background: var(--warn); }   .sev-some   .sev-name { color: var(--warn); }
-.sev-severe .dot, .sev-sam .dot { background: var(--danger); }
+.sev-none .sev-name { color: var(--ok); }
+.sev-some .sev-name { color: var(--warn); }
 .sev-severe .sev-name, .sev-sam .sev-name { color: var(--danger); }
-.sam-note { color: var(--text-3); margin: 4px 0 0 24px; }
+.sam-note { color: var(--text-3); margin: 4px 0 0; }
 
 /* metrics */
 .metrics {

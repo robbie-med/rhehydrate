@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.5";
+  var APP_VERSION = "1.6.6";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -375,7 +375,6 @@
     if (inst.name || inst.logo) body.appendChild(instHeader());
 
     var banner = el("div", "sev-banner sev-" + key);
-    banner.appendChild(el("span", "dot"));
     var bt = el("div");
     bt.appendChild(el("div", "sev-name", t("sev." + key)));
     bt.appendChild(el("div", "sev-sub",  t("res.disclaimerShort")));
@@ -571,7 +570,6 @@
     if (inst.name || inst.logo) body.appendChild(instHeader());
 
     var banner = el("div", "sev-banner sev-sam");
-    banner.appendChild(el("span", "dot"));
     var bt = el("div");
     bt.appendChild(txt("div", "sev-name", t("res.sam.banner")));
     bt.appendChild(txt("div", "sev-sub", R.screen.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ")));

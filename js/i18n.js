@@ -59,7 +59,6 @@ en: {
 
   "btn.calc":"Calculate","btn.reset":"Reset","btn.print":"Print / save",
 
-  "res.title":"Assessment & plan",
   "res.empty":"Enter a weight and complete the assessment to generate a plan.",
   "res.severity":"Severity","res.deficitPct":"Estimated deficit",
   "res.deficitVol":"Fluid deficit","res.maint24":"Maintenance (24 h)",
@@ -259,7 +258,6 @@ kr: {
 
   "btn.calc":"계산","btn.reset":"초기화","btn.print":"인쇄 / 저장",
 
-  "res.title":"평가 및 계획",
   "res.empty":"체중을 입력하고 평가를 완료하면 계획이 생성됩니다.",
   "res.severity":"중증도","res.deficitPct":"추정 결핍",
   "res.deficitVol":"수액 결핍량","res.maint24":"유지 수액 (24시간)",
@@ -459,7 +457,6 @@ fr: {
 
   "btn.calc":"Calculer","btn.reset":"Réinitialiser","btn.print":"Imprimer / enregistrer",
 
-  "res.title":"Évaluation et plan",
   "res.empty":"Saisissez un poids et complétez l'évaluation pour générer un plan.",
   "res.severity":"Sévérité","res.deficitPct":"Déficit estimé",
   "res.deficitVol":"Déficit hydrique","res.maint24":"Entretien (24 h)",
@@ -659,7 +656,6 @@ ru: {
 
   "btn.calc":"Рассчитать","btn.reset":"Сбросить","btn.print":"Печать / сохранить",
 
-  "res.title":"Оценка и план",
   "res.empty":"Введите массу тела и завершите оценку для формирования плана.",
   "res.severity":"Тяжесть","res.deficitPct":"Расчётный дефицит",
   "res.deficitVol":"Объём дефицита","res.maint24":"Поддерживающий объём (24 ч)",
@@ -859,7 +855,6 @@ zh: {
 
   "btn.calc":"计算","btn.reset":"重置","btn.print":"打印 / 保存",
 
-  "res.title":"评估与方案",
   "res.empty":"请输入体重并完成评估以生成补液方案。",
   "res.severity":"严重程度","res.deficitPct":"估算缺失量",
   "res.deficitVol":"液体缺失量","res.maint24":"维持量（24小时）",

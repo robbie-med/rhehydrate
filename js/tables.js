@@ -33,9 +33,9 @@
       title: { en: "WHO: Assessing dehydration", fr: "OMS : Évaluation de la déshydratation" },
       tables: [{
         cols: [{ t: { en: "Sign", fr: "Signe" }, cls: "col-sign" },
-               { t: { en: "A — No dehydration", fr: "A — Pas de déshydratation" }, cls: "th-none" },
-               { t: { en: "B — Some dehydration", fr: "B — Signes évidents de déshydratation" }, cls: "th-some" },
-               { t: { en: "C — Severe dehydration", fr: "C — Déshydratation sévère" }, cls: "th-severe" }],
+               { t: { en: "A: No dehydration", fr: "A : Pas de déshydratation" }, cls: "th-none" },
+               { t: { en: "B: Some dehydration", fr: "B : Signes évidents de déshydratation" }, cls: "th-some" },
+               { t: { en: "C: Severe dehydration", fr: "C : Déshydratation sévère" }, cls: "th-severe" }],
         rows: [
           [{ en: "Condition¹", fr: "État général¹" }, { en: "Well, alert", fr: "Bien, éveillé" }, { en: "Restless, irritable", fr: "Agité, irritable" }, { en: "Lethargic or unconscious", fr: "Léthargique ou inconscient" }],
           [{ en: "Eyes²", fr: "Yeux²" }, { en: "Normal", fr: "Normaux" }, { en: "Sunken", fr: "Enfoncés" }, { en: "Sunken", fr: "Enfoncés" }],
@@ -47,12 +47,12 @@
       }],
       footnotes: [
         { en: "¹ Lethargic is not the same as asleep: the child's mental state is dull and the child cannot be fully awakened.", fr: "¹ Léthargique n'est pas endormi : l'état mental est émoussé et l'enfant ne peut pas être complètement réveillé." },
-        { en: "² In some children the eyes are normally somewhat sunken — ask the mother whether they look different than usual.", fr: "² Chez certains enfants, les yeux sont normalement un peu enfoncés — demander à la mère s'ils sont différents de d'habitude." },
-        { en: "³ The skin pinch is less useful in marasmus, kwashiorkor or obese children — see the SAM tables below.", fr: "³ Le pli cutané est moins utile en cas de marasme, de kwashiorkor ou d'obésité — voir les tableaux MAS ci-dessous." }
+        { en: "² In some children the eyes are normally somewhat sunken. Ask the mother whether they look different than usual.", fr: "² Chez certains enfants, les yeux sont normalement un peu enfoncés. Demander à la mère s'ils sont différents de d'habitude." },
+        { en: "³ The skin pinch is less useful in marasmus, kwashiorkor or obese children. See the SAM tables below.", fr: "³ Le pli cutané est moins utile en cas de marasme, de kwashiorkor ou d'obésité. Voir les tableaux MAS ci-dessous." }
       ],
       sources: [
-        { t: "WHO. The treatment of diarrhoea: a manual for physicians and other senior health workers, 4th rev. 2005 — Table 1.", u: S.whoTod },
-        { t: "WHO. Pocket book of hospital care for children, 2nd ed. 2013 — Table 12.", u: S.whoPb2013 }
+        { t: "WHO. The treatment of diarrhoea: a manual for physicians and other senior health workers, 4th rev. 2005, Table 1.", u: S.whoTod },
+        { t: "WHO. Pocket book of hospital care for children, 2nd ed. 2013, Table 12.", u: S.whoPb2013 }
       ] },
 
     // ── 2. WHO plans ──────────────────────────────────────────────────
@@ -61,12 +61,12 @@
       tables: [{
         cols: [{ t: { en: "Plan", fr: "Plan" } }, { t: { en: "What to give", fr: "Quoi donner" } }],
         rows: [
-          [{ en: "A — no dehydration", fr: "A — pas de déshydratation" }, { en: "Extra fluid after each loose stool: < 2 years 50–100 mL; ≥ 2 years 100–200 mL. Zinc 10–14 days: ≤ 6 months 10 mg/day, ≥ 6 months 20 mg/day. Continue feeding.", fr: "Liquides supplémentaires après chaque selle liquide : < 2 ans 50–100 mL ; ≥ 2 ans 100–200 mL. Zinc 10–14 jours : ≤ 6 mois 10 mg/j, ≥ 6 mois 20 mg/j. Poursuivre l'alimentation." }],
-          [{ en: "B — some dehydration", fr: "B — signes évidents" }, { en: "ORS 75 mL/kg over 4 h (give more if the child wants more). Reassess at 4 h.", fr: "SRO 75 mL/kg en 4 h (donner plus si l'enfant en veut plus). Réévaluer à 4 h." }],
-          [{ en: "C — severe dehydration", fr: "C — déshydratation sévère" }, { en: "IV Ringer's lactate (or normal saline) 100 mL/kg: 30 mL/kg then 70 mL/kg. Infants < 12 months: 1 h + 5 h. Older: 30 min + 2.5 h. Repeat the first portion if the radial pulse is still very weak. ORS ~5 mL/kg/h as soon as the child can drink.", fr: "Ringer lactate IV (ou sérum physiologique) 100 mL/kg : 30 mL/kg puis 70 mL/kg. Nourrisson < 12 mois : 1 h + 5 h. Plus âgé : 30 min + 2,5 h. Répéter la première fraction si le pouls radial reste très faible. SRO ~5 mL/kg/h dès que l'enfant peut boire." }]
+          [{ en: "A: no dehydration", fr: "A : pas de déshydratation" }, { en: "Extra fluid after each loose stool: < 2 years 50–100 mL; ≥ 2 years 100–200 mL. Zinc 10–14 days: ≤ 6 months 10 mg/day, ≥ 6 months 20 mg/day. Continue feeding.", fr: "Liquides supplémentaires après chaque selle liquide : < 2 ans 50–100 mL ; ≥ 2 ans 100–200 mL. Zinc 10–14 jours : ≤ 6 mois 10 mg/j, ≥ 6 mois 20 mg/j. Poursuivre l'alimentation." }],
+          [{ en: "B: some dehydration", fr: "B : signes évidents" }, { en: "ORS 75 mL/kg over 4 h (give more if the child wants more). Reassess at 4 h.", fr: "SRO 75 mL/kg en 4 h (donner plus si l'enfant en veut plus). Réévaluer à 4 h." }],
+          [{ en: "C: severe dehydration", fr: "C : déshydratation sévère" }, { en: "IV Ringer's lactate (or normal saline) 100 mL/kg: 30 mL/kg then 70 mL/kg. Infants < 12 months: 1 h + 5 h. Older: 30 min + 2.5 h. Repeat the first portion if the radial pulse is still very weak. ORS ~5 mL/kg/h as soon as the child can drink.", fr: "Ringer lactate IV (ou sérum physiologique) 100 mL/kg : 30 mL/kg puis 70 mL/kg. Nourrisson < 12 mois : 1 h + 5 h. Plus âgé : 30 min + 2,5 h. Répéter la première fraction si le pouls radial reste très faible. SRO ~5 mL/kg/h dès que l'enfant peut boire." }]
         ]
       }, {
-        caption: { en: "Plan B — approximate ORS in the first 4 hours (use age only if weight is unknown; otherwise weight × 75)", fr: "Plan B — SRO approximatif pendant les 4 premières heures (âge seulement si le poids est inconnu ; sinon poids × 75)" },
+        caption: { en: "Plan B: approximate ORS in the first 4 hours (use age only if weight is unknown; otherwise weight × 75)", fr: "Plan B : SRO approximatif pendant les 4 premières heures (âge seulement si le poids est inconnu ; sinon poids × 75)" },
         cols: [{ t: { en: "Age", fr: "Âge" } }, { t: { en: "Weight", fr: "Poids" } }, { t: "mL" }],
         rows: [
           [{ en: "< 4 months", fr: "< 4 mois" }, "< 5 kg", "200–400"],
@@ -77,10 +77,10 @@
           [{ en: "≥ 15 years", fr: "≥ 15 ans" }, "≥ 30 kg", "2200–4000"]
         ]
       }],
-      notes: [{ en: "Not for children with severe acute malnutrition — see the SAM protocols below.", fr: "Ne s'applique pas aux enfants avec malnutrition aiguë sévère — voir les protocoles MAS ci-dessous." }],
+      notes: [{ en: "Not for children with severe acute malnutrition. See the SAM protocols below.", fr: "Ne s'applique pas aux enfants avec malnutrition aiguë sévère. Voir les protocoles MAS ci-dessous." }],
       sources: [
-        { t: "WHO. The treatment of diarrhoea, 2005 — §4.2, Table 2, Table 3.", u: S.whoTod },
-        { t: "WHO. Pocket book of hospital care for children, 2013 — §5.2, Table 13, treatment plans A–C.", u: S.whoPb2013 }
+        { t: "WHO. The treatment of diarrhoea, 2005, §4.2, Table 2, Table 3.", u: S.whoTod },
+        { t: "WHO. Pocket book of hospital care for children, 2013, §5.2, Table 13, treatment plans A–C.", u: S.whoPb2013 }
       ] },
 
     // ── 3. Severity by signs ───────────────────
@@ -148,8 +148,8 @@
         { en: "Under 6 months: MUAC is not used for SAM; use weight-for-length < −3 SD or oedema. Admit for inpatient care if any IMCI danger sign, acute medical problem, oedema +++, or failed appetite test.", fr: "Moins de 6 mois : le PB n'est pas utilisé pour la MAS ; utiliser poids-pour-taille < −3 ET ou les œdèmes. Hospitaliser si signe de danger PCIME, problème médical aigu, œdèmes +++ ou échec du test d'appétit." }
       ],
       sources: [
-        { t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023 — definitions; B2, B7, B8.", u: S.who2023 },
-        { t: "WHO. Pocket book of hospital care for children, 2013 — §7.1.", u: S.whoPb2013 }
+        { t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023, definitions; B2, B7, B8.", u: S.who2023 },
+        { t: "WHO. Pocket book of hospital care for children, 2013, §7.1.", u: S.whoPb2013 }
       ] },
 
     // ── 6. Dehydration in SAM ─────────────────────────────────────────
@@ -170,14 +170,14 @@
       }],
       notes: [
         { en: "Sunken eyes and a slow skin pinch are often present in SAM without dehydration; oedema can mask dehydration (WHO 2023 B6; MSF 2024).", fr: "Les yeux enfoncés et un pli cutané lent sont fréquents en cas de MAS sans déshydratation ; les œdèmes peuvent masquer la déshydratation (OMS 2023 B6 ; MSF 2024)." },
-        { en: "WHO 2013: dehydration is over-diagnosed in SAM — assume all children with watery diarrhoea or reduced urine output have some dehydration; IV only for shock.", fr: "OMS 2013 : la déshydratation est surdiagnostiquée en cas de MAS — considérer que tout enfant avec diarrhée aqueuse ou diurèse diminuée présente des signes évidents ; IV uniquement en cas de choc." },
+        { en: "WHO 2013: dehydration is over-diagnosed in SAM. All children with watery diarrhoea or reduced urine output likely have some dehydration; IV only for shock.", fr: "OMS 2013 : la déshydratation est surdiagnostiquée en cas de MAS. Tout enfant avec diarrhée aqueuse ou diurèse diminuée présente probablement des signes évidents ; IV uniquement en cas de choc." },
         { en: "ACF 2011: diagnose from the history (recent watery diarrhoea, carer reports the eyes recently sank, no full veins, no oedema); children with oedema cannot be 'dehydrated'.", fr: "ACF 2011 : diagnostic par l'anamnèse (diarrhée aqueuse récente, yeux récemment enfoncés selon l'accompagnant, pas de veines pleines, pas d'œdèmes) ; un enfant œdémateux ne peut pas être « déshydraté »." }
       ],
       sources: [
-        { t: "Médecins Sans Frontières. Clinical guidelines — Severe acute malnutrition (Feb 2024).", u: S.msfSam },
-        { t: "WHO. Guideline on wasting and nutritional oedema, 2023 — B6.", u: S.who2023 },
-        { t: "WHO. Pocket book of hospital care for children, 2013 — §7.4.3.", u: S.whoPb2013 },
-        { t: "ACF International. Guidelines for the integrated management of SAM, 2011 — pp. 72–78.", u: S.acf2011 }
+        { t: "Médecins Sans Frontières. Clinical guidelines, Severe acute malnutrition (Feb 2024).", u: S.msfSam },
+        { t: "WHO. Guideline on wasting and nutritional oedema, 2023, B6.", u: S.who2023 },
+        { t: "WHO. Pocket book of hospital care for children, 2013, §7.4.3.", u: S.whoPb2013 },
+        { t: "ACF International. Guidelines for the integrated management of SAM, 2011, pp. 72–78.", u: S.acf2011 }
       ] },
 
     // ── 7. SAM protocols compared ─────────────────────────────────────
@@ -207,7 +207,7 @@
           [{ en: "No response", fr: "Pas de réponse" },
            { en: "After 2 boluses: IV 4 mL/kg/h, whole blood 10 mL/kg over 3 h", fr: "Après 2 bolus : IV 4 mL/kg/h, sang total 10 mL/kg en 3 h" },
            { en: "Continue 10 mL/kg/h; check Hb and transfuse", fr: "Poursuivre 10 mL/kg/h ; doser l'Hb et transfuser" },
-           { en: "Weight up but no better: toxic/septic/cardiogenic shock — stop", fr: "Poids en hausse sans amélioration : choc toxique/septique/cardiogénique — arrêter" },
+           { en: "Weight up but no better: toxic/septic/cardiogenic shock; stop", fr: "Poids en hausse sans amélioration : choc toxique/septique/cardiogénique ; arrêter" },
            { en: "Septic shock: IV 4 mL/kg/h, review antibiotics, dopamine", fr: "Choc septique : IV 4 mL/kg/h, revoir les antibiotiques, dopamine" },
            { en: "Severe anaemia: transfuse instead of Ringer's", fr: "Anémie sévère : transfuser au lieu du Ringer" }],
           [{ en: "Stop / overload", fr: "Arrêt / surcharge" },
@@ -220,19 +220,19 @@
         ]
       }],
       notes: [
-        { en: "Cholera or profuse watery diarrhoea: standard ORS, not ReSoMal. MSF (SAM + cholera): some dehydration 75 mL/kg ORS over 4 h; severe/shock RL 20 mL/kg over 30 min (up to 3 boluses) then 70 mL/kg over 6 h — same volume as non-malnourished children, twice as slowly.", fr: "Choléra ou diarrhée aqueuse profuse : SRO standard, pas de ReSoMal. MSF (MAS + choléra) : signes évidents 75 mL/kg de SRO en 4 h ; sévère/choc RL 20 mL/kg en 30 min (jusqu'à 3 bolus) puis 70 mL/kg en 6 h — même volume que chez l'enfant non malnutri, deux fois plus lentement." },
+        { en: "Cholera or profuse watery diarrhoea: standard ORS, not ReSoMal. MSF (SAM + cholera): some dehydration 75 mL/kg ORS over 4 h; severe/shock RL 20 mL/kg over 30 min (up to 3 boluses) then 70 mL/kg over 6 h. Same volume as non-malnourished children, twice as slowly.", fr: "Choléra ou diarrhée aqueuse profuse : SRO standard, pas de ReSoMal. MSF (MAS + choléra) : signes évidents 75 mL/kg de SRO en 4 h ; sévère/choc RL 20 mL/kg en 30 min (jusqu'à 3 bolus) puis 70 mL/kg en 6 h. Même volume que chez l'enfant non malnutri, deux fois plus lentement." },
         { en: "Earlier WHO guidance (Treatment of diarrhoea 2005, §8.2) gave 70–100 mL/kg over 12 h, starting at ~10 mL/kg/h; the 2013 Pocket Book regimen above supersedes it.", fr: "Recommandation OMS antérieure (Traitement de la diarrhée 2005, §8.2) : 70–100 mL/kg en 12 h, en commençant à ~10 mL/kg/h ; le schéma du Livre de poche 2013 ci-dessus la remplace." },
         { en: "GASTROSAM (2026): in 415 children with SAM and moderate/severe dehydration, standard WHO ORS gave outcomes similar to ReSoMal, with no fluid overload in either arm.", fr: "GASTROSAM (2026) : chez 415 enfants avec MAS et déshydratation modérée/sévère, le SRO OMS standard a donné des résultats similaires au ReSoMal, sans surcharge hydrique." }
       ],
       sources: [
-        { t: "WHO. Pocket book of hospital care for children, 2013 — §7.4.3, Chart 8.", u: S.whoPb2013 },
-        { t: "WHO. Guideline on wasting and nutritional oedema, 2023 — B7.", u: S.who2023 },
-        { t: "MSF. Clinical guidelines — Severe acute malnutrition (Feb 2024).", u: S.msfSam },
-        { t: "ACF International. Guidelines for the integrated management of SAM, 2011 — pp. 72–78.", u: S.acf2011 },
-        { t: "MoHFW India. Operational guidelines on facility based management of children with SAM, 2011 — §5.3.", u: S.india2011 },
+        { t: "WHO. Pocket book of hospital care for children, 2013, §7.4.3, Chart 8.", u: S.whoPb2013 },
+        { t: "WHO. Guideline on wasting and nutritional oedema, 2023, B7.", u: S.who2023 },
+        { t: "MSF. Clinical guidelines, Severe acute malnutrition (Feb 2024).", u: S.msfSam },
+        { t: "ACF International. Guidelines for the integrated management of SAM, 2011, pp. 72–78.", u: S.acf2011 },
+        { t: "MoHFW India. Operational guidelines on facility based management of children with SAM, 2011, §5.3.", u: S.india2011 },
         { t: "Ministry of Health Kenya. Basic Paediatric Protocols, 5th ed. 2022.", u: S.kenya2022 },
-        { t: "MSF. Management of a cholera epidemic — 5.8 Cholera and acute malnutrition.", u: S.msfCholera },
-        { t: "WHO. The treatment of diarrhoea, 2005 — §8.2.", u: S.whoTod },
+        { t: "MSF. Management of a cholera epidemic, 5.8 Cholera and acute malnutrition.", u: S.msfCholera },
+        { t: "WHO. The treatment of diarrhoea, 2005, §8.2.", u: S.whoTod },
         { t: "GASTROSAM trial. Lancet Child Adolesc Health 2026.", u: S.gastrosam }
       ] },
 
@@ -256,8 +256,8 @@
         { en: "The ESPGHAN option (Na⁺ 60 mEq/L, ~200–250 mOsm/L) can be selected under Institution settings.", fr: "L'option ESPGHAN (Na⁺ 60 mEq/L, ~200–250 mOsm/L) peut être choisie dans les paramètres de l'institution." }
       ],
       sources: [
-        { t: "WHO. The treatment of diarrhoea, 2005 — Annex 2, Table A (reduced-osmolarity ORS).", u: S.whoTod },
-        { t: "Guarino A et al. ESPGHAN/ESPID guidelines for acute gastroenteritis in children in Europe — 2014 update. JPGN 2014;59(1):132–152.", u: S.guarino },
+        { t: "WHO. The treatment of diarrhoea, 2005, Annex 2, Table A (reduced-osmolarity ORS).", u: S.whoTod },
+        { t: "Guarino A et al. ESPGHAN/ESPID guidelines for acute gastroenteritis in children in Europe, 2014 update. JPGN 2014;59(1):132–152.", u: S.guarino },
         { t: { en: "Commercial products: manufacturer labels.", fr: "Produits commerciaux : étiquettes des fabricants." }, u: null }
       ] },
 
@@ -280,11 +280,11 @@
         { en: "“—” = not stated in the source.", fr: "« — » = non précisé dans la source." }
       ],
       sources: [
-        { t: "MSF. Essential drugs — ReSoMal oral (Nov 2022): composition table.", u: S.msfResomal },
-        { t: "WHO. Pocket book of hospital care for children, 2013 — p. 205 (ReSoMal recipe).", u: S.whoPb2013 },
-        { t: "WHO. The treatment of diarrhoea, 2005 — §8.2.", u: S.whoTod },
-        { t: "MoHFW India. Facility based management of children with SAM, 2011 — §5.3a.", u: S.india2011 },
-        { t: "WHO. Guideline on wasting and nutritional oedema, 2023 — B7 remarks.", u: S.who2023 }
+        { t: "MSF. Essential drugs, ReSoMal oral (Nov 2022): composition table.", u: S.msfResomal },
+        { t: "WHO. Pocket book of hospital care for children, 2013, p. 205 (ReSoMal recipe).", u: S.whoPb2013 },
+        { t: "WHO. The treatment of diarrhoea, 2005, §8.2.", u: S.whoTod },
+        { t: "MoHFW India. Facility based management of children with SAM, 2011, §5.3a.", u: S.india2011 },
+        { t: "WHO. Guideline on wasting and nutritional oedema, 2023, B7 remarks.", u: S.who2023 }
       ] },
 
     // ── 10. Preparation ───────────────────────────────────────────────
@@ -295,7 +295,7 @@
         rows: [
           [{ en: "Home-made salt–sugar solution", fr: "Solution sucrée-salée maison" },
            { en: "3 g/L table salt (one level teaspoon) + 18 g/L sugar (sucrose)", fr: "3 g/L de sel de table (une cuillère à café rase) + 18 g/L de sucre (saccharose)" },
-           { en: "WHO: effective, but not generally recommended — the recipe is often forgotten, ingredients may be unavailable, or too little is given. Prefer ORS; salted home fluids (rice water, soup) are alternatives.", fr: "OMS : efficace mais généralement non recommandée — la recette est souvent oubliée, les ingrédients peuvent manquer, ou la quantité donnée est trop faible. Préférer le SRO ; les liquides salés maison (eau de riz, soupe) sont des alternatives." }],
+           { en: "WHO: effective, but not generally recommended. The recipe is often forgotten, ingredients may be unavailable, or too little is given. Prefer ORS; salted home fluids (rice water, soup) are alternatives.", fr: "OMS : efficace mais généralement non recommandée. La recette est souvent oubliée, les ingrédients peuvent manquer, ou la quantité donnée est trop faible. Préférer le SRO ; les liquides salés maison (eau de riz, soupe) sont des alternatives." }],
           [{ en: "ReSoMal from WHO-ORS", fr: "ReSoMal à partir du SRO OMS" },
            { en: "2 L water + one 1-litre packet WHO-ORS + 50 g sucrose + 40 mL electrolyte/mineral solution (or 45 mL of 10% KCl: 100 g KCl in 1 L)", fr: "2 L d'eau + un sachet de SRO OMS pour 1 L + 50 g de saccharose + 40 mL de solution électrolytes/minéraux (ou 45 mL de KCl à 10 % : 100 g de KCl dans 1 L)" },
            { en: "≈ 45 mmol Na, 40 mmol K, 3 mmol Mg per litre (WHO 2013). Not for cholera or profuse watery diarrhoea.", fr: "≈ 45 mmol Na, 40 mmol K, 3 mmol Mg par litre (OMS 2013). Pas en cas de choléra ou de diarrhée aqueuse profuse." }],
@@ -308,9 +308,9 @@
         ]
       }],
       sources: [
-        { t: "WHO. The treatment of diarrhoea, 2005 — §4.2 (home fluids).", u: S.whoTod },
-        { t: "WHO. Pocket book of hospital care for children, 2013 — p. 205.", u: S.whoPb2013 },
-        { t: "MSF. Clinical guidelines — Severe acute malnutrition (Feb 2024), footnote d.", u: S.msfSam },
+        { t: "WHO. The treatment of diarrhoea, 2005, §4.2 (home fluids).", u: S.whoTod },
+        { t: "WHO. Pocket book of hospital care for children, 2013, p. 205.", u: S.whoPb2013 },
+        { t: "MSF. Clinical guidelines, Severe acute malnutrition (Feb 2024), footnote d.", u: S.msfSam },
         { t: "Ministry of Health Kenya. Basic Paediatric Protocols, 5th ed. 2022.", u: S.kenya2022 },
         { t: "MSF. 5.8 Cholera and acute malnutrition.", u: S.msfCholera }
       ] },
@@ -339,10 +339,10 @@
         ]
       }],
       footnotes: [
-        { en: "a BodyArmor Lyte — serving size (12 oz) from website; nutrition label did not specify which size.", fr: "a BodyArmor Lyte — portion (12 oz) selon le site ; l'étiquette ne précisait pas la taille." },
-        { en: "b Nuun Sport — product supplied as a dissolvable tablet.", fr: "b Nuun Sport — comprimé à dissoudre." },
-        { en: "c Skratch Labs Sport Hydration Mix — product supplied as a powder mixture.", fr: "c Skratch Labs Sport Hydration Mix — poudre à mélanger." },
-        { en: "d Ultima Replenisher — composition reported per scoop.", fr: "d Ultima Replenisher — composition par mesure." }
+        { en: "a BodyArmor Lyte: serving size (12 oz) from website; nutrition label did not specify which size.", fr: "a BodyArmor Lyte : portion (12 oz) selon le site ; l'étiquette ne précisait pas la taille." },
+        { en: "b Nuun Sport: product supplied as a dissolvable tablet.", fr: "b Nuun Sport : comprimé à dissoudre." },
+        { en: "c Skratch Labs Sport Hydration Mix: product supplied as a powder mixture.", fr: "c Skratch Labs Sport Hydration Mix : poudre à mélanger." },
+        { en: "d Ultima Replenisher: composition reported per scoop.", fr: "d Ultima Replenisher : composition par mesure." }
       ],
       notes: [{ en: "Sports drinks are not oral rehydration solutions; compare their sodium and sugar with the ORS table above.", fr: "Les boissons pour sportifs ne sont pas des solutions de réhydratation orale ; comparer leur sodium et leur sucre au tableau des SRO ci-dessus." }],
       sources: [{ t: { en: "Manufacturer nutrition labels; data as published.", fr: "Étiquettes nutritionnelles des fabricants ; données telles que publiées." }, u: null }] }
@@ -455,9 +455,24 @@
     });
   }
 
+  var tocObserver = null;
+  function trackToc(toc) {
+    if (tocObserver) tocObserver.disconnect();
+    if (!("IntersectionObserver" in window)) return;
+    var links = {};
+    Array.prototype.forEach.call(toc.querySelectorAll("a"), function (a) { links[a.getAttribute("href").slice(1)] = a; });
+    tocObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        Object.keys(links).forEach(function (id) { links[id].classList.toggle("active", id === e.target.id); });
+      });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    Array.prototype.forEach.call(document.querySelectorAll(".ref-section"), function (sec) { tocObserver.observe(sec); });
+  }
+
   function render() {
     document.documentElement.lang = HTML_LANG[lang];
-    document.title = L(UI.title) + " — PRhehydrate";
+    document.title = L(UI.title) + " · PRhehydrate";
     document.getElementById("pageTag").textContent = L(UI.title);
     document.getElementById("backBtn").setAttribute("aria-label", L(UI.back));
     document.getElementById("backBtn").setAttribute("title", L(UI.back));
@@ -496,6 +511,7 @@
       if (s.sources) sec.appendChild(renderSources(s.sources));
       root.appendChild(sec);
     });
+    trackToc(toc);
     if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
   }
 

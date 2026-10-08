@@ -626,17 +626,6 @@ input[type="number"] { -moz-appearance: textfield; }
   border: 1.5px solid var(--line);
   border-radius: var(--radius-s);
 }
-.ref-table-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 32px;
-  background: linear-gradient(to left, var(--bg), transparent);
-  pointer-events: none;
-  border-radius: 0 var(--radius-s) var(--radius-s) 0;
-}
 
 /* ── table base ──────────────────────────────────────────────── */
 .ref-table {
@@ -668,26 +657,16 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 
 /* ── severity column headers (Table 1) ───────────────────────── */
-.th-none {
-  background: var(--ok-soft) !important;
-  color: var(--ok) !important;
-}
-.th-some {
-  background: var(--warn-soft) !important;
-  color: var(--warn) !important;
-}
-.th-severe {
-  background: var(--danger-soft) !important;
-  color: var(--danger) !important;
-}
+.th-none { color: var(--ok) !important; }
+.th-some { color: var(--warn) !important; }
+.th-severe { color: var(--danger) !important; }
 .col-sign {
   background: var(--bg-2);
   color: var(--text-3);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: .5px;
-  white-space: nowrap;
-  width: 140px;
+  width: 120px;
 }
 
 /* ── CDS interpretation rows (Table 2) ───────────────────────── */
@@ -812,6 +791,26 @@ input[type="number"] { -moz-appearance: textfield; }
   font-size: 12px; font-weight: 700; color: var(--text-2);
 }
 .ref-wide { min-width: 820px; }
+.ref-wide:has(th.col-sign) { table-layout: fixed; }
+.ref-wide thead th { white-space: normal; }
+.ref-toc a.active { color: var(--text); font-weight: 600; }
+
+/* desktop: contents as a fixed sidebar */
+@media (min-width: 1024px) {
+  .tables-page {
+    max-width: 1240px; display: grid;
+    grid-template-columns: 220px minmax(0, 1fr); column-gap: 40px; align-items: start;
+  }
+  .tables-page > * { grid-column: 2; }
+  .tables-page > .ref-toc {
+    grid-column: 1; grid-row: 1 / span 30;
+    position: sticky; top: calc(var(--topbar-h) + 20px);
+    max-height: calc(100dvh - var(--topbar-h) - 40px); overflow-y: auto;
+    margin: 0; padding: 0 0 0 18px; columns: auto;
+    border: 0; border-right: 1px solid var(--line); border-radius: 0; background: none;
+  }
+  .tables-page > .ref-toc li { margin: 0 0 10px; padding-right: 12px; }
+}
 .ref-note {
   margin: 10px 0 0; padding: 9px 12px; font-size: 12.5px; line-height: 1.5;
   color: var(--text); background: var(--bg-2);

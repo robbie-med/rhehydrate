@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.1";
+  var APP_VERSION = "1.6.3";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -610,8 +610,8 @@
     src.appendChild(txt("h4", null, t("res.sam.sources")));
     var ul = txt("ul", "src-list");
     var list = P.protocol.sources.slice();
-    list.push({ t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023 — definitions, B6.", u: C.SRC.who2023 });
-    if (s.cholera) list.push({ t: "Médecins Sans Frontières. Management of a cholera epidemic — 5.8 Cholera and acute malnutrition.", u: C.SRC.msfCholera });
+    list.push({ t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023, definitions, B6.", u: C.SRC.who2023 });
+    if (s.cholera) list.push({ t: "Médecins Sans Frontières. Management of a cholera epidemic, 5.8 Cholera and acute malnutrition.", u: C.SRC.msfCholera });
     list.push({ t: "GASTROSAM trial. Lancet Child Adolesc Health 2026.", u: C.SRC.gastrosam });
     var seen = {};
     list.forEach(function (x) {
@@ -631,13 +631,13 @@
     var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
       : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr });
     var samLabel = t("bs.sam.unk");
-    if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + " — " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
+    if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + ": " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     else if (sc && sc.status === "neg") samLabel = t("bs.sam.no");
     var proto;
     if (R.sam) proto = t(M.protocol.nameKey);
     else if (R.sev.key === "none") proto = t("plan.a.title");
     else if (R.sev.key === "some") proto = t("plan.b.title");
-    else proto = t("plan.c.title") + " — " + t("inst.planBApproach." + ins.planCAppr);
+    else proto = t("plan.c.title") + " · " + t("inst.planBApproach." + ins.planCAppr);
     var head = {
       logo: ins.logo, inst: ins.name, dept: ins.dept,
       age: R.months < 24 ? t("bs.age.m", { n: R.months }) : t("bs.age.y", { n: R.months / 12 }),
@@ -682,7 +682,7 @@
     if (!screen) { $("#samExtra").hidden = true; return; }
     box.classList.add("st-" + screen.status);
     var head = t("sam.status." + screen.status);
-    if (screen.reasons.length) head += " — " + screen.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
+    if (screen.reasons.length) head += ": " + screen.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     box.appendChild(txt("strong", null, head));
     screen.notes.forEach(function (k) { box.appendChild(txt("span", "hint", t(k))); });
     $("#samExtra").hidden = screen.status !== "pos";
@@ -1116,7 +1116,7 @@
     applyI18n();
     syncSeg("#langSeg", "lang", state.lang);
     updateInstTag();
-    if (fromLink) toast(t("toast.linkApplied") + (state.inst.name ? " — " + state.inst.name : ""));
+    if (fromLink) toast(t("toast.linkApplied") + (state.inst.name ? ": " + state.inst.name : ""));
 
     $("#langToggle").addEventListener("click", function () {
       var idx = LANGS.indexOf(state.lang);

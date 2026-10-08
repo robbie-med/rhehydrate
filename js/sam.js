@@ -50,8 +50,8 @@
       id: "who", nameKey: "sam.p.who", defaultFluid: "resomal",
       shockDefKey: "sam.who.shockdef",
       sources: [
-        { t: "WHO. Pocket book of hospital care for children, 2nd ed. 2013 — §7.4.1 (p. 201–202), §7.4.3 (pp. 203–206), Chart 8 (p. 14).", u: S.whoPb2013 },
-        { t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023 — B6–B8.", u: S.who2023 },
+        { t: "WHO. Pocket book of hospital care for children, 2nd ed. 2013, §7.4.1 (p. 201–202), §7.4.3 (pp. 203–206), Chart 8 (p. 14).", u: S.whoPb2013 },
+        { t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023, B6–B8.", u: S.who2023 },
         { t: "WHO. Updates on the management of severe acute malnutrition in infants and children, 2013.", u: S.who2013 }
       ],
       build: function (ctx) {
@@ -94,8 +94,8 @@
       id: "msf", nameKey: "sam.p.msf", defaultFluid: "resomal",
       shockDefKey: "sam.msf.shockdef",
       sources: [
-        { t: "Médecins Sans Frontières. Clinical guidelines — Severe acute malnutrition (last updated Feb 2024): Diarrhoea and dehydration, Plans A/B/C SAM.", u: S.msfSam },
-        { t: "Médecins Sans Frontières. Essential drugs — ReSoMal oral (last updated Nov 2022).", u: S.msfResomal }
+        { t: "Médecins Sans Frontières. Clinical guidelines, Severe acute malnutrition (last updated Feb 2024): Diarrhoea and dehydration, Plans A/B/C SAM.", u: S.msfSam },
+        { t: "Médecins Sans Frontières. Essential drugs, ReSoMal oral (last updated Nov 2022).", u: S.msfResomal }
       ],
       build: function (ctx) {
         var w = ctx.w, src = S.msfSam, fn = "msf";
@@ -152,7 +152,7 @@
       id: "acf", nameKey: "sam.p.acf", defaultFluid: "resomal",
       shockDefKey: "sam.acf.shockdef",
       sources: [
-        { t: "Action Contre la Faim International. Guidelines for the integrated management of severe acute malnutrition: in- and out-patient treatment. Dec 2011 — pp. 72–78.", u: S.acf2011 }
+        { t: "Action Contre la Faim International. Guidelines for the integrated management of severe acute malnutrition: in- and out-patient treatment. Dec 2011, pp. 72–78.", u: S.acf2011 }
       ],
       build: function (ctx) {
         var w = ctx.w, src = S.acf2011, fn = "acf";
@@ -202,7 +202,7 @@
       id: "india", nameKey: "sam.p.india", defaultFluid: "orsK",
       shockDefKey: "sam.ind.shockdef",
       sources: [
-        { t: "Ministry of Health & Family Welfare, Government of India. Operational guidelines on facility based management of children with severe acute malnutrition. 2011 — §5.3a–5.3b (pp. 42–45).", u: S.india2011 }
+        { t: "Ministry of Health & Family Welfare, Government of India. Operational guidelines on facility based management of children with severe acute malnutrition. 2011, §5.3a–5.3b (pp. 42–45).", u: S.india2011 }
       ],
       build: function (ctx) {
         var w = ctx.w, src = S.india2011, fn = "india";
@@ -242,7 +242,7 @@
       id: "kenya", nameKey: "sam.p.kenya", defaultFluid: "resomal",
       shockDefKey: "sam.ken.shockdef",
       sources: [
-        { t: "Ministry of Health, Kenya. Basic Paediatric Protocols, 5th ed. Feb 2022 — Fluid management in severe malnutrition with diarrhoea.", u: S.kenya2022 },
+        { t: "Ministry of Health, Kenya. Basic Paediatric Protocols, 5th ed. Feb 2022, Fluid management in severe malnutrition with diarrhoea.", u: S.kenya2022 },
         { t: "Official print edition (University of Nairobi, Oct 2022).", u: "https://paediatrics.uonbi.ac.ke/sites/paediatrics.uonbi.ac.ke/files/2023-04/Basic%20Paediatric%20protocol%205th%20edition%20FOR%20PRINT%2031st%20Oct%202022.pdf" }
       ],
       build: function (ctx) {

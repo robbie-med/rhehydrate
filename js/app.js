@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.4";
+  var APP_VERSION = "1.6.5";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -753,7 +753,7 @@
     b.appendChild(el("p", null, t("about.p1")));
     b.appendChild(el("h3", null, t("about.dedication.h")));
     var ded = el("div", "dedication");
-    ded.appendChild(el("p", null, "“" + t("about.dedication.p") + "”"));
+    ded.appendChild(el("p", null, t("about.dedication.p")));
     b.appendChild(ded);
     b.appendChild(el("h3", null, t("about.mission.h")));
     b.appendChild(el("p", null, t("about.mission.p")));

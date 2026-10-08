@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.6.13-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.7.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -93,7 +93,7 @@ Every plan lists its sources. Page-level excerpts for each number:
 </tr>
 <tr>
   <td><strong>🌐 Five languages</strong></td>
-  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文. English, French and Korean cover everything, including the SAM pathway and reference tables; Russian and Chinese cover the v1.3 content, with v1.4 additions shown in English for now. The browser language is detected on first visit.</td>
+  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文. Every language covers everything: the SAM pathway, show-the-maths working, the bedside sheet and the reference tables. The browser language is detected on first visit.</td>
 </tr>
 <tr>
   <td><strong>🔗 Setup link</strong></td>
@@ -150,10 +150,10 @@ All protocols and reference ranges are drawn from peer-reviewed sources:
 
 ## Languages
 
-The UI is translated into five languages; English, French and Korean are complete for
-v1.4. Russian and Chinese show the v1.4 additions (SAM pathway, show-the-maths, setup link,
-reference tables) in English until reviewed translations are added. Language is detected
-from the browser on first visit and persisted across sessions.
+The app, the bedside sheet and the reference tables are complete in all five languages,
+including the formulas and units in show-the-maths. `node tests/calc.test.js` fails if any
+language is missing a string. Language is detected from the browser on first visit and
+persisted across sessions.
 
 | Flag | Code | Language | Notes |
 |------|------|----------|-------|
@@ -215,15 +215,17 @@ Plain HTML + CSS + vanilla JS. **No framework. No build step. No dependencies.**
 index.html              # single-page app shell; all panels rendered by JS
 css/styles.css          # CSS custom properties for theming; no preprocessor
 js/i18n.js              # window.I18N — core strings, 5 languages
-js/i18n-sam.js          # v1.4 strings (SAM, show-the-maths, setup link) — EN · FR · KR
-js/i18n-sheet.js        # v1.5 strings (bedside sheet, logo) — EN · FR · KR
+js/i18n-sam.js          # SAM, show-the-maths (formulas, units), setup link — 5 languages
+js/i18n-sheet.js        # bedside sheet, logo — 5 languages
 js/calc.js              # every formula, as pure functions returning their working
 js/sam.js               # the five SAM protocols, with page-level sources
 js/sheet.js             # bedside sheet: plan → timed checklist rows, and its layout
 js/app.js               # UI, state, persistence, rendering
 tables.html             # clinical reference tables page
 js/tables.js            # reference tables as data (EN · FR) + live formula source
-js/tables-kr.js         # Korean strings for the tables page
+js/tables-kr.js         # Korean, Russian and Chinese strings for the tables page,
+js/tables-ru.js         #   keyed by the English text
+js/tables-zh.js
 tests/calc.test.js      # node tests for calc.js, sam.js and sheet.js (no dependencies)
 docs/SAM-PROTOCOLS.md   # source excerpts behind every SAM number
 manifest.webmanifest    # PWA metadata: name, icons, display, theme colours

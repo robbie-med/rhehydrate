@@ -1,18 +1,21 @@
-/* PRhehydrate — reference tables. Cells: string or {en, fr}; Korean in tables-kr.js. */
+/* PRhehydrate — reference tables. Cells: string or {en, fr}; KR/RU/ZH in tables-<lang>.js, keyed by the English. */
 (function () {
   "use strict";
   var C = window.RH_CALC, S = C.SRC, SAM = window.RH_SAM;
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
-  var KR = window.RH_TABLES_KR || {};
-  var LANGS = ["en", "fr", "kr"], FLAGS = { en: "🇬🇧", fr: "🇫🇷", kr: "🇰🇷" }, HTML_LANG = { en: "en", fr: "fr", kr: "ko" };
+  var DICT = { kr: window.RH_TABLES_KR || {}, ru: window.RH_TABLES_RU || {}, zh: window.RH_TABLES_ZH || {} };
+  var LANGS = ["en", "kr", "fr", "ru", "zh"];
+  var FLAGS = { en: "🇬🇧", kr: "🇰🇷", fr: "🇫🇷", ru: "🇷🇺", zh: "🇨🇳" };
+  var HTML_LANG = { en: "en", kr: "ko", fr: "fr", ru: "ru", zh: "zh" };
   var lang = "en";
   try { var saved = localStorage.getItem("rh.lang"); if (LANGS.indexOf(saved) >= 0) lang = saved; } catch (e) {}
 
   function L(x) {
     if (x == null) return "";
     if (typeof x === "string") return x;
-    if (lang === "kr") return x.kr || KR[x.en] || x.en;
-    return x[lang] || x.en;
+    if (x[lang]) return x[lang];
+    var d = DICT[lang];
+    return (d && d[x.en]) || x.en;
   }
 
   var UI = {
@@ -21,9 +24,15 @@
     source: { en: "Source", fr: "Source" },
     sources:{ en: "Sources", fr: "Sources" },
     foot:   { en: "For clinical reference only. Verify all values against current authoritative sources before use. PRhehydrate is not a substitute for clinical judgment.",
-              fr: "Pour référence clinique uniquement. Vérifiez toutes les valeurs auprès de sources faisant autorité avant usage. PRhehydrate ne remplace pas le jugement clinique." },
-    theme:  { en: ["System", "Light", "Dark"], fr: ["Système", "Clair", "Sombre"], kr: ["시스템", "밝게", "어둡게"] },
+              fr: "Pour référence clinique uniquement. Vérifier toutes les valeurs auprès de sources de référence à jour avant usage. PRhehydrate ne remplace pas le jugement clinique." },
+    theme:  { en: ["System", "Light", "Dark"], fr: ["Système", "Clair", "Sombre"], kr: ["시스템", "밝게", "어둡게"],
+              ru: ["Система", "Светлая", "Тёмная"], zh: ["跟随系统", "浅色", "深色"] },
     code:   { en: "Source code", fr: "Code source" },
+    samProto: { en: "SAM protocol: ", fr: "Protocole MAS : " },
+    colon:  { en: ": ", fr: " : ", zh: "：" },
+    nav:    { en: "Theme and language", fr: "Thème et langue" },
+    themeL: { en: "Color theme", fr: "Thème de couleurs" },
+    lang:   { en: "Change language", fr: "Changer de langue" },
   };
 
   var SECTIONS = [
@@ -41,7 +50,7 @@
           [{ en: "Eyes²", fr: "Yeux²" }, { en: "Normal", fr: "Normaux" }, { en: "Sunken", fr: "Enfoncés" }, { en: "Sunken", fr: "Enfoncés" }],
           [{ en: "Thirst", fr: "Soif" }, { en: "Drinks normally, not thirsty", fr: "Boit normalement, pas assoiffé" }, { en: "Thirsty, drinks eagerly", fr: "Assoiffé, boit avidement" }, { en: "Drinks poorly or not able to drink", fr: "Boit difficilement ou ne peut pas boire" }],
           [{ en: "Skin pinch³", fr: "Pli cutané³" }, { en: "Goes back quickly", fr: "S'efface rapidement" }, { en: "Goes back slowly", fr: "S'efface lentement" }, { en: "Goes back very slowly (≥ 2 s)", fr: "S'efface très lentement (≥ 2 s)" }],
-          [{ en: "Decide", fr: "Décider" }, { en: "Not enough signs for B or C", fr: "Pas assez de signes pour B ou C" }, { en: "Two or more signs in B", fr: "Deux signes ou plus en B" }, { en: "Two or more signs in C", fr: "Deux signes ou plus en C" }],
+          [{ en: "Decide", fr: "Classer" }, { en: "Not enough signs for B or C", fr: "Pas assez de signes pour B ou C" }, { en: "Two or more signs in B", fr: "Deux signes ou plus en B" }, { en: "Two or more signs in C", fr: "Deux signes ou plus en C" }],
           [{ en: "Treat", fr: "Traiter" }, { en: "Plan A", fr: "Plan A" }, { en: "Weigh; Plan B", fr: "Peser ; Plan B" }, { en: "Weigh; Plan C urgently", fr: "Peser ; Plan C en urgence" }]
         ]
       }],
@@ -59,22 +68,22 @@
     { id: "who-plans",
       title: { en: "WHO: Treatment plans A, B and C", fr: "OMS : Plans de traitement A, B et C" },
       tables: [{
-        cols: [{ t: { en: "Plan", fr: "Plan" } }, { t: { en: "What to give", fr: "Quoi donner" } }],
+        cols: [{ t: { en: "Plan", fr: "Plan" } }, { t: { en: "What to give", fr: "À donner" } }],
         rows: [
-          [{ en: "A: no dehydration", fr: "A : pas de déshydratation" }, { en: "Extra fluid after each loose stool: < 2 years 50–100 mL; ≥ 2 years 100–200 mL. Zinc 10–14 days: ≤ 6 months 10 mg/day, ≥ 6 months 20 mg/day. Continue feeding.", fr: "Liquides supplémentaires après chaque selle liquide : < 2 ans 50–100 mL ; ≥ 2 ans 100–200 mL. Zinc 10–14 jours : ≤ 6 mois 10 mg/j, ≥ 6 mois 20 mg/j. Poursuivre l'alimentation." }],
-          [{ en: "B: some dehydration", fr: "B : signes évidents" }, { en: "ORS 75 mL/kg over 4 h (give more if the child wants more). Reassess at 4 h.", fr: "SRO 75 mL/kg en 4 h (donner plus si l'enfant en veut plus). Réévaluer à 4 h." }],
-          [{ en: "C: severe dehydration", fr: "C : déshydratation sévère" }, { en: "IV Ringer's lactate (or normal saline) 100 mL/kg: 30 mL/kg then 70 mL/kg. Infants < 12 months: 1 h + 5 h. Older: 30 min + 2.5 h. Repeat the first portion if the radial pulse is still very weak. ORS ~5 mL/kg/h as soon as the child can drink.", fr: "Ringer lactate IV (ou sérum physiologique) 100 mL/kg : 30 mL/kg puis 70 mL/kg. Nourrisson < 12 mois : 1 h + 5 h. Plus âgé : 30 min + 2,5 h. Répéter la première fraction si le pouls radial reste très faible. SRO ~5 mL/kg/h dès que l'enfant peut boire." }]
+          [{ en: "A: no dehydration", fr: "A : pas de déshydratation" }, { en: "Extra fluid after each loose stool: < 2 years 50–100 mL; ≥ 2 years 100–200 mL. Zinc 10–14 days: ≤ 6 months 10 mg/day, ≥ 6 months 20 mg/day. Continue feeding.", fr: "Liquides supplémentaires après chaque selle liquide : < 2 ans 50–100 mL ; ≥ 2 ans 100–200 mL. Zinc pendant 10–14 jours : ≤ 6 mois 10 mg/jour, ≥ 6 mois 20 mg/jour. Poursuivre l'alimentation." }],
+          [{ en: "B: some dehydration", fr: "B : signes évidents de déshydratation" }, { en: "ORS 75 mL/kg over 4 h (give more if the child wants more). Reassess at 4 h.", fr: "SRO 75 mL/kg en 4 h (donner plus si l'enfant en veut plus). Réévaluer à 4 h." }],
+          [{ en: "C: severe dehydration", fr: "C : déshydratation sévère" }, { en: "IV Ringer's lactate (or normal saline) 100 mL/kg: 30 mL/kg then 70 mL/kg. Infants < 12 months: 1 h + 5 h. Older: 30 min + 2.5 h. Repeat the first portion if the radial pulse is still very weak. ORS ~5 mL/kg/h as soon as the child can drink.", fr: "Ringer lactate IV (ou sérum physiologique) 100 mL/kg : 30 mL/kg puis 70 mL/kg. Nourrisson < 12 mois : 1 h + 5 h. Enfant plus âgé : 30 min + 2,5 h. Répéter la première fraction si le pouls radial reste très faible. SRO ~5 mL/kg/h dès que l'enfant peut boire." }]
         ]
       }, {
-        caption: { en: "Plan B: approximate ORS in the first 4 hours (use age only if weight is unknown; otherwise weight × 75)", fr: "Plan B : SRO approximatif pendant les 4 premières heures (âge seulement si le poids est inconnu ; sinon poids × 75)" },
-        cols: [{ t: { en: "Age", fr: "Âge" } }, { t: { en: "Weight", fr: "Poids" } }, { t: "mL" }],
+        caption: { en: "Plan B: approximate ORS in the first 4 hours (use age only if weight is unknown; otherwise weight × 75)", fr: "Plan B : quantité approximative de SRO les 4 premières heures (âge seulement si le poids est inconnu ; sinon poids × 75)" },
+        cols: [{ t: { en: "Age", fr: "Âge" } }, { t: { en: "Weight", fr: "Poids" } }, { t: { en: "mL", fr: "mL" } }],
         rows: [
-          [{ en: "< 4 months", fr: "< 4 mois" }, "< 5 kg", "200–400"],
-          [{ en: "4–11 months", fr: "4–11 mois" }, "5–7.9 kg", "400–600"],
-          [{ en: "12–23 months", fr: "12–23 mois" }, "8–10.9 kg", "600–800"],
-          [{ en: "2–4 years", fr: "2–4 ans" }, "11–15.9 kg", "800–1200"],
-          [{ en: "5–14 years", fr: "5–14 ans" }, "16–29.9 kg", "1200–2200"],
-          [{ en: "≥ 15 years", fr: "≥ 15 ans" }, "≥ 30 kg", "2200–4000"]
+          [{ en: "< 4 months", fr: "< 4 mois" }, { en: "< 5 kg", fr: "< 5 kg" }, "200–400"],
+          [{ en: "4–11 months", fr: "4–11 mois" }, { en: "5–7.9 kg", fr: "5–7,9 kg" }, "400–600"],
+          [{ en: "12–23 months", fr: "12–23 mois" }, { en: "8–10.9 kg", fr: "8–10,9 kg" }, "600–800"],
+          [{ en: "2–4 years", fr: "2–4 ans" }, { en: "11–15.9 kg", fr: "11–15,9 kg" }, "800–1200"],
+          [{ en: "5–14 years", fr: "5–14 ans" }, { en: "16–29.9 kg", fr: "16–29,9 kg" }, "1200–2200"],
+          [{ en: "≥ 15 years", fr: "≥ 15 ans" }, { en: "≥ 30 kg", fr: "≥ 30 kg" }, "2200–4000"]
         ]
       }],
       notes: [{ en: "Not for children with severe acute malnutrition. See the SAM protocols below.", fr: "Ne s'applique pas aux enfants avec malnutrition aiguë sévère. Voir les protocoles MAS ci-dessous." }],
@@ -85,23 +94,23 @@
 
     // ── 3. Severity by signs ───────────────────
     { id: "cdc-signs",
-      title: { en: "Severity of dehydration", fr: "Sévérité de la déshydratation" },
+      title: { en: "Severity of dehydration", fr: "Gravité de la déshydratation" },
       tables: [{
         cols: [{ t: { en: "Sign / Symptom", fr: "Signe / symptôme" }, cls: "col-sign" },
-               { t: { en: "Minimal or No Dehydration", fr: "Déshydratation minime ou absente" }, small: { en: "<3% body weight loss; 3%–5% fluid deficit", fr: "perte de poids < 3 % ; déficit 3–5 %" }, cls: "th-none" },
-               { t: { en: "Mild to Moderate Dehydration", fr: "Déshydratation légère à modérée" }, small: { en: "3%–9% body weight loss; 6%–9% fluid deficit", fr: "perte de poids 3–9 % ; déficit 6–9 %" }, cls: "th-some" },
-               { t: { en: "Severe Dehydration", fr: "Déshydratation sévère" }, small: { en: ">9% body weight loss; >10% fluid deficit", fr: "perte de poids > 9 % ; déficit > 10 %" }, cls: "th-severe" }],
+               { t: { en: "Minimal or No Dehydration", fr: "Déshydratation minime ou absente" }, small: { en: "<3% body weight loss; 3%–5% fluid deficit", fr: "perte de poids < 3 % ; déficit hydrique 3–5 %" }, cls: "th-none" },
+               { t: { en: "Mild to Moderate Dehydration", fr: "Déshydratation légère à modérée" }, small: { en: "3%–9% body weight loss; 6%–9% fluid deficit", fr: "perte de poids 3–9 % ; déficit hydrique 6–9 %" }, cls: "th-some" },
+               { t: { en: "Severe Dehydration", fr: "Déshydratation sévère" }, small: { en: ">9% body weight loss; >10% fluid deficit", fr: "perte de poids > 9 % ; déficit hydrique > 10 %" }, cls: "th-severe" }],
         rows: [
-          [{ en: "Mental status", fr: "État mental" }, { en: "Well; alert", fr: "Bien ; éveillé" }, { en: "Normal, fatigued, or restless, irritable", fr: "Normal, fatigué, ou agité, irritable" }, { en: "Apathetic, lethargic, unconscious", fr: "Apathique, léthargique, inconscient" }],
+          [{ en: "Mental status", fr: "État de conscience" }, { en: "Well; alert", fr: "Bien ; éveillé" }, { en: "Normal, fatigued, or restless, irritable", fr: "Normal, fatigué, ou agité, irritable" }, { en: "Apathetic, lethargic, unconscious", fr: "Apathique, léthargique, inconscient" }],
           [{ en: "Thirst", fr: "Soif" }, { en: "Drinks normally; might refuse liquids", fr: "Boit normalement ; peut refuser les liquides" }, { en: "Thirsty; eager to drink", fr: "Assoiffé ; boit avidement" }, { en: "Drinks poorly; unable to drink", fr: "Boit mal ; ne peut pas boire" }],
-          [{ en: "Heart rate", fr: "Fréquence cardiaque" }, { en: "Normal", fr: "Normale" }, { en: "Normal to increased", fr: "Normale à augmentée" }, { en: "Tachycardia, with bradycardia in severe cases", fr: "Tachycardie, bradycardie dans les cas sévères" }],
+          [{ en: "Heart rate", fr: "Fréquence cardiaque" }, { en: "Normal", fr: "Normale" }, { en: "Normal to increased", fr: "Normale à augmentée" }, { en: "Tachycardia, with bradycardia in severe cases", fr: "Tachycardie, avec bradycardie dans les cas sévères" }],
           [{ en: "Quality of pulses", fr: "Qualité des pouls" }, { en: "Normal", fr: "Normale" }, { en: "Normal to decreased", fr: "Normale à diminuée" }, { en: "Weak, thready, or impalpable", fr: "Faibles, filants ou imperceptibles" }],
           [{ en: "Breathing", fr: "Respiration" }, { en: "Normal", fr: "Normale" }, { en: "Normal; fast", fr: "Normale ; rapide" }, { en: "Deep", fr: "Profonde" }],
           [{ en: "Eyes", fr: "Yeux" }, { en: "Normal", fr: "Normaux" }, { en: "Slightly sunken", fr: "Légèrement enfoncés" }, { en: "Deeply sunken", fr: "Très enfoncés" }],
           [{ en: "Tears", fr: "Larmes" }, { en: "Present", fr: "Présentes" }, { en: "Decreased", fr: "Diminuées" }, { en: "Absent", fr: "Absentes" }],
           [{ en: "Mouth and tongue", fr: "Bouche et langue" }, { en: "Moist", fr: "Humides" }, { en: "Dry", fr: "Sèches" }, { en: "Parched", fr: "Desséchées" }],
           [{ en: "Skin fold", fr: "Pli cutané" }, { en: "Instant recoil", fr: "Retour immédiat" }, { en: "Recoil in <2 s", fr: "Retour en < 2 s" }, { en: "Recoil in >2 s", fr: "Retour en > 2 s" }],
-          [{ en: "Capillary refill", fr: "Temps de recoloration" }, { en: "Normal (<3 s)", fr: "Normal (< 3 s)" }, { en: "Prolonged", fr: "Allongé" }, { en: "Prolonged; minimal", fr: "Allongé ; minimal" }],
+          [{ en: "Capillary refill", fr: "Temps de recoloration capillaire" }, { en: "Normal (<3 s)", fr: "Normal (< 3 s)" }, { en: "Prolonged", fr: "Allongé" }, { en: "Prolonged; minimal", fr: "Allongé ; minimal" }],
           [{ en: "Extremities", fr: "Extrémités" }, { en: "Warm", fr: "Chaudes" }, { en: "Cool", fr: "Fraîches" }, { en: "Cold; mottled; cyanotic", fr: "Froides ; marbrées ; cyanosées" }],
           [{ en: "Urine output", fr: "Diurèse" }, { en: "Normal to decreased", fr: "Normale à diminuée" }, { en: "Decreased", fr: "Diminuée" }, { en: "Minimal", fr: "Minimale" }]
         ]
@@ -117,7 +126,7 @@
         cols: [{ t: { en: "Characteristic", fr: "Caractéristique" } }, { t: "0", center: true }, { t: "1", center: true }, { t: "2", center: true }],
         rows: [
           [{ en: "General appearance", fr: "Aspect général" }, { en: "Normal", fr: "Normal" }, { en: "Thirsty, restless, or lethargic but irritable when touched", fr: "Assoiffé, agité, ou léthargique mais irritable au toucher" }, { en: "Drowsy, limp, cold or sweaty ± comatose", fr: "Somnolent, hypotonique, froid ou moite ± comateux" }],
-          [{ en: "Eyes", fr: "Yeux" }, { en: "Normal", fr: "Normaux" }, { en: "Slightly sunken", fr: "Légèrement enfoncés" }, { en: "Extremely sunken", fr: "Très enfoncés" }],
+          [{ en: "Eyes", fr: "Yeux" }, { en: "Normal", fr: "Normaux" }, { en: "Slightly sunken", fr: "Légèrement enfoncés" }, { en: "Extremely sunken", fr: "Extrêmement enfoncés" }],
           [{ en: "Mucus membrane", fr: "Muqueuses" }, { en: "Moist", fr: "Humides" }, { en: "Sticky", fr: "Collantes" }, { en: "Dry", fr: "Sèches" }],
           [{ en: "Tears", fr: "Larmes" }, { en: "Present", fr: "Présentes" }, { en: "Decreased", fr: "Diminuées" }, { en: "Absent", fr: "Absentes" }]
         ]
@@ -126,7 +135,7 @@
         rowCls: ["cds-none", "cds-some", "cds-severe"],
         rows: [
           [{ b: "0" }, { en: "No dehydration", fr: "Pas de déshydratation" }],
-          [{ b: "1–4" }, { en: "Some dehydration", fr: "Déshydratation légère" }],
+          [{ b: "1–4" }, { en: "Some dehydration", fr: "Signes évidents de déshydratation" }],
           [{ b: "5–8" }, { en: "Moderate to severe dehydration", fr: "Déshydratation modérée à sévère" }]
         ]
       }],
@@ -134,18 +143,18 @@
 
     // ── 5. SAM criteria ───────────────────────────────────────────────
     { id: "sam-criteria",
-      title: { en: "Severe acute malnutrition: who has it?", fr: "Malnutrition aiguë sévère : critères" },
+      title: { en: "Severe acute malnutrition: who has it?", fr: "Malnutrition aiguë sévère : quels critères ?" },
       tables: [{
         cols: [{ t: { en: "Criterion", fr: "Critère" } }, { t: { en: "Severe (SAM)", fr: "Sévère (MAS)" }, cls: "th-severe" }, { t: { en: "Moderate wasting", fr: "Émaciation modérée" }, cls: "th-some" }],
         rows: [
-          [{ en: "MUAC (6–59 months)", fr: "Périmètre brachial (PB, 6–59 mois)" }, "< 115 mm", "115 – < 125 mm"],
-          [{ en: "Weight-for-height / length z-score", fr: "Poids-pour-taille (z-score)" }, "< −3 SD", "−3 to < −2 SD"],
-          [{ en: "Bilateral pitting (nutritional) oedema", fr: "Œdèmes nutritionnels bilatéraux prenant le godet" }, { en: "Any grade (+, ++, +++) = SAM", fr: "Tout degré (+, ++, +++) = MAS" }, "—"],
-          [{ en: "Rehydration", fr: "Réhydratation" }, { en: "SAM protocol (ReSoMal preferred; low-osmolarity ORS if unavailable)", fr: "Protocole MAS (ReSoMal de préférence ; SRO faible osmolarité sinon)" }, { en: "Standard WHO plans with low-osmolarity ORS", fr: "Plans OMS standard avec SRO faible osmolarité" }]
+          [{ en: "MUAC (6–59 months)", fr: "Périmètre brachial (PB, 6–59 mois)" }, { en: "< 115 mm", fr: "< 115 mm" }, { en: "115 – < 125 mm", fr: "115 – < 125 mm" }],
+          [{ en: "Weight-for-height / length z-score", fr: "Poids-pour-taille / longueur (z-score)" }, { en: "< −3 SD", fr: "< −3 ET" }, { en: "−3 to < −2 SD", fr: "−3 à < −2 ET" }],
+          [{ en: "Bilateral pitting (nutritional) oedema", fr: "Œdèmes bilatéraux prenant le godet (nutritionnels)" }, { en: "Any grade (+, ++, +++) = SAM", fr: "Tout degré (+, ++, +++) = MAS" }, "—"],
+          [{ en: "Rehydration", fr: "Réhydratation" }, { en: "SAM protocol (ReSoMal preferred; low-osmolarity ORS if unavailable)", fr: "Protocole MAS (ReSoMal de préférence ; SRO à faible osmolarité s'il est indisponible)" }, { en: "Standard WHO plans with low-osmolarity ORS", fr: "Plans OMS standard avec SRO à faible osmolarité" }]
         ]
       }],
       notes: [
-        { en: "Under 6 months: MUAC is not used for SAM; use weight-for-length < −3 SD or oedema. Admit for inpatient care if any IMCI danger sign, acute medical problem, oedema +++, or failed appetite test.", fr: "Moins de 6 mois : le PB n'est pas utilisé pour la MAS ; utiliser poids-pour-taille < −3 ET ou les œdèmes. Hospitaliser si signe de danger PCIME, problème médical aigu, œdèmes +++ ou échec du test d'appétit." }
+        { en: "Under 6 months: MUAC is not used for SAM; use weight-for-length < −3 SD or oedema. Admit for inpatient care if any IMCI danger sign, acute medical problem, oedema +++, or failed appetite test.", fr: "Moins de 6 mois : le PB n'est pas utilisé pour la MAS ; utiliser le poids-pour-longueur < −3 ET ou les œdèmes. Hospitaliser en cas de signe de danger PCIME, de problème médical aigu, d'œdèmes +++ ou d'échec du test de l'appétit." }
       ],
       sources: [
         { t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023, definitions; B2, B7, B8.", u: S.who2023 },
@@ -158,7 +167,7 @@
       tables: [{
         cols: [{ t: { en: "Sign", fr: "Signe" }, cls: "col-sign" },
                { t: { en: "No dehydration", fr: "Pas de déshydratation" }, cls: "th-none" },
-               { t: { en: "Some dehydration", fr: "Signes évidents" }, cls: "th-some" },
+               { t: { en: "Some dehydration", fr: "Signes évidents de déshydratation" }, cls: "th-some" },
                { t: { en: "Severe dehydration", fr: "Déshydratation sévère" }, cls: "th-severe" }],
         rows: [
           [{ en: "Mental status", fr: "État de conscience" }, { en: "Normal", fr: "Normal" }, { en: "Restless, irritable", fr: "Agité, irritable" }, { en: "Lethargic or unconscious", fr: "Léthargique ou inconscient" }],
@@ -170,7 +179,7 @@
       }],
       notes: [
         { en: "Sunken eyes and a slow skin pinch are often present in SAM without dehydration; oedema can mask dehydration (WHO 2023 B6; MSF 2024).", fr: "Les yeux enfoncés et un pli cutané lent sont fréquents en cas de MAS sans déshydratation ; les œdèmes peuvent masquer la déshydratation (OMS 2023 B6 ; MSF 2024)." },
-        { en: "WHO 2013: dehydration is over-diagnosed in SAM. All children with watery diarrhoea or reduced urine output likely have some dehydration; IV only for shock.", fr: "OMS 2013 : la déshydratation est surdiagnostiquée en cas de MAS. Tout enfant avec diarrhée aqueuse ou diurèse diminuée présente probablement des signes évidents ; IV uniquement en cas de choc." },
+        { en: "WHO 2013: dehydration is over-diagnosed in SAM. All children with watery diarrhoea or reduced urine output likely have some dehydration; IV only for shock.", fr: "OMS 2013 : la déshydratation est surdiagnostiquée en cas de MAS. Tout enfant avec diarrhée aqueuse ou diurèse diminuée a probablement des signes évidents de déshydratation ; IV uniquement en cas de choc." },
         { en: "ACF 2011: diagnose from the history (recent watery diarrhoea, carer reports the eyes recently sank, no full veins, no oedema); children with oedema cannot be 'dehydrated'.", fr: "ACF 2011 : diagnostic par l'anamnèse (diarrhée aqueuse récente, yeux récemment enfoncés selon l'accompagnant, pas de veines pleines, pas d'œdèmes) ; un enfant œdémateux ne peut pas être « déshydraté »." }
       ],
       sources: [
@@ -182,28 +191,28 @@
 
     // ── 7. SAM protocols compared ─────────────────────────────────────
     { id: "sam-protocols",
-      title: { en: "SAM rehydration protocols compared", fr: "Protocoles de réhydratation MAS comparés" },
+      title: { en: "SAM rehydration protocols compared", fr: "Comparaison des protocoles de réhydratation MAS" },
       tables: [{
         wide: true,
-        cols: [{ t: "", cls: "col-sign" }, { t: { en: "WHO 2013/2023 (default)", fr: "OMS 2013/2023 (défaut)" } }, { t: "MSF 2024" }, { t: "ACF 2011" }, { t: { en: "India 2011", fr: "Inde 2011" } }, { t: "Kenya 2022" }],
+        cols: [{ t: "", cls: "col-sign" }, { t: { en: "WHO 2013/2023 (default)", fr: "OMS 2013/2023 (par défaut)" } }, { t: "MSF 2024" }, { t: "ACF 2011" }, { t: { en: "India 2011", fr: "Inde 2011" } }, { t: "Kenya 2022" }],
         rows: [
-          [{ en: "Oral fluid", fr: "Soluté oral" }, "ReSoMal", "ReSoMal", "ReSoMal", { en: "Reduced-osmolarity ORS + 15 mL KCl/L", fr: "SRO osmolarité réduite + 15 mL KCl/L" }, "ReSoMal"],
-          [{ en: "Some dehydration (oral/NG)", fr: "Signes évidents (oral/NG)" },
+          [{ en: "Oral fluid", fr: "Soluté oral" }, "ReSoMal", "ReSoMal", "ReSoMal", { en: "Reduced-osmolarity ORS + 15 mL KCl/L", fr: "SRO à osmolarité réduite + 15 mL KCl/L" }, "ReSoMal"],
+          [{ en: "Some dehydration (oral/NG)", fr: "Signes évidents (voie orale/NG)" },
            { en: "5 mL/kg every 30 min × 2 h, then 5–10 mL/kg/h for 4–10 h alternating with F-75; max 12 h", fr: "5 mL/kg toutes les 30 min × 2 h, puis 5–10 mL/kg/h pendant 4–10 h en alternance avec F-75 ; max 12 h" },
            { en: "20 mL/kg/h × 2 h, then 10 mL/kg/h to target weight (current × 1.06)", fr: "20 mL/kg/h × 2 h, puis 10 mL/kg/h jusqu'au poids cible (actuel × 1,06)" },
            { en: "10 mL/kg/h × 2 h, then adjust by hourly weight; stop at target (≤ +5%)", fr: "10 mL/kg/h × 2 h, puis ajuster selon la pesée horaire ; arrêt au poids cible (≤ +5 %)" },
            { en: "5 mL/kg every 30 min × 2 h, then 5–10 mL/kg alternate hours up to 10 h", fr: "5 mL/kg toutes les 30 min × 2 h, puis 5–10 mL/kg une heure sur deux jusqu'à 10 h" },
            { en: "10 mL/kg/h × 2 h, then 7.5 mL/kg/h alternating with F-75 for 10 h (5–10)", fr: "10 mL/kg/h × 2 h, puis 7,5 mL/kg/h en alternance avec F-75 pendant 10 h (5–10)" }],
           [{ en: "Severe, no shock", fr: "Sévère, sans choc" },
-           { en: "Same oral regimen; IV (Chart 8) only if oral/NG impossible", fr: "Même schéma oral ; IV (tableau 8) seulement si oral/NG impossible" },
-           { en: "ReSoMal 20 mL/kg over 1 h (target × 1.1); if vomiting G5%-RL 10 mL/kg/h × 2 h", fr: "ReSoMal 20 mL/kg en 1 h (cible × 1,1) ; si vomissements G5 %-RL 10 mL/kg/h × 2 h" },
+           { en: "Same oral regimen; IV (Chart 8) only if oral/NG impossible", fr: "Même schéma oral ; IV (tableau 8) seulement si voie orale/NG impossible" },
+           { en: "ReSoMal 20 mL/kg over 1 h (target × 1.1); if vomiting G5%-RL 10 mL/kg/h × 2 h", fr: "ReSoMal 20 mL/kg en 1 h (cible × 1,1) ; si vomissements, G5 %-RL 10 mL/kg/h × 2 h" },
            { en: "Same oral regimen", fr: "Même schéma oral" }, { en: "Same oral regimen", fr: "Même schéma oral" }, { en: "Same oral regimen", fr: "Même schéma oral" }],
           [{ en: "Shock: IV", fr: "Choc : IV" },
            { en: "15 mL/kg over 1 h (RL-5% glucose, ½-Darrow's-5% glucose, or 0.45% NaCl-5% glucose); repeat once if improving, then ReSoMal 10 mL/kg/h", fr: "15 mL/kg en 1 h (RL-glucose 5 %, Darrow ½-glucose 5 % ou NaCl 0,45 %-glucose 5 %) ; répéter une fois si amélioration, puis ReSoMal 10 mL/kg/h" },
            { en: "Ceftriaxone 80 mg/kg; G5%-RL 10 mL/kg/h × 2 h; reassess at 1 h and 2 h", fr: "Ceftriaxone 80 mg/kg ; G5 %-RL 10 mL/kg/h × 2 h ; réévaluer à 1 h et 2 h" },
            { en: "15 mL/kg over 1 h (half-strength fluids); repeat while weight is not rising", fr: "15 mL/kg en 1 h (solutés demi-concentrés) ; répéter tant que le poids n'augmente pas" },
            { en: "10% glucose 5 mL/kg; 15 mL/kg over 1 h; repeat once if improving, then ORS 10 mL/kg/h", fr: "Glucose 10 % 5 mL/kg ; 15 mL/kg en 1 h ; répéter une fois si amélioration, puis SRO 10 mL/kg/h" },
-           { en: "RL-5% dextrose 20 mL/kg over 2 h", fr: "RL-dextrose 5 % 20 mL/kg en 2 h" }],
+           { en: "RL-5% dextrose 20 mL/kg over 2 h", fr: "RL-glucose 5 % 20 mL/kg en 2 h" }],
           [{ en: "No response", fr: "Pas de réponse" },
            { en: "After 2 boluses: IV 4 mL/kg/h, whole blood 10 mL/kg over 3 h", fr: "Après 2 bolus : IV 4 mL/kg/h, sang total 10 mL/kg en 3 h" },
            { en: "Continue 10 mL/kg/h; check Hb and transfuse", fr: "Poursuivre 10 mL/kg/h ; doser l'Hb et transfuser" },
@@ -211,18 +220,18 @@
            { en: "Septic shock: IV 4 mL/kg/h, review antibiotics, dopamine", fr: "Choc septique : IV 4 mL/kg/h, revoir les antibiotiques, dopamine" },
            { en: "Severe anaemia: transfuse instead of Ringer's", fr: "Anémie sévère : transfuser au lieu du Ringer" }],
           [{ en: "Stop / overload", fr: "Arrêt / surcharge" },
-           { en: "Oral: RR +5 and pulse +25. IV: RR +5 and pulse +15, liver ↑, crackles, JVP ↑, gallop", fr: "Oral : FR +5 et pouls +25. IV : FR +5 et pouls +15, foie ↑, crépitants, TVJ ↑, galop" },
+           { en: "Oral: RR +5 and pulse +25. IV: RR +5 and pulse +15, liver ↑, crackles, JVP ↑, gallop", fr: "Oral : FR +5 et pouls +25. IV : FR +5 et pouls +15, foie ↑, crépitants, PVJ ↑, galop" },
            { en: "RR ≥ +10 or HR ≥ +20 plus SpO₂ ↓ > 5%, crackles, gallop, liver ↑ or new oedema", fr: "FR ≥ +10 ou FC ≥ +20 plus SpO₂ ↓ > 5 %, crépitants, galop, foie ↑ ou nouveaux œdèmes" },
            { en: "Target weight, full veins, oedema, liver +1 cm, RR +5, grunting, crackles, gallop", fr: "Poids cible, veines pleines, œdèmes, foie +1 cm, FR +5, geignement, crépitants, galop" },
            { en: "RR +5 and pulse +15, jugular veins engorged, puffy eyelids", fr: "FR +5 et pouls +15, jugulaires turgescentes, paupières gonflées" },
            { en: "—", fr: "—" }],
-          [{ en: "Per watery stool", fr: "Par selle liquide" }, "50–100 mL ReSoMal", { en: "5 mL/kg (ORS outpatient; ReSoMal inpatient)", fr: "5 mL/kg (SRO ambulatoire ; ReSoMal hospitalisé)" }, { en: "30 mL (6–24 months only)", fr: "30 mL (6–24 mois seulement)" }, { en: "< 2 y ~50 mL; ≥ 2 y 100 mL ORS", fr: "< 2 ans ~50 mL ; ≥ 2 ans 100 mL SRO" }, { en: "Not specified", fr: "Non précisé" }]
+          [{ en: "Per watery stool", fr: "Par selle liquide" }, { en: "50–100 mL ReSoMal", fr: "50–100 mL de ReSoMal" }, { en: "5 mL/kg (ORS outpatient; ReSoMal inpatient)", fr: "5 mL/kg (SRO ambulatoire ; ReSoMal hospitalisé)" }, { en: "30 mL (6–24 months only)", fr: "30 mL (6–24 mois seulement)" }, { en: "< 2 y ~50 mL; ≥ 2 y 100 mL ORS", fr: "< 2 ans ~50 mL ; ≥ 2 ans 100 mL de SRO" }, { en: "Not specified", fr: "Non précisé" }]
         ]
       }],
       notes: [
         { en: "Cholera or profuse watery diarrhoea: standard ORS, not ReSoMal. MSF (SAM + cholera): some dehydration 75 mL/kg ORS over 4 h; severe/shock RL 20 mL/kg over 30 min (up to 3 boluses) then 70 mL/kg over 6 h. Same volume as non-malnourished children, twice as slowly.", fr: "Choléra ou diarrhée aqueuse profuse : SRO standard, pas de ReSoMal. MSF (MAS + choléra) : signes évidents 75 mL/kg de SRO en 4 h ; sévère/choc RL 20 mL/kg en 30 min (jusqu'à 3 bolus) puis 70 mL/kg en 6 h. Même volume que chez l'enfant non malnutri, deux fois plus lentement." },
-        { en: "Earlier WHO guidance (Treatment of diarrhoea 2005, §8.2) gave 70–100 mL/kg over 12 h, starting at ~10 mL/kg/h; the 2013 Pocket Book regimen above supersedes it.", fr: "Recommandation OMS antérieure (Traitement de la diarrhée 2005, §8.2) : 70–100 mL/kg en 12 h, en commençant à ~10 mL/kg/h ; le schéma du Livre de poche 2013 ci-dessus la remplace." },
-        { en: "GASTROSAM (2026): in 415 children with SAM and moderate/severe dehydration, standard WHO ORS gave outcomes similar to ReSoMal, with no fluid overload in either arm.", fr: "GASTROSAM (2026) : chez 415 enfants avec MAS et déshydratation modérée/sévère, le SRO OMS standard a donné des résultats similaires au ReSoMal, sans surcharge hydrique." }
+        { en: "Earlier WHO guidance (Treatment of diarrhoea 2005, §8.2) gave 70–100 mL/kg over 12 h, starting at ~10 mL/kg/h; the 2013 Pocket Book regimen above supersedes it.", fr: "Recommandation OMS antérieure (Traitement de la diarrhée 2005, §8.2) : 70–100 mL/kg en 12 h, en commençant à ~10 mL/kg/h ; le schéma du Mémento 2013 ci-dessus la remplace." },
+        { en: "GASTROSAM (2026): in 415 children with SAM and moderate/severe dehydration, standard WHO ORS gave outcomes similar to ReSoMal, with no fluid overload in either arm.", fr: "GASTROSAM (2026) : chez 415 enfants atteints de MAS avec déshydratation modérée/sévère, le SRO OMS standard a donné des résultats similaires au ReSoMal, sans surcharge hydrique dans aucun des deux bras." }
       ],
       sources: [
         { t: "WHO. Pocket book of hospital care for children, 2013, §7.4.3, Chart 8.", u: S.whoPb2013 },
@@ -240,10 +249,10 @@
     { id: "ors",
       title: { en: "ORS Comparison", fr: "Comparaison des SRO" },
       tables: [{
-        cols: [{ t: { en: "ORS Product", fr: "Produit" } }, { t: { en: "Carbs (g/L)", fr: "Glucides (g/L)" } }, { t: "Na⁺ (mEq/L)" }, { t: "K⁺ (mEq/L)" }, { t: "Cl⁻ (mEq/L)" }, { t: "HCO₃⁻ (mEq/L)" }, { t: { en: "Osmolarity (mOsm/L)", fr: "Osmolarité (mOsm/L)" } }],
+        cols: [{ t: { en: "ORS Product", fr: "Produit (SRO)" } }, { t: { en: "Carbs (g/L)", fr: "Glucides (g/L)" } }, { t: "Na⁺ (mEq/L)" }, { t: "K⁺ (mEq/L)" }, { t: "Cl⁻ (mEq/L)" }, { t: "HCO₃⁻ (mEq/L)" }, { t: { en: "Osmolarity (mOsm/L)", fr: "Osmolarité (mOsm/L)" } }],
         hl: [0],
         rows: [
-          [{ b: { en: "WHO low-osmolarity (2002)", fr: "OMS faible osmolarité (2002)" } }, "13.5", "75", "20", "65", "30ᵃ", "245"],
+          [{ b: { en: "WHO low-osmolarity (2002)", fr: "OMS, faible osmolarité (2002)" } }, "13.5", "75", "20", "65", "30ᵃ", "245"],
           ["Pedialyte", "25", "45", "20", "35", "30", "250"],
           ["Ceralyte", "40", "70", "20", "60", "10", "235"],
           ["Enfalyte", "30", "50", "25", "45", "30", "200"],
@@ -252,7 +261,7 @@
       }],
       footnotes: [{ en: "ᵃ WHO ORS contains trisodium citrate 10 mmol/L (2.9 g/L), which supplies about 30 mEq/L of base.", fr: "ᵃ Le SRO OMS contient du citrate trisodique 10 mmol/L (2,9 g/L), soit environ 30 mEq/L de base." }],
       notes: [
-        { en: "WHO low-osmolarity ORS is the formulation in WHO/UNICEF sachets (one sachet per litre of clean water). Check which brands your pharmacy stocks and that they match this composition.", fr: "Le SRO OMS à faible osmolarité est la formule des sachets OMS/UNICEF (un sachet par litre d'eau propre). Vérifiez les marques en stock dans votre pharmacie et leur conformité à cette composition." },
+        { en: "WHO low-osmolarity ORS is the formulation in WHO/UNICEF sachets (one sachet per litre of clean water). Check which brands your pharmacy stocks and that they match this composition.", fr: "Le SRO OMS à faible osmolarité est la formule des sachets OMS/UNICEF (un sachet par litre d'eau propre). Vérifier les marques en stock dans votre pharmacie et leur conformité à cette composition." },
         { en: "The ESPGHAN option (Na⁺ 60 mEq/L, ~200–250 mOsm/L) can be selected under Institution settings.", fr: "L'option ESPGHAN (Na⁺ 60 mEq/L, ~200–250 mOsm/L) peut être choisie dans les paramètres de l'institution." }
       ],
       sources: [
@@ -267,12 +276,12 @@
       tables: [{
         wide: true,
         cols: [{ t: { en: "Solution", fr: "Soluté" } }, { t: "Na⁺" }, { t: "K⁺" }, { t: "Cl⁻" }, { t: { en: "Citrate", fr: "Citrate" } }, { t: "Mg²⁺" }, { t: "Zn²⁺" }, { t: "Cu²⁺" }, { t: { en: "Sugars", fr: "Sucres" } }, { t: { en: "Osmolarity", fr: "Osmolarité" } }],
-        unit: { en: "mmol/L unless stated", fr: "mmol/L sauf indication" },
+        unit: { en: "mmol/L unless stated", fr: "mmol/L sauf mention contraire" },
         rows: [
           [{ b: { en: "ReSoMal, commercial sachet (84 g in 2 L)", fr: "ReSoMal, sachet commercial (84 g dans 2 L)" } }, "45", "40", "70", "7", "3", "0.3", "0.045", { en: "glucose 55, sucrose 73", fr: "glucose 55, saccharose 73" }, "294"],
           [{ en: "ReSoMal, WHO recipe from WHO-ORS (2013)", fr: "ReSoMal, recette OMS à partir du SRO OMS (2013)" }, "~45", "~40", "—", "—", "~3", "—", "—", { en: "+ 50 g sucrose per 2 L", fr: "+ 50 g de saccharose pour 2 L" }, "—"],
           [{ en: "Modified ORS for SAM (WHO 2005)", fr: "SRO modifié pour la MAS (OMS 2005)" }, "37.5", "40", "—", "—", "—", "—", "—", { en: "+ 25 g/L sugar", fr: "+ 25 g/L de sucre" }, "—"],
-          [{ en: "India MoHFW: reduced-osmolarity ORS + 15 mL KCl per litre", fr: "Inde MoHFW : SRO osmolarité réduite + 15 mL de KCl par litre" }, "75", { en: "20 + 20", fr: "20 + 20" }, "—", "10", "—", "—", "—", { en: "glucose 75", fr: "glucose 75" }, "—"]
+          [{ en: "India MoHFW: reduced-osmolarity ORS + 15 mL KCl per litre", fr: "Inde MoHFW : SRO à osmolarité réduite + 15 mL de KCl par litre" }, "75", { en: "20 + 20", fr: "20 + 20" }, "—", "10", "—", "—", "—", { en: "glucose 75", fr: "glucose 75" }, "—"]
         ]
       }],
       notes: [
@@ -301,10 +310,10 @@
            { en: "≈ 45 mmol Na, 40 mmol K, 3 mmol Mg per litre (WHO 2013). Not for cholera or profuse watery diarrhoea.", fr: "≈ 45 mmol Na, 40 mmol K, 3 mmol Mg par litre (OMS 2013). Pas en cas de choléra ou de diarrhée aqueuse profuse." }],
           [{ en: "Ringer's lactate with 5% glucose (G5%-RL)", fr: "Ringer lactate avec glucose 5 % (G5 %-RL)" },
            { en: "Remove 50 mL from a 500 mL RL bag; add 50 mL of 50% glucose", fr: "Retirer 50 mL d'une poche de 500 mL de RL ; ajouter 50 mL de glucose 50 %" },
-           { en: "MSF 2024; Kenya BPP 2022 (50 mL 50% dextrose + 450 mL RL).", fr: "MSF 2024 ; Kenya BPP 2022 (50 mL de dextrose 50 % + 450 mL de RL)." }],
-          [{ en: "RL for cholera infusion (SAM)", fr: "RL pour perfusion choléra (MAS)" },
+           { en: "MSF 2024; Kenya BPP 2022 (50 mL 50% dextrose + 450 mL RL).", fr: "MSF 2024 ; Kenya BPP 2022 (50 mL de glucose 50 % + 450 mL de RL)." }],
+          [{ en: "RL for cholera infusion (SAM)", fr: "RL pour perfusion en cas de choléra (MAS)" },
            { en: "Add 100 mL of 50% glucose to each litre of RL", fr: "Ajouter 100 mL de glucose 50 % par litre de RL" },
-           "MSF cholera §5.8."]
+           { en: "MSF cholera §5.8.", fr: "MSF choléra §5.8." }]
         ]
       }],
       sources: [
@@ -324,7 +333,7 @@
       title: { en: "Sports Drinks Comparison", fr: "Comparaison des boissons pour sportifs" },
       tables: [{
         sticky: true,
-        cols: [{ t: { en: "Brand", fr: "Marque" }, cls: "sticky-col" }, { t: { en: "Serving", fr: "Portion" } }, { t: "Cal" }, { t: { en: "Carbs (g)", fr: "Glucides (g)" } }, { t: { en: "% Carb", fr: "% glucides" } }, { t: { en: "Sugars (g)", fr: "Sucres (g)" } }, { t: "Na (mg)" }, { t: "K (mg)" }, { t: { en: "Other Key Ingredients", fr: "Autres ingrédients" } }],
+        cols: [{ t: { en: "Brand", fr: "Marque" }, cls: "sticky-col" }, { t: { en: "Serving", fr: "Portion" } }, { t: { en: "Cal", fr: "Cal" } }, { t: { en: "Carbs (g)", fr: "Glucides (g)" } }, { t: { en: "% Carb", fr: "% glucides" } }, { t: { en: "Sugars (g)", fr: "Sucres (g)" } }, { t: "Na (mg)" }, { t: "K (mg)" }, { t: { en: "Other Key Ingredients", fr: "Autres ingrédients clés" } }],
         rows: [
           ["Gatorade Thirst Quencher", "12 fl oz", "80", "22", "6%", "21", "160", "50", { en: "Electrolytes, natural flavor", fr: "Électrolytes, arôme naturel" }],
           ["Powerade", "12 fl oz", "80", "21", "5.9%", "21", "240", "80", { en: "Vitamins C, B12, calcium, magnesium", fr: "Vitamines C, B12, calcium, magnésium" }],
@@ -339,10 +348,10 @@
         ]
       }],
       footnotes: [
-        { en: "a BodyArmor Lyte: serving size (12 oz) from website; nutrition label did not specify which size.", fr: "a BodyArmor Lyte : portion (12 oz) selon le site ; l'étiquette ne précisait pas la taille." },
-        { en: "b Nuun Sport: product supplied as a dissolvable tablet.", fr: "b Nuun Sport : comprimé à dissoudre." },
-        { en: "c Skratch Labs Sport Hydration Mix: product supplied as a powder mixture.", fr: "c Skratch Labs Sport Hydration Mix : poudre à mélanger." },
-        { en: "d Ultima Replenisher: composition reported per scoop.", fr: "d Ultima Replenisher : composition par mesure." }
+        { en: "a BodyArmor Lyte: serving size (12 oz) from website; nutrition label did not specify which size.", fr: "a BodyArmor Lyte : portion (12 oz) d'après le site web ; l'étiquette nutritionnelle ne précisait pas le format." },
+        { en: "b Nuun Sport: product supplied as a dissolvable tablet.", fr: "b Nuun Sport : produit sous forme de comprimé à dissoudre." },
+        { en: "c Skratch Labs Sport Hydration Mix: product supplied as a powder mixture.", fr: "c Skratch Labs Sport Hydration Mix : produit sous forme de poudre à mélanger." },
+        { en: "d Ultima Replenisher: composition reported per scoop.", fr: "d Ultima Replenisher : composition indiquée par mesurette." }
       ],
       notes: [{ en: "Sports drinks are not oral rehydration solutions; compare their sodium and sugar with the ORS table above.", fr: "Les boissons pour sportifs ne sont pas des solutions de réhydratation orale ; comparer leur sodium et leur sucre au tableau des SRO ci-dessus." }],
       sources: [{ t: { en: "Manufacturer nutrition labels; data as published.", fr: "Étiquettes nutritionnelles des fabricants ; données telles que publiées." }, u: null }] }
@@ -359,9 +368,9 @@
     { name: "ongoingLosses(stools, emesis, w)", fn: C.ongoingLosses, file: "js/calc.js",
       d: { en: "10 mL/kg per watery stool + 2 mL/kg per emesis.", fr: "10 mL/kg par selle liquide + 2 mL/kg par vomissement." }, s: S.king2003 },
     { name: "cdsSeverity(items)", fn: C.cdsSeverity, file: "js/calc.js",
-      d: { en: "Goldman CDS: sum of 4 items (0–2 each); 0 none, 1–4 some, 5–8 moderate/severe.", fr: "ECD de Goldman : somme de 4 items (0–2) ; 0 aucune, 1–4 légère, 5–8 modérée/sévère." }, s: S.goldman },
+      d: { en: "Goldman CDS: sum of 4 items (0–2 each); 0 none, 1–4 some, 5–8 moderate/severe.", fr: "ECD de Goldman : somme de 4 items (0–2 chacun) ; 0 absente, 1–4 signes évidents, 5–8 modérée/sévère." }, s: S.goldman },
     { name: "whoSeverity(items)", fn: C.whoSeverity, file: "js/calc.js",
-      d: { en: "WHO: ≥ 2 signs in column C = severe; ≥ 2 signs in B or C = some; otherwise none.", fr: "OMS : ≥ 2 signes en C = sévère ; ≥ 2 signes en B ou C = signes évidents ; sinon aucune." }, s: S.whoTod },
+      d: { en: "WHO: ≥ 2 signs in column C = severe; ≥ 2 signs in B or C = some; otherwise none.", fr: "OMS : ≥ 2 signes en colonne C = sévère ; ≥ 2 signes en B ou C = signes évidents ; sinon absente." }, s: S.whoTod },
     { name: "planB(w, rate, hours)", fn: C.planB, file: "js/calc.js",
       d: { en: "ORS volume = rate (mL/kg, WHO 75) × weight, over the chosen hours.", fr: "Volume de SRO = dose (mL/kg, OMS 75) × poids, sur la durée choisie." }, s: S.whoTod },
     { name: "planCWho(w, months)", fn: C.planCWho, file: "js/calc.js",
@@ -376,7 +385,7 @@
   SAM.ORDER.forEach(function (id) {
     var p = SAM.PROTOCOLS[id];
     FORMULAS.push({ name: "PROTOCOLS." + id + ".build(ctx)", fn: p.build, file: "js/sam.js",
-      d: { en: "SAM protocol: " + p.sources[0].t, fr: "Protocole MAS : " + p.sources[0].t, kr: "SAM 프로토콜: " + p.sources[0].t }, s: p.sources[0].u });
+      d: p.sources[0].t, s: p.sources[0].u, proto: true });
   });
 
   function el(tag, cls, text) {
@@ -426,7 +435,7 @@
 
   function renderSources(list) {
     var p = el("div", "ref-source");
-    p.appendChild(el("strong", null, L(list.length > 1 ? UI.sources : UI.source) + ": "));
+    p.appendChild(el("strong", null, L(list.length > 1 ? UI.sources : UI.source) + L(UI.colon)));
     var ul = el("ul", "src-list");
     list.forEach(function (s) {
       var li = el("li");
@@ -441,10 +450,10 @@
     FORMULAS.forEach(function (f) {
       var box = el("div", "formula");
       box.appendChild(el("h4", "formula-h", f.name));
-      box.appendChild(el("p", "formula-d", L(f.d)));
+      box.appendChild(el("p", "formula-d", (f.proto ? L(UI.samProto) : "") + L(f.d)));
       var links = el("p", "ref-source");
       if (f.s) { links.appendChild(a(f.s, L(UI.source) + " ↗")); links.appendChild(document.createTextNode(" · ")); }
-      links.appendChild(a(REPO + f.file, L(UI.code) + ": " + f.file + " ↗"));
+      links.appendChild(a(REPO + f.file, L(UI.code) + L(UI.colon) + f.file + " ↗"));
       box.appendChild(links);
       var det = el("details", "working");
       det.appendChild(el("summary", null, f.name));
@@ -477,6 +486,9 @@
     document.getElementById("backBtn").setAttribute("aria-label", L(UI.back));
     document.getElementById("backBtn").setAttribute("title", L(UI.back));
     document.getElementById("langBtn").textContent = FLAGS[lang];
+    document.getElementById("langBtn").setAttribute("aria-label", L(UI.lang));
+    document.getElementById("topNav").setAttribute("aria-label", L(UI.nav));
+    document.getElementById("themeSeg").setAttribute("aria-label", L(UI.themeL));
     var tl = UI.theme[lang] || UI.theme.en;
     Array.prototype.forEach.call(document.querySelectorAll("#themeSeg .seg"), function (b, i) { b.textContent = tl[i]; });
     document.getElementById("footText").textContent = L(UI.foot);

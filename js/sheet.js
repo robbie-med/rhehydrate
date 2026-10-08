@@ -25,7 +25,9 @@
     }
     return rows;
   }
-  function dur(hours) { return hours < 1 ? Math.round(hours * 60) + " min" : hours + " h"; }
+  function dur(hours) {
+    return hours < 1 ? { key: "bs.dur.min", vars: { n: Math.round(hours * 60) } } : { key: "bs.dur.h", vars: { n: hours } };
+  }
 
   function findItem(P, key) {
     for (var i = 0; i < P.blocks.length; i++)
@@ -81,7 +83,7 @@
         m.rows.push({ type: "opt", text: ["bs.p2.opt", { n: String(k), rate: p.rate, total: p.total }] });
       });
       for (var i = 1; i <= 6; i++) {
-        m.rows.push({ type: "dose", when: "P2 +" + hm(i * 120), text: ["bs.p2.row", {}] });
+        m.rows.push({ type: "dose", when: ["bs.p2.when", { t: hm(i * 120) }], text: ["bs.p2.row", {}] });
       }
       m.rows.push({ type: "task", when: "", text: ["bs.oral.started", {}] });
       return m;
@@ -228,7 +230,7 @@
           var od2 = el("td", null, "○  " + tx(r.text)); od2.colSpan = cols.length; tr.appendChild(od2);
           tb.appendChild(tr); return;
         }
-        tr.appendChild(el("td", "c-when", r.when || ""));
+        tr.appendChild(el("td", "c-when", Array.isArray(r.when) ? tx(r.when) : (r.when || "")));
         var give = el("td", "c-give");
         if (r.text) give.appendChild(document.createTextNode(tx(r.text)));
         if (r.v != null) {

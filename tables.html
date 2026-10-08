@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="css/styles.css?v=1.6.13" />
+  <link rel="stylesheet" href="css/styles.css?v=1.7.0" />
   <script>
     try { var th = localStorage.getItem("rh.theme") || "system";
       if (th === "system") th = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
@@ -33,13 +33,13 @@
         </div>
       </div>
     </div>
-    <nav class="topnav" aria-label="Theme and language">
+    <nav class="topnav" id="topNav" aria-label="Theme and language">
       <div class="segmented small" id="themeSeg" role="group" aria-label="Color theme">
         <button class="seg" data-theme-val="system">System</button>
         <button class="seg" data-theme-val="light">Light</button>
         <button class="seg" data-theme-val="dark">Dark</button>
       </div>
-      <button class="langtoggle" id="langBtn" aria-label="Language: English / Français / 한국어">🇬🇧</button>
+      <button class="langtoggle" id="langBtn" aria-label="Change language">🇬🇧</button>
     </nav>
   </header>
 
@@ -96,10 +96,12 @@
       });
     })();
   </script>
-  <script src="js/calc.js?v=1.6.13"></script>
-  <script src="js/sam.js?v=1.6.13"></script>
-  <script src="js/tables-kr.js?v=1.6.13"></script>
-  <script src="js/tables.js?v=1.6.13"></script>
+  <script src="js/calc.js?v=1.7.0"></script>
+  <script src="js/sam.js?v=1.7.0"></script>
+  <script src="js/tables-kr.js?v=1.7.0"></script>
+  <script src="js/tables-ru.js?v=1.7.0"></script>
+  <script src="js/tables-zh.js?v=1.7.0"></script>
+  <script src="js/tables.js?v=1.7.0"></script>
 
 </body>
 </html>

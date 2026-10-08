@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.13";
+  var APP_VERSION = "1.7.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -11,7 +11,6 @@
   var FLAGS  = { en: "🇬🇧", kr: "🇰🇷", fr: "🇫🇷", ru: "🇷🇺", zh: "🇨🇳" };
   var LOCALES = { en: "en-US", kr: "ko-KR", fr: "fr-FR", ru: "ru-RU", zh: "zh-CN" };
   var HTML_LANGS = { en: "en", kr: "ko", fr: "fr", ru: "ru", zh: "zh" };
-  var IV_NOTE_LABEL = { en: "IV fluid: ", kr: "정맥 수액: ", fr: "Soluté IV : ", ru: "В/В раствор: ", zh: "静脉输液：" };
 
   var REFS = [
     { url: "https://iris.who.int/handle/10665/43209",            key: "edu.refs.1" },
@@ -82,10 +81,31 @@
       if (!(k in vars)) return "{" + k + "}";
       var v = vars[k];
       if (typeof v === "number") return fmt(v);
-      if (v && typeof v === "object" && v.key) return t(v.key);
+      if (v && typeof v === "object" && v.key) return t(v.key, v.vars);
       return v;
     });
     return s;
+  }
+
+  // units inside working lines and unit labels
+  var UNIT_RE = /\b(mL\/kg\/h|mL\/kg|mL\/h|mL\/day|mg\/kg|mg\/day|mL|kg|mg|mm|months|min|h)\b/g;
+  function lu(s) {
+    return String(s).replace(UNIT_RE, function (u) { return t("u." + u); });
+  }
+  // formula text: "f:" keys hold the English with each number replaced by #
+  function tf(s) {
+    var nums = [], key = "f:" + s.replace(/\d+(?:\.\d+)?/g, function (m) { nums.push(m); return "#"; });
+    var d = window.I18N[state.lang] || {};
+    if (!(key in d)) return lu(s);
+    var i = 0;
+    return d[key].replace(/#/g, function () { return nums[i++]; });
+  }
+  // working values that are words
+  function tw(v) {
+    if (typeof v === "number") return C.n(v);
+    if (window.I18N.en["sev." + v]) return t("sev." + v);
+    if (window.I18N.en["w.v." + v]) return t("w.v." + v);
+    return lu(v);
   }
 
   // displayed doses: whole units at ≥ 10, one decimal below
@@ -98,6 +118,7 @@
   // ── i18n ────────────────────────────────────────────────────────────
   function applyI18n() {
     document.documentElement.lang = HTML_LANGS[state.lang] || state.lang;
+    document.title = t("app.docTitle");
     $$("[data-i18n]").forEach(function (el) {
       el.textContent = t(el.getAttribute("data-i18n"));
     });
@@ -107,6 +128,9 @@
     $$("[data-i18n-title]").forEach(function (el) {
       var v = t(el.getAttribute("data-i18n-title"));
       el.setAttribute("title", v); el.setAttribute("aria-label", v);
+    });
+    $$("[data-i18n-aria]").forEach(function (el) {
+      el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
     });
     $("#langToggle").textContent = FLAGS[state.lang] || state.lang.toUpperCase();
     $$("select option[data-i18n]").forEach(function (o) {
@@ -348,16 +372,15 @@
     lines.forEach(function (l) {
       var li = txt("li");
       li.appendChild(txt("span", "wk-l", t(l.k)));
-      var v = typeof l.v === "number" ? C.n(l.v) : (window.I18N.en["sev." + l.v] ? t("sev." + l.v) : String(l.v));
-      li.appendChild(txt("code", "wk-x", l.x + " = " + v + (l.u ? " " + l.u : "")));
-      if (l.f) li.appendChild(txt("span", "wk-f", l.f));
+      li.appendChild(txt("code", "wk-x", tw(l.x) + " = " + tw(l.v) + (l.u ? " " + lu(l.u) : "")));
+      if (l.f) li.appendChild(txt("span", "wk-f", tf(l.f)));
       if (l.src) li.appendChild(link(l.src, t("w.source") + " ↗", "wk-src"));
       ul.appendChild(li);
     });
     d.appendChild(ul);
     var foot = txt("p", "wk-foot");
     foot.appendChild(document.createTextNode(t("w.rounding") + " "));
-    foot.appendChild(link(REPO + (codeFile || "js/calc.js"), t("w.code") + ": " + (codeFile || "js/calc.js") + " ↗"));
+    foot.appendChild(link(REPO + (codeFile || "js/calc.js"), t("w.code", { file: codeFile || "js/calc.js" }) + " ↗"));
     foot.appendChild(document.createTextNode(" · "));
     var f = txt("a", null, t("w.formulas")); f.href = "tables.html#formulas";
     foot.appendChild(f);
@@ -387,11 +410,11 @@
 
     var metrics = el("div", "metrics");
     metrics.appendChild(metric(t("res.deficitPct"),  fmt(R.sev.pct) + "<small>%</small>"));
-    metrics.appendChild(metric(t("res.deficitVol"),  fmt(R.deficitVol) + "<small> mL</small>"));
+    metrics.appendChild(metric(t("res.deficitVol"),  fmt(R.deficitVol) + "<small> " + t("u.mL") + "</small>"));
     metrics.appendChild(metric(t("res.maint24"),     fmt(R.maint24) + "<small> " + t("unit.mlDay") + "</small>"));
-    metrics.appendChild(metric(t("res.maintHr"),     fmt(R.maintHr) + "<small> mL/h</small>"));
+    metrics.appendChild(metric(t("res.maintHr"),     fmt(R.maintHr) + "<small> " + t("u.mL/h") + "</small>"));
     if (R.lossVol > 0) {
-      metrics.appendChild(metric(t("res.losses"), fmt(R.lossVol) + "<small> mL</small>"));
+      metrics.appendChild(metric(t("res.losses"), fmt(R.lossVol) + "<small> " + t("u.mL") + "</small>"));
     }
     body.appendChild(metrics);
     body.appendChild(workDetails(R.work));
@@ -512,9 +535,7 @@
         witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"));
         if (ins.showZinc) witems.push(zincLine(R));
         body.appendChild(liList(witems));
-        var fnote = el("p", "note");
-        fnote.textContent = (IV_NOTE_LABEL[state.lang] || "IV fluid: ") + fluidName;
-        body.appendChild(fnote);
+        body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
         body.appendChild(workDetails(wc.work));
       }
     }
@@ -578,7 +599,7 @@
     var metrics = el("div", "metrics");
     metrics.appendChild(metric(t("res.sam.hyd"), t("sam.hyd." + s.hyd) + (s.shock ? " · " + t("sam.shock") : "")));
     metrics.appendChild(metric(t("res.sam.protocol"), t(P.protocol.nameKey + ".short")));
-    metrics.appendChild(metric(t("res.sam.weight"), fmt(R.weight) + "<small> kg</small>"));
+    metrics.appendChild(metric(t("res.sam.weight"), fmt(R.weight) + "<small> " + t("u.kg") + "</small>"));
     metrics.appendChild(metric(t("res.sam.fluid"), t("sam.fluid." + P.fluid)));
     body.appendChild(metrics);
     body.appendChild(workDetails(R.screen.work, "js/calc.js"));
@@ -636,7 +657,7 @@
     var head = {
       logo: ins.logo, inst: ins.name, dept: ins.dept,
       age: R.months < 24 ? t("bs.age.m", { n: R.months }) : t("bs.age.y", { n: R.months / 12 }),
-      weight: fmt(R.weight) + " kg",
+      weight: fmt(R.weight) + " " + t("u.kg"),
       classLabel: R.sam ? t("bs.class.sam", { hyd: { key: "sam.hyd." + s.hyd } }) + (s.shock ? " · " + t("sam.shock") : "")
         : t("sev." + R.sev.key),
       samLabel: samLabel,

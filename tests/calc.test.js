@@ -4,6 +4,7 @@ var assert = require("assert");
 var C = require("../js/calc.js");
 var S = require("../js/sam.js");
 
+var LANGS = ["en", "kr", "fr", "ru", "zh"];
 var passed = 0;
 function t(name, fn) { fn(); passed++; console.log("ok  " + name); }
 function close(a, b) { assert.ok(Math.abs(a - b) < 1e-9, a + " ≠ " + b); }
@@ -203,7 +204,7 @@ t("sheet SAM: India uses its own doses; other protocols, shock and cholera get a
     assert.strictEqual(m.rows.filter(function (r) { return r.type === "blank"; }).length, 12, c[0]);
   });
 });
-t("every string the sheet uses exists in EN, FR and KR", function () {
+t("every string the sheet uses exists in all five languages", function () {
   global.window = globalThis;
   require("../js/i18n.js"); require("../js/i18n-sam.js"); require("../js/i18n-sheet.js");
   var I = globalThis.I18N, fs = require("fs"), path = require("path");
@@ -236,15 +237,73 @@ t("every string the sheet uses exists in EN, FR and KR", function () {
   });
   Object.keys(keys).forEach(function (k) {
     if (/\.$/.test(k)) return;   // prefix
-    ["en", "fr", "kr"].forEach(function (l) { assert.ok(k in I[l], l + " missing " + k); });
+    LANGS.forEach(function (l) { assert.ok(k in I[l], l + " missing " + k); });
   });
 });
 
-t("on-screen zinc line and the mL/day unit exist in all five languages", function () {
-  ["en", "kr", "fr", "ru", "zh"].forEach(function (l) {
-    assert.ok(/\{mg\}/.test(globalThis.I18N[l]["plan.zinc"]), l + " plan.zinc");
-    assert.ok(globalThis.I18N[l]["unit.mlDay"], l + " unit.mlDay");
+// ── translations ──
+t("every UI string exists in every language, with the same placeholders", function () {
+  var I = globalThis.I18N;
+  function ph(s) { return (s.match(/\{\w+\}/g) || []).sort().join(" "); }
+  Object.keys(I.en).forEach(function (k) {
+    LANGS.forEach(function (l) {
+      assert.ok(typeof I[l][k] === "string" && I[l][k].trim(), l + " missing " + k);
+      assert.strictEqual(ph(I[l][k]), ph(I.en[k]), l + " " + k + " placeholders");
+      if (k.indexOf("f:") === 0) assert.strictEqual(I[l][k].split("#").length, I.en[k].split("#").length, l + " " + k + " #");
+    });
   });
+  LANGS.forEach(function (l) {
+    Object.keys(I[l]).forEach(function (k) { assert.ok(k in I.en, l + " has stale key " + k); });
+  });
+});
+
+t("every formula and unit the working can show has a translation key", function () {
+  var I = globalThis.I18N, lines = [];
+  function add(w) { lines = lines.concat(w); }
+  [5, 12, 25].forEach(function (w) {
+    add(C.maintenance(w).work); add(C.deficitVolume(6, w).work); add(C.ongoingLosses(2, 1, w).work);
+    add(C.planB(w, 75, 4).work); add(C.planCWho(w, null).work); add(C.planCBolus(w, 1000, 40, 2).work);
+  });
+  add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work);
+  add(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).work);
+  add(C.whoSeverity({ condition: 1, eyes: 1, thirst: 1, skin: 1 }).work);
+  add(C.samScreen({ muac: 110, oedema: 2, whz: "yes", months: 20 }).work);
+  S.ORDER.forEach(function (id) {
+    ["none", "some", "severe"].forEach(function (hyd) {
+      [false, true].forEach(function (shock) { [false, true].forEach(function (cholera) {
+        [true, false].forEach(function (oralOk) { [null, 9, 7].forEach(function (preW) { [null, 10].forEach(function (months) {
+          S.plan(id, base({ hyd: hyd, shock: shock, cholera: cholera, oralOk: oralOk, preW: preW, months: months })).blocks
+            .forEach(function (b) { add(b.work); });
+        }); }); });
+      }); });
+    });
+  });
+  var app = require("fs").readFileSync(require("path").join(__dirname, "../js/app.js"), "utf8");
+  var unitRe = new RegExp(app.match(/var UNIT_RE = \/(.*)\/g;/)[1], "g");
+  lines.forEach(function (l) {
+    assert.ok(("f:" + l.f.replace(/\d+(?:\.\d+)?/g, "#")) in I.en, "no f: key for " + l.f);
+    assert.ok(I.en["w.v." + l.v] || I.en["sev." + l.v] || typeof l.v === "number" || l.v === "—", "untranslated value " + l.v);
+    (String(l.x) + " " + l.u).replace(unitRe, function (u) { assert.ok(("u." + u) in I.en, "no unit key u." + u); });
+  });
+});
+
+t("every reference-table string has a translation in all five languages", function () {
+  var fs = require("fs"), path = require("path"), vm = require("vm"), ctx = { window: {} };
+  vm.createContext(ctx);
+  ["kr", "ru", "zh"].forEach(function (l) {
+    vm.runInContext(fs.readFileSync(path.join(__dirname, "../js/tables-" + l + ".js"), "utf8"), ctx);
+  });
+  var D = { kr: ctx.window.RH_TABLES_KR, ru: ctx.window.RH_TABLES_RU, zh: ctx.window.RH_TABLES_ZH };
+  var src = fs.readFileSync(path.join(__dirname, "../js/tables.js"), "utf8");
+  var re = /\{\s*en:\s*("(?:[^"\\]|\\.)*")(\s*,\s*fr:\s*("(?:[^"\\]|\\.)*"))?(\s*,\s*kr:\s*"(?:[^"\\]|\\.)*")?/g, m, n = 0;
+  while ((m = re.exec(src))) {
+    var en = JSON.parse(m[1]);
+    if (/^(🇬🇧|en)$/.test(en) || !/[A-Za-z]/.test(en)) continue;
+    n++;
+    assert.ok(m[3] && JSON.parse(m[3]).trim(), "fr missing: " + en);
+    ["kr", "ru", "zh"].forEach(function (l) { assert.ok(m[4] && l === "kr" || D[l][en], l + " missing: " + en); });
+  }
+  assert.ok(n > 200, "table strings found: " + n);
 });
 
 // ── release versions ──

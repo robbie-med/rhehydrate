@@ -1,5 +1,5 @@
 /* PRhehydrate service worker. Release: bump VERSION, APP_VERSION and every ?v= (tested). */
-var VERSION = "1.6.13";
+var VERSION = "1.7.0";
 var CACHE = "rhehydrate-v" + VERSION;
 var V = "?v=" + VERSION;
 var PAGES = ["./", "./index.html", "./tables.html"];
@@ -14,6 +14,8 @@ var ASSETS = [
   "./js/app.js" + V,
   "./js/tables.js" + V,
   "./js/tables-kr.js" + V,
+  "./js/tables-ru.js" + V,
+  "./js/tables-zh.js" + V,
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-maskable.svg"

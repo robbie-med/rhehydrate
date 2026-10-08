@@ -152,7 +152,7 @@ en: {
   "about.mission.p":"PRhehydrate exists to put evidence-based rehydration guidance at the bedside, fast. Diarrhoea remains a leading cause of preventable child death, and simple oral rehydration is among the most effective interventions available.",
   "about.version":"Version",
   "about.disclaimer.h":"Disclaimer",
-  "about.disclaimer.p":"This tool does not replace clinical judgement, local guidelines, or direct assessment. Verify all doses and volumes. The authors accept no liability for clinical use. Not a regulated medical device.",
+  "about.disclaimer.p":"Not a regulated medical device. Check every dose and volume. It does not replace clinical judgement or local protocols, and no liability is accepted for clinical use.",
   "about.offline":"Installed and ready offline.",
   "about.online":"Online. Install to use offline.",
 
@@ -351,7 +351,7 @@ kr: {
   "about.mission.p":"PRhehydrate는 근거 기반 수액 요법 지침을 침상에서 빠르게 제공하기 위해 만들어졌습니다. 설사는 여전히 예방 가능한 소아 사망의 주요 원인이며, 단순한 경구 수액은 가장 효과적인 중재 중 하나입니다.",
   "about.version":"버전",
   "about.disclaimer.h":"면책 조항",
-  "about.disclaimer.p":"이 도구는 임상 판단, 지역 지침 또는 직접 평가를 대체하지 않습니다. 모든 용량과 용적을 확인하세요. 저자는 임상 사용에 대한 책임을 지지 않습니다. 규제 의료기기가 아닙니다.",
+  "about.disclaimer.p":"규제 대상 의료기기가 아닙니다. 모든 용량과 수액량을 확인하십시오. 임상 판단이나 지역 프로토콜을 대신하지 않으며, 임상 사용에 대한 책임을 지지 않습니다.",
   "about.offline":"설치되어 오프라인 사용 준비됨.",
   "about.online":"온라인. 오프라인 사용을 위해 설치하세요.",
 
@@ -550,7 +550,7 @@ fr: {
   "about.mission.p":"PRhehydrate existe pour mettre les recommandations de réhydratation fondées sur les preuves au chevet du patient, rapidement. La diarrhée reste une cause majeure de décès évitables chez l'enfant, et la réhydratation orale simple est parmi les interventions les plus efficaces disponibles.",
   "about.version":"Version",
   "about.disclaimer.h":"Avertissement",
-  "about.disclaimer.p":"Cet outil ne remplace pas le jugement clinique, les protocoles locaux ou l'évaluation directe. Vérifiez toutes les doses et tous les volumes. Les auteurs déclinent toute responsabilité en cas d'utilisation clinique. Ce n'est pas un dispositif médical réglementé.",
+  "about.disclaimer.p":"Ce n'est pas un dispositif médical réglementé. Vérifier chaque dose et chaque volume. Il ne remplace ni le jugement clinique ni les protocoles locaux, et aucune responsabilité n'est acceptée pour l'usage clinique.",
   "about.offline":"Installé et prêt hors ligne.",
   "about.online":"En ligne. Installer pour utilisation hors ligne.",
 
@@ -749,7 +749,7 @@ ru: {
   "about.mission.p":"PRhehydrate создан для того, чтобы обоснованные рекомендации по регидратации были доступны у постели больного быстро. Диарея остаётся ведущей причиной предотвратимых смертей детей, а простая оральная регидратация — одним из наиболее эффективных доступных вмешательств.",
   "about.version":"Версия",
   "about.disclaimer.h":"Отказ от ответственности",
-  "about.disclaimer.p":"Данный инструмент не заменяет клиническое суждение, местные протоколы или непосредственную оценку пациента. Проверяйте все дозы и объёмы. Авторы не несут ответственности за клиническое применение. Не является регулируемым медицинским изделием.",
+  "about.disclaimer.p":"Не является зарегистрированным медицинским изделием. Проверяйте каждую дозу и объём. Не заменяет клиническое суждение и местные протоколы; ответственность за клиническое применение не принимается.",
   "about.offline":"Установлено и готово к работе офлайн.",
   "about.online":"Онлайн — установите для работы офлайн.",
 
@@ -948,7 +948,7 @@ zh: {
   "about.mission.p":"PRhehydrate的使命是将循证补液指南快速送达床旁。腹泻病仍是儿童可预防死亡的主要原因，而简单的口服补液是目前最有效的干预措施之一。",
   "about.version":"版本",
   "about.disclaimer.h":"免责声明",
-  "about.disclaimer.p":"本工具不能替代临床判断、当地指南或直接评估。请核实所有剂量和容积。作者不承担任何临床使用责任。本工具不是经监管批准的医疗器械。",
+  "about.disclaimer.p":"本工具不是受监管的医疗器械。请核对每一剂量和液体量。本工具不能替代临床判断或当地方案，对临床使用不承担责任。",
   "about.offline":"已安装，可离线使用。",
   "about.online":"在线模式，安装后可离线使用。",
 

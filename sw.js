@@ -5,7 +5,7 @@
  * they agree). Versioned URLs mean a new release never reuses a cached file
  * from an older one — neither from this cache nor the browser's HTTP cache
  * (GitHub Pages sends max-age=14400 for .js/.css). */
-var VERSION = "1.5.0";
+var VERSION = "1.6.0";
 var CACHE = "rhehydrate-v" + VERSION;
 var V = "?v=" + VERSION;
 var PAGES = ["./", "./index.html", "./tables.html"];

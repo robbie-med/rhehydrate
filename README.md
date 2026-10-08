@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.6.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -109,7 +109,7 @@ Every plan lists its sources. Page-level excerpts for each number:
 </tr>
 <tr>
   <td><strong>🌗 Thoughtful theming</strong></td>
-  <td>Light / dark / system. Dark mode uses a pure charcoal palette with amber gold accent — zero blue, zero eye strain at 3 am.</td>
+  <td>Light / dark / system. Dark mode is true black with an amber accent — easy on the eyes at 3 am and on OLED batteries.</td>
 </tr>
 <tr>
   <td><strong>🔒 Fully private</strong></td>
@@ -117,7 +117,7 @@ Every plan lists its sources. Page-level excerpts for each number:
 </tr>
 <tr>
   <td><strong>🖥 Responsive layout</strong></td>
-  <td>Sticky two-column on desktop (inputs left, results right); single-column on mobile portrait. Print-ready output.</td>
+  <td>Flat, uncluttered layout. Desktop and tablet (≥ 768 px): inputs in a left column, the plan on the right. Mobile: one column with Calculate pinned to the bottom of the screen. The plan updates live as you fill in the inputs.</td>
 </tr>
 </table>
 

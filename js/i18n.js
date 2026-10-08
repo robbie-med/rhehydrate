@@ -116,6 +116,8 @@ en: {
   "plan.c.var.surgical":"Suspected surgical abdomen: withhold ORS; obtain surgical review urgently.",
 
   "res.maintNote":"Holliday–Segar: 100/50/20 mL/kg/day (4-2-1 mL/kg/h).",
+  "unit.mlDay":"mL/day",
+  "plan.zinc":"Zinc {mg} mg once a day for 10–14 days (10 mg under 6 months, 20 mg from 6 months) — reduces diarrhoea duration and severity.",
   "res.disclaimerShort":"Decision support only — verify against local protocol and clinical judgement.",
 
   "rf.title":"Red flags — consider IV and senior review",
@@ -316,6 +318,8 @@ kr: {
   "plan.c.var.surgical":"수술적 복부 의심: ORS 중단; 즉시 외과 진료 요청.",
 
   "res.maintNote":"Holliday–Segar: 100/50/20 mL/kg/일 (4-2-1 mL/kg/시).",
+  "unit.mlDay":"mL/일",
+  "plan.zinc":"아연 {mg} mg 1일 1회, 10–14일 (6개월 미만 10 mg, 6개월 이상 20 mg) — 설사 기간과 중증도를 줄입니다.",
   "res.disclaimerShort":"의사결정 보조용 — 지역 프로토콜과 임상 판단으로 확인하세요.",
 
   "rf.title":"위험 징후 — 정맥 수액 및 상급자 검토 고려",
@@ -516,6 +520,8 @@ fr: {
   "plan.c.var.surgical":"Abdomen chirurgical suspecté : ne pas donner le SRO ; demander un avis chirurgical en urgence.",
 
   "res.maintNote":"Holliday–Segar : 100/50/20 mL/kg/jour (4-2-1 mL/kg/h).",
+  "unit.mlDay":"mL/jour",
+  "plan.zinc":"Zinc {mg} mg une fois par jour pendant 10–14 jours (10 mg avant 6 mois, 20 mg à partir de 6 mois) — réduit la durée et la sévérité de la diarrhée.",
   "res.disclaimerShort":"Aide à la décision uniquement — vérifier selon le protocole local et le jugement clinique.",
 
   "rf.title":"Signes d'alarme — envisager voie IV et avis senior",
@@ -716,6 +722,8 @@ ru: {
   "plan.c.var.surgical":"Подозрение на хирургическую патологию живота: отменить ОРС; срочно запросить хирургическую консультацию.",
 
   "res.maintNote":"Holliday–Segar: 100/50/20 мл/кг/сут (4-2-1 мл/кг/ч).",
+  "unit.mlDay":"мл/сут",
+  "plan.zinc":"Цинк {mg} мг 1 раз в сутки в течение 10–14 дней (до 6 месяцев — 10 мг, с 6 месяцев — 20 мг) — уменьшает длительность и тяжесть диареи.",
   "res.disclaimerShort":"Только поддержка принятия решений — проверяйте по местному протоколу и клиническому суждению.",
 
   "rf.title":"Тревожные признаки — рассмотреть в/в доступ и консультацию старшего врача",
@@ -916,6 +924,8 @@ zh: {
   "plan.c.var.surgical":"疑似外科急腹症：禁止口服补液，立即请外科急会诊。",
 
   "res.maintNote":"Holliday–Segar法：前10 kg 100 mL/kg/天，10–20 kg 50 mL/kg/天，>20 kg 20 mL/kg/天（4-2-1规则）。",
+  "unit.mlDay":"mL/天",
+  "plan.zinc":"锌 {mg} mg，每日一次，连用10–14天（6个月以下10 mg，6个月及以上20 mg）——可缩短腹泻病程并减轻严重程度。",
   "res.disclaimerShort":"仅供临床决策参考——请结合当地方案和临床判断。",
 
   "rf.title":"危险信号——考虑静脉补液及上级会诊",

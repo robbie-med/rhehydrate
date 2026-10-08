@@ -244,6 +244,13 @@ t("every string the sheet uses exists in EN, FR and KR", function () {
   });
 });
 
+t("on-screen zinc line and the mL/day unit exist in all five languages", function () {
+  ["en", "kr", "fr", "ru", "zh"].forEach(function (l) {
+    assert.ok(/\{mg\}/.test(globalThis.I18N[l]["plan.zinc"]), l + " plan.zinc");
+    assert.ok(globalThis.I18N[l]["unit.mlDay"], l + " unit.mlDay");
+  });
+});
+
 // ── release consistency: versioned URLs must match the service worker ──
 t("release versions agree (sw.js, app.js, ?v= in HTML) and every script is precached", function () {
   var fs = require("fs"), path = require("path"), root = path.join(__dirname, "..");

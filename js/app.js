@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.5.0";
+  var APP_VERSION = "1.6.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -72,7 +72,6 @@
     bolusCount: 1,
     inst: Object.assign({}, INST_DEFAULTS)
   };
-  var calcRequested = false;   // live-recalculate only after the first Calculate
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -188,7 +187,7 @@
         o.classList.add("sel");
         if (group === "cds") updateCdsScore();
         persist();
-        if (calcRequested) calculate();
+        recalc();
       });
       var txt = document.createElement("span"); txt.className = "opt-t";
       txt.textContent = t(group + "." + item + "." + v);
@@ -250,13 +249,18 @@
     return C.samScreen({ muac: state.sam.muac, oedema: state.sam.oedema, whz: state.sam.whz, months: months });
   }
 
-  function calculate() {
-    calcRequested = true;
+  // The plan follows the inputs live (quiet); the Calculate button calls it
+  // loudly, which also points at a missing weight.
+  function calculate(quiet) {
     var weight = parseFloat($("#weight").value);
     var months = ageMonths();
     var screen = samScreenResult(months);
     renderSamStatus(screen);
-    if (!weight || weight <= 0) { flashWeight(); return; }
+    if (!weight || weight <= 0) {
+      lastResult = null; renderEmpty();
+      if (!quiet) flashWeight();
+      return;
+    }
 
     // SAM gate: a positive screen replaces Plans A/B/C with the SAM pathway
     if (screen && screen.status === "pos") {
@@ -288,6 +292,8 @@
     renderResults(lastResult);
     persist();
   }
+
+  function recalc() { calculate(true); }
 
   function ageMonths() {
     var a = parseFloat($("#age").value);
@@ -392,7 +398,7 @@
     var metrics = el("div", "metrics");
     metrics.appendChild(metric(t("res.deficitPct"),  fmt(R.sev.pct) + "<small>%</small>"));
     metrics.appendChild(metric(t("res.deficitVol"),  fmt(R.deficitVol) + "<small> mL</small>"));
-    metrics.appendChild(metric(t("res.maint24"),     fmt(R.maint24) + "<small> mL/day</small>"));
+    metrics.appendChild(metric(t("res.maint24"),     fmt(R.maint24) + "<small> " + t("unit.mlDay") + "</small>"));
     metrics.appendChild(metric(t("res.maintHr"),     fmt(R.maintHr) + "<small> mL/h</small>"));
     if (R.lossVol > 0) {
       metrics.appendChild(metric(t("res.losses"), fmt(R.lossVol) + "<small> mL</small>"));
@@ -436,7 +442,7 @@
       head.textContent = t("plan.a.title");
       var items = [t("plan.a.1"), t("plan.a.2"),
         t("plan.a.3", { stool: fmt(loss.perStool), emesis: fmt(loss.perEmesis) })];
-      if (ins.showZinc) items.push(t("plan.a.4"));
+      if (ins.showZinc) items.push(zincLine(R));
       items.push(t("plan.a.5"));
       body.appendChild(liList(items));
       body.appendChild(workDetails(loss.work.slice(0, 2)));
@@ -451,6 +457,7 @@
       its.push(t("plan.b.3", { losses: fmt(R.lossVol) }));
       its.push(t("plan.b.4", { hours: ins.planBHours }));
       if (ins.showNgOrs)        its.push(t("plan.b.5"));
+      if (ins.showZinc)         its.push(zincLine(R));
       if (ins.showRacecadotril) its.push(t("plan.b.racecadotril"));
       if (ins.showSmectite)     its.push(t("plan.b.smectite"));
       if (ins.showSboulardii)   its.push(t("plan.b.sboulardii"));
@@ -488,7 +495,8 @@
         ph2.appendChild(liList([
           t("plan.c.phase2.switch"),
           t("plan.c.4"),
-          t("plan.c.phase2.reassess")
+          t("plan.c.phase2.reassess"),
+          ins.showZinc ? zincLine(R) : null
         ]));
         body.appendChild(ph2);
         body.appendChild(workDetails(pc.work));
@@ -518,6 +526,7 @@
           witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
         }
         witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"));
+        if (ins.showZinc) witems.push(zincLine(R));
         body.appendChild(liList(witems));
         var fnote = el("p", "note");
         fnote.textContent = (IV_NOTE_LABEL[state.lang] || "IV fluid: ") + fluidName;
@@ -528,6 +537,11 @@
 
     plan.appendChild(head); plan.appendChild(body);
     return plan;
+  }
+
+  // zinc dose for the child's age (calc.js); the 10–20 mg range if age is unknown
+  function zincLine(R) {
+    return R.months == null ? t("plan.a.4") : t("plan.zinc", { mg: String(C.zinc(R.months).mg) });
   }
 
   // how many 20 mL/kg boluses were actually given (drives Phase 2)
@@ -713,7 +727,7 @@
   }
 
   function wireSamUI() {
-    function changed() { persist(); renderSamStatus(samScreenResult(ageMonths())); if (calcRequested) calculate(); }
+    function changed() { persist(); renderSamStatus(samScreenResult(ageMonths())); recalc(); }
     function num(v) { var x = parseFloat(v); return isNaN(x) ? null : x; }
     $("#samMuac").addEventListener("input", function () { state.sam.muac = num(this.value); changed(); });
     $("#samPreW").addEventListener("input", function () { state.sam.preW = num(this.value); changed(); });
@@ -812,7 +826,7 @@
     try { localStorage.setItem(LS.inst, JSON.stringify(state.inst)); } catch(e) {}
     updateInstTag();
     syncSamUI();
-    if (calcRequested) calculate();
+    recalc();
   }
 
   function loadInst() {
@@ -829,7 +843,7 @@
     syncInstUI();
     updateInstTag();
     syncSamUI();
-    if (calcRequested) calculate();
+    recalc();
   }
 
   function wireInstUI() {
@@ -1064,7 +1078,7 @@
     ["#weight","#age","#wellWeight"].forEach(function(s){ $(s).value = ""; });
     $("#stools").value = "0"; $("#emesis").value = "0";
     $("#pctRange").value = "5"; $("#pctOut").textContent = "5%";
-    lastResult = null; calcRequested = false; renderEmpty();
+    lastResult = null; renderEmpty();
     buildScales();
     syncSamUI();
   }
@@ -1149,7 +1163,7 @@
       var b = e.target.closest(".seg"); if (!b) return;
       setMethod(b.getAttribute("data-method"));
       persist();
-      if (calcRequested) calculate();
+      recalc();
     });
     // percent range
     $("#pctRange").addEventListener("input", function () {
@@ -1163,7 +1177,13 @@
     $("#overlay").addEventListener("click", function (e) { if (e.target === this) closePanel(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
     // calc / reset / print
-    $("#calcBtn").addEventListener("click", calculate);
+    $("#calcBtn").addEventListener("click", function () {
+      calculate(false);
+      // mobile: the plan is below the inputs — take the user there
+      if (lastResult && window.matchMedia("(max-width: 767px)").matches) {
+        $(".col-results").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
     $("#resetBtn").addEventListener("click", clearInputs);
     $("#printBtn").addEventListener("click", function () { window.print(); });
     $("#sheetBtn").addEventListener("click", openSheet);
@@ -1186,9 +1206,10 @@
       $(s).addEventListener("change", function () { renderSamStatus(samScreenResult(ageMonths())); });
     });
     $$(".inputs input, .inputs select").forEach(function (n) {
-      n.addEventListener("change", function () { if (calcRequested) calculate(); });
+      n.addEventListener("change", recalc);
     });
 
+    recalc();   // saved inputs → plan straight away
     registerSW();
     window.addEventListener("online",  buildAbout);
     window.addEventListener("offline", buildAbout);

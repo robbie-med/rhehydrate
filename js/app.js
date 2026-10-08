@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.6.6";
+  var APP_VERSION = "1.6.7";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -377,7 +377,6 @@
     var banner = el("div", "sev-banner sev-" + key);
     var bt = el("div");
     bt.appendChild(el("div", "sev-name", t("sev." + key)));
-    bt.appendChild(el("div", "sev-sub",  t("res.disclaimerShort")));
     banner.appendChild(bt);
     body.appendChild(banner);
 

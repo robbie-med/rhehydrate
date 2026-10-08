@@ -147,6 +147,103 @@ t("Cholera overrides protocol: 20 mL/kg + 70 mL/kg over 6 h", function () {
   close(find(S.plan("acf", base({ cholera: true })), "sam.chol.b").v, 600);
 });
 
+// ── bedside sheet: every slot comes from the plan and adds up to it ──
+var SH = require("../js/sheet.js");
+var INST = { planBRate: 75, planBHours: 4, planCAppr: "who", ivFluid: "rl", showZinc: true,
+  showOnda: true, showNgOrs: true, samProtocol: "who", samFluid: "auto" };
+function inst(extra) { var o = {}, k; for (k in INST) o[k] = INST[k]; for (k in extra) o[k] = extra[k]; return o; }
+function doses(m) { return m.rows.filter(function (r) { return r.type === "dose" && r.v != null; }); }
+function sum(rows) { return rows.reduce(function (a, r) { return a + r.v; }, 0); }
+
+t("zinc: 10 mg under 6 months, 20 mg from 6 months", function () {
+  assert.strictEqual(C.zinc(5).mg, 10); assert.strictEqual(C.zinc(5.9).mg, 10);
+  assert.strictEqual(C.zinc(6).mg, 20); assert.strictEqual(C.zinc(36).mg, 20);
+});
+t("sheet Plan B: hourly slots add up to the ORS volume", function () {
+  [3, 4, 6].forEach(function (h) {
+    var m = SH.build({ w: 8, months: 9, sev: "some", inst: inst({ planBHours: h }) });
+    var d = doses(m);
+    assert.strictEqual(d.length, h); close(sum(d), 600); close(d[d.length - 1].cum, 600);
+    assert.strictEqual(m.rows[m.rows.length - 1].when, SH.hm(h * 60));
+    assert.strictEqual(m.zinc.mg, 20); close(m.loss.perStool, 80); close(m.loss.perEmesis, 16);
+  });
+});
+t("sheet Plan C WHO: infant 1 h + 5 h, child 30 min + 2.5 h, total 100 mL/kg", function () {
+  var inf = doses(SH.build({ w: 8, months: 9, sev: "severe", inst: inst() }));
+  assert.strictEqual(inf.length, 12); close(sum(inf), 800);
+  close(inf[0].v + inf[1].v, 240); close(inf[11].cum, 800); assert.strictEqual(inf[11].when, "5:30–6:00");
+  var ch = doses(SH.build({ w: 10, months: 18, sev: "severe", inst: inst() }));
+  assert.strictEqual(ch.length, 6); close(ch[0].v, 300); close(sum(ch), 1000); assert.strictEqual(ch[5].when, "2:30–3:00");
+});
+t("sheet Plan C bolus: phase-2 options match planCBolus for 1–3 boluses", function () {
+  var m = SH.build({ w: 12, months: 24, sev: "severe", deficitVol: 1200, maintHr: 1100 / 24, inst: inst({ planCAppr: "bolus" }) });
+  var opts = m.rows.filter(function (r) { return r.type === "opt"; });
+  assert.strictEqual(opts.length, 3);
+  opts.forEach(function (o, i) { close(o.text[1].rate, C.planCBolus(12, 1200, 1100 / 24, i + 1).rate); });
+  m.rows.filter(function (r) { return r.text && /^bs\.bolus/.test(r.text[0]); }).forEach(function (r) { close(r.v, 240); });
+});
+t("sheet zinc follows the setting and age; none in SAM", function () {
+  assert.strictEqual(SH.build({ w: 6, months: 4, sev: "some", inst: inst() }).zinc.mg, 10);
+  assert.strictEqual(SH.build({ w: 6, months: 4, sev: "some", inst: inst({ showZinc: false }) }).zinc, null);
+  assert.strictEqual(SH.build({ w: 8, months: 18, inst: inst(), samCtx: base() }).zinc, null);
+});
+t("sheet SAM WHO oral: 4 doses of 5 mL/kg every 30 min, then hourly rows to 10 h; stop signs boxed", function () {
+  var m = SH.build({ w: 8, months: 18, inst: inst(), samCtx: base() });
+  var d = doses(m);
+  assert.strictEqual(d.length, 4); d.forEach(function (r) { close(r.v, 40); }); close(d[3].cum, 160);
+  assert.deepStrictEqual(d.map(function (r) { return r.when; }), ["0:00", "0:30", "1:00", "1:30"]);
+  var alt = m.rows.filter(function (r) { return r.text && r.text[0] === "bs.sam.alt"; });
+  assert.strictEqual(alt.length, 8); close(alt[0].text[1].lo, 40); close(alt[0].text[1].hi, 80);
+  assert.ok(m.stop.items.some(function (i) { return i[0] === "sam.who.oral.5"; }));
+  m.orders.forEach(function (g) { g.items.forEach(function (i) { assert.notStrictEqual(i[0], "sam.who.oral.5"); }); });
+});
+t("sheet SAM: India uses its own doses; other protocols, shock and cholera get a blank grid", function () {
+  var ind = doses(SH.build({ w: 8, months: 18, inst: inst({ samProtocol: "india" }), samCtx: base() }));
+  assert.strictEqual(ind.length, 4); close(ind[0].v, 40);
+  [["msf", {}], ["acf", {}], ["kenya", {}], ["who", { shock: true }], ["who", { cholera: true }]].forEach(function (c) {
+    var m = SH.build({ w: 8, months: 18, inst: inst({ samProtocol: c[0] }), samCtx: base(c[1]) });
+    assert.strictEqual(doses(m).length, 0, c[0]);
+    assert.strictEqual(m.rows.filter(function (r) { return r.type === "blank"; }).length, 12, c[0]);
+  });
+});
+t("every string the sheet uses exists in EN, FR and KR", function () {
+  global.window = globalThis;
+  require("../js/i18n.js"); require("../js/i18n-sam.js"); require("../js/i18n-sheet.js");
+  var I = globalThis.I18N, fs = require("fs"), path = require("path");
+  var keys = {};
+  function collect(m) {
+    m.rows.forEach(function (r) { if (r.text) keys[r.text[0]] = 1; });
+    m.orders.forEach(function (g) { if (g.h) keys[g.h[0]] = 1; g.items.forEach(function (i) { keys[i[0]] = 1; }); });
+    m.stop.items.forEach(function (i) { keys[i[0]] = 1; }); keys[m.stop.h] = 1;
+  }
+  ["none", "some", "severe"].forEach(function (sev) {
+    ["who", "bolus"].forEach(function (a) {
+      collect(SH.build({ w: 8, months: 9, sev: sev, deficitVol: 800, maintHr: 800 / 24, inst: inst({ planCAppr: a }) }));
+    });
+  });
+  S.ORDER.forEach(function (id) {
+    ["none", "some", "severe"].forEach(function (hyd) {
+      [false, true].forEach(function (shock) {
+        collect(SH.build({ w: 8, months: 18, inst: inst({ samProtocol: id }), samCtx: base({ hyd: hyd, shock: shock }) }));
+      });
+    });
+  });
+  // plus every literal "bs.*" / "inst.logo*" key in sheet.js and app.js
+  ["js/sheet.js", "js/app.js"].forEach(function (f) {
+    var src = fs.readFileSync(path.join(__dirname, "..", f), "utf8");
+    (src.match(/"(bs\.[\w.]+|inst\.logo[\w.]*)"/g) || []).forEach(function (k) { keys[k.slice(1, -1)] = 1; });
+  });
+  ["col", "lcol", "ccol"].forEach(function (g) {
+    var cols = { col: ["when", "give", "time", "amount", "weight", "pulse", "rr", "urine", "init"],
+      lcol: ["time", "sv", "given", "init"], ccol: ["when", "plan", "why", "sign"] }[g];
+    cols.forEach(function (c) { keys["bs." + g + "." + c] = 1; });
+  });
+  Object.keys(keys).forEach(function (k) {
+    if (/\.$/.test(k)) return;   // prefix used to build a key, checked above
+    ["en", "fr", "kr"].forEach(function (l) { assert.ok(k in I[l], l + " missing " + k); });
+  });
+});
+
 // ── release consistency: versioned URLs must match the service worker ──
 t("release versions agree (sw.js, app.js, ?v= in HTML) and every script is precached", function () {
   var fs = require("fs"), path = require("path"), root = path.join(__dirname, "..");

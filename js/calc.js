@@ -180,6 +180,15 @@
       ]};
   }
 
+  // Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.
+  function zinc(months) {
+    var mg = months < 6 ? 10 : 20;
+    return { mg: mg, work: [
+      line("w.zinc", "age < 6 months → 10 mg/day · ≥ 6 months → 20 mg/day", n(months) + " months", mg, "mg/day",
+        SRC.whoTod, "zinc")
+    ]};
+  }
+
   // ── severe acute malnutrition (SAM) screen ───────────────────────────
   // WHO 2023 / Pocket Book 2013: SAM = WHZ/WLZ < −3, or MUAC < 115 mm
   // (6–59 months), or bilateral pitting (nutritional) oedema.
@@ -219,7 +228,7 @@
     deficitFromWeightLoss: deficitFromWeightLoss, deficitVolume: deficitVolume,
     maintenance: maintenance, ongoingLosses: ongoingLosses,
     planB: planB, planCWho: planCWho, planCBolus: planCBolus,
-    samScreen: samScreen
+    zinc: zinc, samScreen: samScreen
   };
   if (typeof module !== "undefined" && module.exports) module.exports = root.RH_CALC;
 })(typeof window !== "undefined" ? window : globalThis);

@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="css/styles.css?v=1.4.1" />
+  <link rel="stylesheet" href="css/styles.css?v=1.5.0" />
 </head>
 <body>
 
@@ -228,7 +228,10 @@
       <div class="card results" aria-labelledby="resHead" aria-live="polite">
         <div class="results-head">
           <h2 id="resHead" class="card-h" data-i18n="res.title">Assessment &amp; plan</h2>
-          <button id="printBtn" class="btn ghost small" data-i18n="btn.print" hidden>Print / save</button>
+          <div class="results-btns">
+            <button id="sheetBtn" class="btn primary small" data-i18n="bs.btn" hidden>Bedside sheet</button>
+            <button id="printBtn" class="btn ghost small" data-i18n="btn.print" hidden>Print / save</button>
+          </div>
         </div>
         <div id="resultsBody">
           <p class="empty" data-i18n="res.empty">Enter a weight and complete the assessment to generate a plan.</p>
@@ -257,6 +260,16 @@
       <div class="panel" data-panel-body="about" hidden>
         <h2 data-i18n="about.title">About</h2>
         <article class="prose" id="aboutBody"></article>
+      </div>
+
+      <!-- BEDSIDE SHEET (preview of what prints) -->
+      <div class="panel" data-panel-body="bedside" hidden>
+        <div class="bs-bar">
+          <h2 data-i18n="bs.btn">Bedside sheet</h2>
+          <button class="btn primary small" id="sheetPrintBtn" data-i18n="bs.print">Print</button>
+        </div>
+        <p class="hint" data-i18n="bs.preview.help"></p>
+        <div class="bs-preview"><div class="bs-paper" id="sheetPreview"></div></div>
       </div>
 
       <!-- SETTINGS -->
@@ -306,6 +319,20 @@
             <span class="field-l" data-i18n="inst.dept">Department / ward</span>
             <input id="instDept" type="text" data-i18n-ph="inst.dept.ph" placeholder="e.g. Paediatric Emergency" />
           </label>
+        </div>
+        <div class="setrow">
+          <div class="field full">
+            <span class="field-l" data-i18n="inst.logo">Logo</span>
+            <div class="logo-row">
+              <img id="instLogoPreview" class="logo-preview" alt="" hidden />
+              <label class="btn ghost small logo-pick">
+                <span data-i18n="inst.logo.choose">Choose image</span>
+                <input id="instLogoFile" type="file" accept="image/*" hidden />
+              </label>
+              <button class="btn ghost small" id="instLogoRemove" data-i18n="inst.logo.remove" hidden>Remove</button>
+            </div>
+            <span class="hint" data-i18n="inst.logo.help"></span>
+          </div>
         </div>
         <div class="setrow">
           <span data-i18n="inst.ivFluid">IV fluid for Plan C</span>
@@ -449,10 +476,15 @@
 
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <script src="js/i18n.js?v=1.4.1"></script>
-  <script src="js/i18n-sam.js?v=1.4.1"></script>
-  <script src="js/calc.js?v=1.4.1"></script>
-  <script src="js/sam.js?v=1.4.1"></script>
-  <script src="js/app.js?v=1.4.1"></script>
+  <!-- filled just before printing the bedside sheet; hidden on screen -->
+  <div id="printSheet" aria-hidden="true"></div>
+
+  <script src="js/i18n.js?v=1.5.0"></script>
+  <script src="js/i18n-sam.js?v=1.5.0"></script>
+  <script src="js/i18n-sheet.js?v=1.5.0"></script>
+  <script src="js/calc.js?v=1.5.0"></script>
+  <script src="js/sam.js?v=1.5.0"></script>
+  <script src="js/sheet.js?v=1.5.0"></script>
+  <script src="js/app.js?v=1.5.0"></script>
 </body>
 </html>

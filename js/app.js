@@ -4,10 +4,10 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.4.1";
+  var APP_VERSION = "1.5.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
-  var C = window.RH_CALC, SAM = window.RH_SAM;
+  var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
 
   var LANGS = ["en", "kr", "fr", "ru", "zh"];
   var FLAGS  = { en: "🇬🇧", kr: "🇰🇷", fr: "🇫🇷", ru: "🇷🇺", zh: "🇨🇳" };
@@ -39,6 +39,7 @@
   var INST_DEFAULTS = {
     name:             "",
     dept:             "",
+    logo:             "",           // PNG data URL, this device only (never in the setup link)
     ivFluid:          "rl",
     planBRate:        75,
     planBHours:       4,
@@ -123,6 +124,7 @@
     updateInstTag();
     $("#verOut").textContent = APP_VERSION;
     if (lastResult) renderResults(lastResult);
+    if (sheetOpen()) renderSheetPreview();
   }
 
   // ── theme ────────────────────────────────────────────────────────────
@@ -299,12 +301,16 @@
   }
 
   // ── rendering helpers ────────────────────────────────────────────────
+  function setResultBtns(on) {
+    $("#printBtn").hidden = !on;
+    $("#sheetBtn").hidden = !on;
+  }
   function renderEmpty() {
-    $("#printBtn").hidden = true;
+    setResultBtns(false);
     $("#resultsBody").innerHTML = '<p class="empty">' + t("res.empty") + "</p>";
   }
   function renderMessage(key) {
-    $("#printBtn").hidden = true;
+    setResultBtns(false);
     var b = $("#resultsBody"); b.innerHTML = "";
     b.appendChild(txt("p", "empty sam-msg", t(key)));
   }
@@ -365,12 +371,7 @@
     var key  = R.sev.key;
     var inst = state.inst;
 
-    // institution header (if name set)
-    if (inst.name) {
-      var ih = el("div", "plan-inst");
-      ih.textContent = inst.name + (inst.dept ? " · " + inst.dept : "");
-      body.appendChild(ih);
-    }
+    if (inst.name || inst.logo) body.appendChild(instHeader());
 
     // severity banner
     var banner = el("div", "sev-banner sev-" + key);
@@ -404,7 +405,15 @@
     body.appendChild(el("p", "note", t("res.maintNote")));
     body.appendChild(el("p", "disclaimer-mini", t("about.disclaimer.p")));
 
-    $("#printBtn").hidden = false;
+    setResultBtns(true);
+  }
+
+  // institution name / ward, with the logo if one is set
+  function instHeader() {
+    var ins = state.inst, h = txt("div", "plan-inst");
+    if (ins.logo) { var i = txt("img", "plan-inst-logo"); i.src = ins.logo; i.alt = ""; h.appendChild(i); }
+    h.appendChild(txt("span", null, ins.name + (ins.name && ins.dept ? " · " : "") + ins.dept));
+    return h;
   }
 
   function metric(label, valHtml) {
@@ -547,14 +556,18 @@
   }
 
   // ── SAM results ──────────────────────────────────────────────────────
+  function samCtx(R) {
+    var s = state.sam;
+    return { w: R.weight, months: R.months, hyd: s.hyd, shock: !!s.shock, cholera: !!s.cholera,
+      oralOk: s.oralOk !== false, preW: s.preW, oedema: s.oedema || 0, fluid: state.inst.samFluid };
+  }
+
   function renderSamResults(R) {
     var body = $("#resultsBody"); body.innerHTML = "";
     var inst = state.inst, s = state.sam;
-    var ctx = { w: R.weight, months: R.months, hyd: s.hyd, shock: !!s.shock, cholera: !!s.cholera,
-      oralOk: s.oralOk !== false, preW: s.preW, oedema: s.oedema || 0, fluid: inst.samFluid };
-    var P = SAM.plan(inst.samProtocol, ctx);
+    var P = SAM.plan(inst.samProtocol, samCtx(R));
 
-    if (inst.name) body.appendChild(txt("div", "plan-inst", inst.name + (inst.dept ? " · " + inst.dept : "")));
+    if (inst.name || inst.logo) body.appendChild(instHeader());
 
     var banner = el("div", "sev-banner sev-sam");
     banner.appendChild(el("span", "dot"));
@@ -609,8 +622,60 @@
     body.appendChild(src);
 
     body.appendChild(el("p", "disclaimer-mini", t("about.disclaimer.p")));
-    $("#printBtn").hidden = false;
+    setResultBtns(true);
   }
+
+  // ── bedside sheet ────────────────────────────────────────────────────
+  // Same plan as on screen, laid out as a checklist (js/sheet.js). The
+  // child's name is handwritten on the paper; nothing here stores it.
+  function buildSheet() {
+    var R = lastResult, ins = state.inst, s = state.sam, sc = R.screen;
+    var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
+      : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr });
+    var samLabel = t("bs.sam.unk");
+    if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + " — " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
+    else if (sc && sc.status === "neg") samLabel = t("bs.sam.no");
+    var proto;
+    if (R.sam) proto = t(M.protocol.nameKey);
+    else if (R.sev.key === "none") proto = t("plan.a.title");
+    else if (R.sev.key === "some") proto = t("plan.b.title");
+    else proto = t("plan.c.title") + " — " + t("inst.planBApproach." + ins.planCAppr);
+    var head = {
+      logo: ins.logo, inst: ins.name, dept: ins.dept,
+      age: R.months < 24 ? t("bs.age.m", { n: R.months }) : t("bs.age.y", { n: R.months / 12 }),
+      weight: fmt(R.weight) + " kg",
+      classLabel: R.sam ? t("bs.class.sam", { hyd: { key: "sam.hyd." + s.hyd } }) + (s.shock ? " · " + t("sam.shock") : "")
+        : t("sev." + R.sev.key),
+      samLabel: samLabel,
+      protocolLabel: proto,
+      footer: t("bs.foot", { v: APP_VERSION,
+        date: new Date().toLocaleString(LOCALES[state.lang] || "en-US", { dateStyle: "medium", timeStyle: "short" }) })
+    };
+    return SHEET.render(M, head, t);
+  }
+  function sheetOpen() {
+    return !$("#overlay").hidden && !$('[data-panel-body="bedside"]').hidden;
+  }
+  function renderSheetPreview() {
+    var box = $("#sheetPreview"); box.innerHTML = "";
+    if (lastResult) box.appendChild(buildSheet());
+  }
+  function openSheet() {
+    if (!lastResult) return;
+    if (lastResult.months == null) { toast(t("bs.needAge")); $("#age").focus(); return; }
+    openPanel("bedside");
+    renderSheetPreview();
+  }
+  // Any print while the preview is open (button or Ctrl+P) prints the sheet only
+  window.addEventListener("beforeprint", function () {
+    if (!sheetOpen() || !lastResult) return;
+    var box = $("#printSheet"); box.innerHTML = "";
+    box.appendChild(buildSheet());
+    document.documentElement.classList.add("print-sheet");
+  });
+  window.addEventListener("afterprint", function () {
+    document.documentElement.classList.remove("print-sheet");
+  });
 
   // ── SAM screen UI ────────────────────────────────────────────────────
   function renderSamStatus(screen) {
@@ -718,6 +783,9 @@
     $("#instSamScreen").value     = ins.samScreen;
     $("#instSamProtocol").value   = ins.samProtocol;
     $("#instSamFluid").value      = ins.samFluid;
+    $("#instLogoPreview").hidden  = !ins.logo;
+    if (ins.logo) $("#instLogoPreview").src = ins.logo; else $("#instLogoPreview").removeAttribute("src");
+    $("#instLogoRemove").hidden   = !ins.logo;
     syncValSeg("#instZincSeg",       ins.showZinc);
     syncValSeg("#instOndaSeg",       ins.showOnda);
     syncValSeg("#instNgSeg",         ins.showNgOrs);
@@ -752,6 +820,7 @@
       var raw = localStorage.getItem(LS.inst);
       if (raw) state.inst = Object.assign({}, INST_DEFAULTS, JSON.parse(raw));
     } catch(e) {}
+    if (typeof state.inst.logo !== "string" || state.inst.logo.indexOf("data:image/png;base64,") !== 0) state.inst.logo = "";
   }
 
   function resetInst() {
@@ -822,6 +891,14 @@
       setTimeout(function () { self.textContent = orig || t("inst.reset"); }, 1600);
     });
 
+    $("#instLogoFile").addEventListener("change", function () {
+      var f = this.files && this.files[0]; this.value = "";
+      if (f) readLogo(f);
+    });
+    $("#instLogoRemove").addEventListener("click", function () {
+      state.inst.logo = ""; saveInst(); syncInstUI();
+    });
+
     $("#linkMakeBtn").addEventListener("click", function () {
       $("#linkOut").value = buildSetupLink();
       $("#linkRow").hidden = false;
@@ -834,6 +911,29 @@
         navigator.clipboard.writeText(v).then(done, function () { $("#linkOut").select(); document.execCommand("copy"); done(); });
       } else { $("#linkOut").select(); document.execCommand("copy"); done(); }
     });
+  }
+
+  // Logo → PNG data URL, at most 320 px on its longer side, kept in localStorage
+  function readLogo(file) {
+    function fail() { toast(t("inst.logo.err")); }
+    var fr = new FileReader();
+    fr.onerror = fail;
+    fr.onload = function () {
+      var img = new Image();
+      img.onerror = fail;
+      img.onload = function () {
+        var w = img.naturalWidth || 320, h = img.naturalHeight || 320;
+        var k = Math.min(1, 320 / Math.max(w, h));
+        var cv = document.createElement("canvas");
+        cv.width = Math.max(1, Math.round(w * k)); cv.height = Math.max(1, Math.round(h * k));
+        var url = "";
+        try { cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height); url = cv.toDataURL("image/png"); } catch (e) {}
+        if (url.indexOf("data:image/png;base64,") !== 0) { fail(); return; }
+        state.inst.logo = url; saveInst(); syncInstUI();
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
   }
 
   // ── setup link: settings ↔ URL query ────────────────────────────────
@@ -904,6 +1004,7 @@
 
   // ── panels ───────────────────────────────────────────────────────────
   function openPanel(name) {
+    $("#sheet").classList.toggle("wide", name === "bedside");
     $$("[data-panel-body]").forEach(function (p) {
       p.hidden = p.getAttribute("data-panel-body") !== name;
     });
@@ -1065,6 +1166,8 @@
     $("#calcBtn").addEventListener("click", calculate);
     $("#resetBtn").addEventListener("click", clearInputs);
     $("#printBtn").addEventListener("click", function () { window.print(); });
+    $("#sheetBtn").addEventListener("click", openSheet);
+    $("#sheetPrintBtn").addEventListener("click", function () { window.print(); });
     // settings actions
     $("#clearBtn").addEventListener("click", function () {
       clearInputs();

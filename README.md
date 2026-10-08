@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.1-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.5.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -70,6 +70,13 @@ Every plan lists its sources. Page-level excerpts for each number:
 - **Red-flag checklist** — shock, altered consciousness, surgical abdomen, dysnatraemia
 - **Show the maths** — under every result: the formula, this patient's numbers
   substituted, the result, a link to the source, and a link to the code
+- **Bedside sheet** — the plan printed as a checklist to hang on the bed (A4 or Letter,
+  black and white): a timed row for each step with boxes for the time given, the amount
+  actually given and the nurse's initials; reassessment rows; stop signs; a stool / vomit
+  tally with the replacement volume; zinc with the dose for the child's age and a box for
+  each day; and a "plan changed" line. The child's name is written by hand on the paper —
+  it is never entered in the app. The on-screen preview can be copied by hand where there
+  is no printer.
 - **Print / save** — formatted output for the medical record
 
 > **⚕ Decision support only.** PRhehydrate is not a regulated medical device. Verify every
@@ -165,6 +172,8 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 
 | Parameter | Options | Default |
 |-----------|---------|---------|
+| Institution name, department / ward | free text | — |
+| Logo | any image (stored on this device only; not in the setup link) | — |
 | IV fluid (Plan C) | Ringer's lactate · Normal saline · Plasma-Lyte | Ringer's lactate |
 | ORS dose (Plan B) | 50 mL/kg · **60 mL/kg** · 75 mL/kg · 100 mL/kg | 75 mL/kg |
 | Rehydration duration (Plan B) | 3 h · **4 h** · 6 h | 4 h |
@@ -207,13 +216,15 @@ index.html              # single-page app shell; all panels rendered by JS
 css/styles.css          # CSS custom properties for theming; no preprocessor
 js/i18n.js              # window.I18N — core strings, 5 languages
 js/i18n-sam.js          # v1.4 strings (SAM, show-the-maths, setup link) — EN · FR · KR
+js/i18n-sheet.js        # v1.5 strings (bedside sheet, logo) — EN · FR · KR
 js/calc.js              # every formula, as pure functions returning their working
 js/sam.js               # the five SAM protocols, with page-level sources
+js/sheet.js             # bedside sheet: plan → timed checklist rows, and its layout
 js/app.js               # UI, state, persistence, rendering
 tables.html             # clinical reference tables page
 js/tables.js            # reference tables as data (EN · FR) + live formula source
 js/tables-kr.js         # Korean strings for the tables page
-tests/calc.test.js      # node tests for calc.js and sam.js (no dependencies)
+tests/calc.test.js      # node tests for calc.js, sam.js and sheet.js (no dependencies)
 docs/SAM-PROTOCOLS.md   # source excerpts behind every SAM number
 manifest.webmanifest    # PWA metadata: name, icons, display, theme colours
 sw.js                   # service worker: cache-first assets, network-first HTML

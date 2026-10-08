@@ -390,6 +390,8 @@
       d: { en: "WHO Plan C: 100 mL/kg = 30 mL/kg then 70 mL/kg; < 12 months over 1 h + 5 h, older over 30 min + 2.5 h.", fr: "Plan C OMS : 100 mL/kg = 30 mL/kg puis 70 mL/kg ; < 12 mois en 1 h + 5 h, plus âgé en 30 min + 2,5 h." }, s: S.whoPb2013 },
     { name: "planCBolus(w, deficitVol, maintHr, boluses)", fn: C.planCBolus, file: "js/calc.js",
       d: { en: "Bolus-first: 20 mL/kg boluses; phase 2 = (deficit − boluses given) + 12 h maintenance, over 12 h.", fr: "Bolus d'abord : bolus de 20 mL/kg ; phase 2 = (déficit − bolus administrés) + entretien de 12 h, sur 12 h." }, s: S.whoPb2013 },
+    { name: "zinc(months)", fn: C.zinc, file: "js/calc.js",
+      d: { en: "Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.", fr: "Zinc pour la diarrhée aiguë : 10 mg/jour avant 6 mois, 20 mg/jour à partir de 6 mois, pendant 10–14 jours.", kr: "급성 설사의 아연: 6개월 미만 10 mg/일, 6개월 이상 20 mg/일, 10–14일." }, s: S.whoTod },
     { name: "samScreen(o)", fn: C.samScreen, file: "js/calc.js",
       d: { en: "SAM if MUAC < 115 mm (6–59 months), weight-for-height < −3 SD, or bilateral pitting oedema.", fr: "MAS si PB < 115 mm (6–59 mois), poids-pour-taille < −3 ET, ou œdèmes bilatéraux prenant le godet." }, s: S.who2023 }
   ];

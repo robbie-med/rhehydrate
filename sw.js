@@ -1,5 +1,5 @@
 /* PRhehydrate service worker. Release: bump VERSION, APP_VERSION and every ?v= (tested). */
-var VERSION = "1.6.11";
+var VERSION = "1.6.12";
 var CACHE = "rhehydrate-v" + VERSION;
 var V = "?v=" + VERSION;
 var PAGES = ["./", "./index.html", "./tables.html"];

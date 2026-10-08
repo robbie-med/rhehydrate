@@ -674,14 +674,9 @@ input[type="number"] { -moz-appearance: textfield; }
 .th-none { color: var(--ok) !important; }
 .th-some { color: var(--warn) !important; }
 .th-severe { color: var(--danger) !important; }
-.col-sign {
-  background: var(--bg-2);
-  color: var(--text-3);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  width: 120px;
-}
+.col-sign { width: 140px; }
+/* first column = row label, same in every table */
+.ref-table tbody tr:not([class]) td:first-child { background: var(--bg-2); color: var(--text); font-weight: 600; }
 
 /* ── CDS interpretation rows (Table 2) ───────────────────────── */
 .cds-none td {
@@ -720,9 +715,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .ref-table .sticky-col {
   position: sticky;
   left: 0;
-  background: var(--card);
   z-index: 1;
-  border-right: 1px solid var(--line);
   white-space: nowrap;
 }
 .ref-table thead .sticky-col {

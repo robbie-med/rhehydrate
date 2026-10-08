@@ -186,8 +186,7 @@
       [t("bs.f.name"), "", true], [t("bs.f.bed"), ""], [t("bs.f.date"), ""],
       [t("bs.f.age"), head.age], [t("bs.f.weight"), head.weight], [t("bs.f.t0"), ""],
       [t("bs.f.class"), head.classLabel, true], [t("bs.f.sam"), head.samLabel],
-      [t("bs.f.protocol"), head.protocolLabel, true],
-      [t("bs.f.prescriber"), "", true], [t("bs.f.sign"), ""]
+      [t("bs.f.protocol"), head.protocolLabel, true]
     ].forEach(function (f) { pt.appendChild(field(f[0], f[1], f[2])); });
     root.appendChild(pt);
 

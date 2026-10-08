@@ -584,6 +584,8 @@ input[type="number"] { -moz-appearance: textfield; }
 
 @page { margin: 12mm; }
 @media print {
+  :root { color-scheme: light; }
+  html, body { background: #fff !important; }
   html.print-sheet body > *:not(#printSheet) { display: none !important; }
   html.print-sheet body { display: block !important; background: #fff !important; padding: 0 !important; }
   html.print-sheet #printSheet { display: block !important; }

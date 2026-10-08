@@ -823,7 +823,7 @@ input[type="number"] { -moz-appearance: textfield; }
   color: var(--text); background: var(--bg-2);
   border-left: 3px solid var(--accent); border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
 }
-.ref-footnotes-plain { margin: 10px 0 0; padding-left: 18px; }
+.ref-footnotes-plain { margin: 10px 0 0; padding: 0; list-style: none; }
 .ref-footnotes-plain li { font-size: 12px; color: var(--text-2); margin: 3px 0; line-height: 1.45; }
 .ref-source .src-list { margin-top: 4px; }
 .formula {

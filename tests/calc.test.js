@@ -41,6 +41,14 @@ t("Plan C bolus — 1 bolus given", function () {
 });
 t("Plan C bolus — 3 boluses given", function () { var c = C.planCBolus(12, 1200, 1100 / 24, 3); close(c.given, 720); close(c.remaining, 480); });
 t("Plan C bolus — remaining never negative", function () { close(C.planCBolus(10, 500, 1000 / 24, 3).remaining, 0); });
+t("sodium bands", function () {
+  assert.strictEqual(C.sodiumBand(128).key, "hypo"); assert.strictEqual(C.sodiumBand(140).key, "iso");
+  assert.strictEqual(C.sodiumBand(151).key, "hyper"); assert.strictEqual(C.sodiumBand(null), null);
+});
+t("hypernatraemia: deficit + maintenance over 48 h", function () {
+  var s = C.slowRehydration(1200, 1100 / 24); close(s.maint48, 2200); close(s.total, 3400); close(s.rate, 3400 / 48); checkWork(s.work);
+});
+t("hypoglycaemia bolus 5 mL/kg of 10% glucose", function () { var g = C.glucoseBolus(12); close(g.v, 60); checkWork(g.work); });
 t("CDS bands", function () {
   assert.strictEqual(C.cdsSeverity({ appearance: 0, eyes: 0, mucous: 0, tears: 0 }).key, "none");
   assert.strictEqual(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).key, "some");
@@ -180,6 +188,18 @@ t("sheet Plan C bolus: phase-2 options match planCBolus for 1–3 boluses", func
   opts.forEach(function (o, i) { close(o.text[1].rate, C.planCBolus(12, 1200, 1100 / 24, i + 1).rate); });
   m.rows.filter(function (r) { return r.text && /^bs\.bolus/.test(r.text[0]); }).forEach(function (r) { close(r.v, 240); });
 });
+t("sheet hypernatraemia: 48 h rows, options for 0–3 boluses, labs row carries Na⁺", function () {
+  var na = C.sodiumBand(158);
+  var m = SH.build({ w: 10, months: 18, sev: "severe", deficitVol: 1000, maintHr: 1000 / 24, inst: inst({ planCAppr: "who" }), na: na });
+  var rows = m.rows.filter(function (r) { return r.text && r.text[0] === "bs.p48.row"; });
+  assert.strictEqual(rows.length, 12);
+  var opts = m.rows.filter(function (r) { return r.type === "opt"; });
+  assert.strictEqual(opts.length, 4);
+  close(opts[0].text[1].rate, (1000 + 1000 / 24 * 48) / 48);
+  assert.ok(m.rows.some(function (r) { return r.text && r.text[0] === "bs.row.labs.na" && r.text[1].na === 158; }));
+  var hypo = SH.build({ w: 10, months: 18, sev: "some", deficitVol: 600, maintHr: 1000 / 24, inst: inst({}), na: C.sodiumBand(125) });
+  assert.ok(hypo.stop.items.some(function (i) { return i[0] === "bs.hypo"; }));
+});
 t("sheet zinc follows the setting and age; none in SAM", function () {
   assert.strictEqual(SH.build({ w: 6, months: 4, sev: "some", inst: inst() }).zinc.mg, 10);
   assert.strictEqual(SH.build({ w: 6, months: 4, sev: "some", inst: inst({ showZinc: false }) }).zinc, null);
@@ -265,6 +285,7 @@ t("every formula and unit the working can show has a translation key", function 
     add(C.planB(w, 75, 4).work); add(C.planCWho(w, null).work); add(C.planCBolus(w, 1000, 40, 2).work);
   });
   add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work);
+  add(C.sodiumBand(155).work); add(C.slowRehydration(1000, 40).work); add(C.glucoseBolus(8).work);
   add(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).work);
   add(C.whoSeverity({ condition: 1, eyes: 1, thirst: 1, skin: 1 }).work);
   add(C.samScreen({ muac: 110, oedema: 2, whz: "yes", months: 20 }).work);

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.9.0";
+  var APP_VERSION = "1.10.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -30,7 +30,8 @@
     { url: "https://www.who.int/publications/i/item/978-92-4-154837-3", key: "edu.refs.15" },
     { url: "https://iris.who.int/handle/10665/376075",           key: "edu.refs.16" },
     { url: "https://doi.org/10.1016/S2352-4642(25)00371-2",      key: "edu.refs.17" },
-    { url: "https://ansm.sante.fr/actualites/medicaments-a-base-dargile-dans-le-traitement-symptomatique-de-la-diarrhee-aigue-chez-lenfant", key: "edu.refs.18" }
+    { url: "https://ansm.sante.fr/actualites/medicaments-a-base-dargile-dans-le-traitement-symptomatique-de-la-diarrhee-aigue-chez-lenfant", key: "edu.refs.18" },
+    { url: "https://doi.org/10.1542/peds.2018-3083",              key: "edu.refs.19" }
   ];
 
   // ── institution defaults ──
@@ -306,12 +307,13 @@
     var def   = C.deficitVolume(sev.pct, weight);
     var maint = C.maintenance(weight);
     var loss  = C.ongoingLosses(stools, emesis, weight);
+    var na    = C.sodiumBand(parseFloat($("#sodium").value));
 
     lastResult = {
-      weight: weight, months: months, sev: sev, screen: screen,
+      weight: weight, months: months, sev: sev, screen: screen, na: na,
       deficitVol: def.v, maint24: maint.daily, maintHr: maint.hourly,
       stools: stools, emesis: emesis, lossVol: loss.v,
-      work: sev.work.concat(def.work, maint.work, loss.work)
+      work: sev.work.concat(def.work, maint.work, loss.work, na ? na.work : [])
     };
     renderResults(lastResult);
     persist();
@@ -416,7 +418,9 @@
     var banner = el("div", "sev-banner sev-" + key);
     var bt = el("div");
     bt.appendChild(txt("div", "sev-name", t("sev." + key)));
-    bt.appendChild(txt("div", "sev-sub", t("res.deficitPct") + " " + fmt(R.sev.pct) + "% · " + fmt(R.deficitVol) + " " + t("u.mL")));
+    var sub = t("res.deficitPct") + " " + fmt(R.sev.pct) + "% · " + fmt(R.deficitVol) + " " + t("u.mL");
+    if (R.na && R.na.key !== "iso") sub += " · " + t("na." + R.na.key, { na: R.na.na });
+    bt.appendChild(txt("div", "sev-sub", sub));
     banner.appendChild(bt);
     body.appendChild(banner);
 
@@ -469,6 +473,16 @@
     var body = el("div", "plan-body");
     var loss = C.ongoingLosses(R.stools, R.emesis, w);
     var adj  = [];
+    var naKey = R.na ? R.na.key : null;
+    // hyper-/hyponatraemia advice block
+    function naBlock() {
+      if (!naKey || naKey === "iso") return null;
+      var ph = el("div", "plan-phase tone-warn");
+      ph.appendChild(txt("div", "plan-phase-label", t("plan.na.h", { na: R.na.na })));
+      ph.appendChild(liList([1, 2, 3].map(function (i) { return t("plan.na." + naKey + "." + i, { fluid: fluidName }); })));
+      return ph;
+    }
+    function naNote() { return naKey ? null : txt("p", "note", t("plan.na.unknown")); }
     function adjuncts() {
       if (!adj.length) return null;
       var g = group("res.adjuncts", "adjuncts");
@@ -489,6 +503,8 @@
       body.appendChild(el("div", "plan-dose",
         t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours, perHour: fmt(b.perHour) })));
       body.appendChild(liList([t("plan.b.1"), t("plan.b.3", { losses: fmt(R.lossVol) }), t("plan.b.4", { hours: ins.planBHours })]));
+      var nb = naBlock(); if (nb) body.appendChild(nb);
+      var nn = naNote(); if (nn) body.appendChild(nn);
       if (ins.showOnda)         adj.push(t("plan.b.2"));
       if (ins.showNgOrs)        adj.push(t("plan.b.5"));
       if (ins.showZinc)         adj.push(zincLine(R));
@@ -499,8 +515,28 @@
 
     } else {
       head.textContent = t("plan.c.title");
+      var glu = C.glucoseBolus(w);
+      var gluLine = t("plan.c.gluc", { g: fmt(glu.v) });
 
-      if (ins.planCAppr === "bolus") {
+      if (naKey === "hyper") {
+        // shock boluses if needed, then the remaining deficit slowly (NICE CG84)
+        var pcs = C.planCBolus(w, R.deficitVol, R.maintHr, state.bolusCount);
+        var slow = C.slowRehydration(pcs.remaining, R.maintHr);
+        var ps1 = el("div", "plan-phase");
+        ps1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
+        ps1.appendChild(el("div", "plan-dose", t("plan.c.bolus", { bolus: fmt(pcs.bolus), fluid: fluidName })));
+        ps1.appendChild(liList([t("plan.na.hyper.3"), t("plan.c.bolus.fluid", { fluid: fluidName }), t("plan.c.bolus.access")]));
+        body.appendChild(ps1);
+        var ps2 = el("div", "plan-phase plan-phase-2 tone-warn");
+        ps2.appendChild(el("div", "plan-phase-label", t("plan.c.slow.label")));
+        ps2.appendChild(bolusSelect(w));
+        ps2.appendChild(el("div", "plan-calc", t("plan.c.slow.rate", {
+          remaining: fmt(pcs.remaining), maint48: fmt(slow.maint48), total: fmt(slow.total), rate: fmt(slow.rate), fluid: fluidName })));
+        ps2.appendChild(liList([t("plan.na.hyper.1"), t("plan.na.hyper.2", { fluid: fluidName }), t("plan.c.4"), gluLine]));
+        body.appendChild(ps2);
+        R.planWork = pcs.work.concat(slow.work, glu.work);
+
+      } else if (ins.planCAppr === "bolus") {
         var pc = C.planCBolus(w, R.deficitVol, R.maintHr, state.bolusCount);
         var ph1 = el("div", "plan-phase");
         ph1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
@@ -523,9 +559,9 @@
             total:     fmt(pc.total),
             rate:      fmt(pc.rate)
           })));
-        ph2.appendChild(liList([t("plan.c.phase2.switch"), t("plan.c.4"), t("plan.c.phase2.reassess")]));
+        ph2.appendChild(liList([t("plan.c.phase2.switch"), t("plan.c.4"), gluLine, t("plan.c.phase2.reassess")]));
         body.appendChild(ph2);
-        R.planWork = pc.work;
+        R.planWork = pc.work.concat(glu.work);
 
         var varDiv = group("plan.c.var.h", "variants");
         varDiv.appendChild(liList([t("plan.c.var.cardiac"), t("plan.c.var.dysna"), t("plan.c.var.surgical")]));
@@ -538,11 +574,13 @@
         var witems = [];
         if (R.months == null || R.months < 12) witems.push(t("plan.c.infant", { first: fmt(wc.first), rest: fmt(wc.rest) }));
         if (R.months == null || R.months >= 12) witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
-        witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"));
+        witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"), gluLine);
         body.appendChild(liList(witems));
         body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
-        R.planWork = wc.work;
+        R.planWork = wc.work.concat(glu.work);
       }
+      if (naKey === "hypo") body.appendChild(naBlock());
+      var cn = naNote(); if (cn) body.appendChild(cn);
       if (ins.showZinc) adj.push(zincLine(R));
     }
 
@@ -561,13 +599,14 @@
     var wrap = txt("label", "bolus-given");
     wrap.appendChild(txt("span", null, t("plan.c.bolusGiven")));
     var s = txt("select", "set-select");
-    [1, 2, 3].forEach(function (k) {
-      var o = txt("option", null, t("plan.c.bolusGiven.n", { n: String(k), mlkg: String(20 * k), ml: fmt(20 * k * w) }));
+    [0, 1, 2, 3].forEach(function (k) {
+      var o = txt("option", null, k === 0 ? t("plan.c.bolusGiven.0")
+        : t("plan.c.bolusGiven.n", { n: String(k), mlkg: String(20 * k), ml: fmt(20 * k * w) }));
       o.value = String(k); if (k === state.bolusCount) o.selected = true;
       s.appendChild(o);
     });
     s.addEventListener("change", function () {
-      state.bolusCount = parseInt(this.value, 10) || 1; persist();
+      state.bolusCount = parseInt(this.value, 10) || 0; persist();
       if (lastResult) renderResults(lastResult);
     });
     wrap.appendChild(s);
@@ -652,7 +691,7 @@
   function buildSheet() {
     var R = lastResult, ins = state.inst, s = state.sam, sc = R.screen;
     var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
-      : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr });
+      : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr, na: R.na });
     var samLabel = t("bs.sam.unk");
     if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + ": " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     else if (sc && sc.status === "neg") samLabel = t("bs.sam.no");
@@ -755,7 +794,7 @@
   function buildEdu() {
     var b = $("#eduBody"); if (!b) return;
     b.innerHTML = "";
-    ["s1","s2","s3","s4","s5","s6","s7"].forEach(function (s) {
+    ["s1","s2","s3","s4","s5","s6","s7","s8"].forEach(function (s) {
       b.appendChild(el("h3", null, t("edu." + s + ".h")));
       b.appendChild(el("p",  null, t("edu." + s + ".p")));
     });
@@ -1049,6 +1088,7 @@
         pct:        $("#pctRange").value,
         stools:     $("#stools").value,
         emesis:     $("#emesis").value,
+        sodium:     $("#sodium").value,
         cds:        state.cds,
         who:        state.who,
         sam:        state.sam,
@@ -1067,10 +1107,11 @@
       if (d.pct)      { $("#pctRange").value    = d.pct; $("#pctOut").textContent = d.pct + "%"; }
       if (d.stools)     $("#stools").value      = d.stools;
       if (d.emesis)     $("#emesis").value      = d.emesis;
+      if (d.sodium)     $("#sodium").value      = d.sodium;
       if (d.cds)        state.cds = d.cds;
       if (d.who)        state.who = d.who;
       if (d.sam)        state.sam = Object.assign(samDefaults(), d.sam);
-      if (d.bolusCount) state.bolusCount = d.bolusCount;
+      if (d.bolusCount != null) state.bolusCount = d.bolusCount;
       if (d.method)     state.method = d.method;
     } catch(e) {}
   }
@@ -1080,7 +1121,7 @@
     state.who = { condition: null, eyes: null, thirst: null, skin: null };
     state.sam = samDefaults();
     state.bolusCount = 1;
-    ["#weight","#age","#wellWeight"].forEach(function(s){ $(s).value = ""; });
+    ["#weight","#age","#wellWeight","#sodium"].forEach(function(s){ $(s).value = ""; });
     $("#stools").value = "0"; $("#emesis").value = "0";
     $("#pctRange").value = "5"; $("#pctOut").textContent = "5%";
     lastResult = null; renderEmpty();
@@ -1198,7 +1239,7 @@
     wireInstUI();
     wireSamUI();
 
-    ["#weight","#age","#ageUnit","#wellWeight","#stools","#emesis"].forEach(function (s) {
+    ["#weight","#age","#ageUnit","#wellWeight","#stools","#emesis","#sodium"].forEach(function (s) {
       $(s).addEventListener("change", persist);
     });
     ["#age","#ageUnit"].forEach(function (s) {

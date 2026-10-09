@@ -39,6 +39,7 @@
   function standard(o) {
     var w = o.w, ins = o.inst, fluid = { key: "inst.ivFluid." + ins.ivFluid, short: true };
     var loss = C.ongoingLosses(0, 0, w);
+    var naKey = o.na ? o.na.key : null;
     var m = {
       kind: o.sev, vitals: [], orders: [], rows: [],
       stop: { h: "bs.stop.std", items: RED_FLAGS },
@@ -56,6 +57,8 @@
       var items = [["plan.b.1", {}]];
       if (ins.showOnda)  items.push(["plan.b.2", {}]);
       if (ins.showNgOrs) items.push(["plan.b.5", {}]);
+      if (naKey === "hyper") items.push(["plan.na.hyper.1", {}], ["plan.na.hyper.2", { fluid: fluid }]);
+      if (naKey === "hypo")  m.stop.items = RED_FLAGS.concat([["bs.hypo", {}]]);
       m.orders.push({ h: null, items: items });
       m.rows.push({ type: "head", text: ["plan.b.dose", { vol: b.vol, hours: String(ins.planBHours), rate: String(ins.planBRate), perHour: b.perHour }] });
       m.rows = m.rows.concat(slots(b.vol, ins.planBHours, 60, 0, 0, ["bs.give", { fluid: { key: "bs.ors" } }]));
@@ -67,7 +70,30 @@
     m.loss = { perStool: null, perEmesis: null };
     var ors = C.perKg("w.ors", 5, "mL/kg/h", w, "mL/h");
     m.rows.push({ type: "task", when: hm(0), text: ["bs.row.base", {}] });
-    m.rows.push({ type: "task", when: "", text: ["bs.row.labs", {}] });
+    m.rows.push({ type: "task", when: "", text: o.na ? ["bs.row.labs.na", { na: o.na.na }] : ["bs.row.labs", {}] });
+    if (naKey === "hypo") m.stop.items = RED_FLAGS.concat([["bs.hypo", {}]]);
+
+    // hypernatraemia: boluses only for shock, then 48 h at a steady rate with Na⁺ every 4 h
+    if (naKey === "hyper") {
+      var pch = C.planCBolus(w, o.deficitVol, o.maintHr, 1);
+      m.orders.push({ h: null, items: [["plan.na.hyper.1", {}], ["plan.na.hyper.2", { fluid: fluid }], ["plan.na.hyper.3", {}]] });
+      [1, 2, 3].forEach(function (k) {
+        m.rows.push({ type: "task", when: k === 1 ? hm(0) : "",
+          text: [k === 1 ? "bs.bolus.1" : "bs.bolus.n", { n: String(k), fluid: fluid }], v: pch.bolus, ifNeeded: true });
+        m.rows.push({ type: "check", when: "", text: ["bs.chk.perf", {}], vit: true });
+      });
+      var s1 = C.slowRehydration(pch.remaining, o.maintHr);
+      m.rows.push({ type: "head", text: ["bs.p48.h", { fluid: fluid, rate: s1.rate }] });
+      [0, 1, 2, 3].forEach(function (k) {
+        var s = C.slowRehydration(C.planCBolus(w, o.deficitVol, o.maintHr, k).remaining, o.maintHr);
+        m.rows.push({ type: "opt", text: ["bs.p48.opt", { n: String(k), rate: s.rate, total: s.total }] });
+      });
+      for (var q = 1; q <= 12; q++) {
+        m.rows.push({ type: "dose", when: ["bs.p2.when", { t: hm(q * 240) }], text: ["bs.p48.row", { fluid: fluid }] });
+      }
+      m.rows.push({ type: "task", when: "", text: ["bs.oral.started", {}] });
+      return m;
+    }
 
     if (ins.planCAppr === "bolus") {
       var pc = C.planCBolus(w, o.deficitVol, o.maintHr, 1);

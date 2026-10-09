@@ -19,7 +19,9 @@
     acf2011:    "https://www.actionagainsthunger.org/app/uploads/2022/09/Guidelines_For_the_integrated_management_of_severe_acute_malnutrition_In_and_out_patient_treatment_12.2011.pdf",
     india2011:  "https://nhm.assam.gov.in/sites/default/files/swf_utility_folder/departments/nhm_lipl_in_oid_6/do_u_want_2_know/Operational%20Guidelines%20on%20Facility%20Based%20Management%20of%20Children%20with%20Severe%20Acute%20Malnutrition.pdf",
     kenya2022:  "https://kijabehospital.or.ke/uploads/guidelines/1712736965_Basic_Paediatric_Protocols-JAN_27_2022_DRAFT_SW.pdf",
-    gastrosam:  "https://doi.org/10.1016/S2352-4642(25)00371-2"
+    gastrosam:  "https://doi.org/10.1016/S2352-4642(25)00371-2",
+    nice:       "https://www.nice.org.uk/guidance/cg84",
+    aap2018:    "https://doi.org/10.1542/peds.2018-3083"
   };
 
   // ≤ 2 decimals, "." separator
@@ -145,9 +147,9 @@
     return r;
   }
 
-  // Bolus-first: 1–3 boluses of 20 mL/kg, then (deficit − boluses) + 12 h maintenance over 12 h.
+  // Bolus-first: 0–3 boluses of 20 mL/kg, then (deficit − boluses) + 12 h maintenance over 12 h.
   function planCBolus(w, deficitVol, maintHr, boluses) {
-    var b = Math.max(1, Math.min(3, boluses || 1));
+    var b = Math.max(0, Math.min(3, boluses == null ? 1 : boluses));
     var bolus = 20 * w, given = 20 * b * w;
     var remaining = Math.max(0, deficitVol - given);
     var maint12 = maintHr * 12, total = remaining + maint12, rate = total / 12;
@@ -163,6 +165,32 @@
           null, "planCBolus"),
         line("w.rate12", "total ÷ 12 h", n(total) + " ÷ 12", rate, "mL/h", null, "planCBolus")
       ]};
+  }
+
+  // Serum sodium: < 130 hyponatraemic, 130–150 isonatraemic, > 150 hypernatraemic (NICE CG84).
+  function sodiumBand(na) {
+    if (na == null || isNaN(na)) return null;
+    var k = na < 130 ? "hypo" : (na > 150 ? "hyper" : "iso");
+    return { key: k, na: na, work: [
+      line("w.na", "< 130 → hyponatraemic · 130–150 → isonatraemic · > 150 → hypernatraemic", n(na), k, "",
+        SRC.nice, "sodiumBand")
+    ]};
+  }
+
+  // Hypernatraemia: deficit + maintenance replaced evenly over 48 h (NICE CG84; Na⁺ fall ≤ 0.5 mmol/L/h).
+  function slowRehydration(deficitVol, maintHr) {
+    var m48 = maintHr * 48, total = deficitVol + m48, rate = total / 48;
+    return { maint48: m48, total: total, rate: rate, work: [
+      line("w.maint48", "hourly maintenance × 48", n(maintHr) + " × 48", m48, "mL", SRC.holliday, "slowRehydration"),
+      line("w.total48", "deficit + 48 h maintenance", n(deficitVol) + " + " + n(m48), total, "mL", SRC.nice, "slowRehydration"),
+      line("w.rate48", "total ÷ 48 h", n(total) + " ÷ 48", rate, "mL/h", SRC.nice, "slowRehydration")
+    ]};
+  }
+
+  // Hypoglycaemia: 10% glucose 5 mL/kg IV (WHO Pocket Book 2013).
+  function glucoseBolus(w) {
+    var g = perKg("w.sam.glucose", 5, "mL/kg", w, "mL", SRC.whoPb2013, "glucoseBolus");
+    return { v: g.v, work: [g] };
   }
 
   // Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.
@@ -210,7 +238,8 @@
     deficitFromWeightLoss: deficitFromWeightLoss, deficitVolume: deficitVolume,
     maintenance: maintenance, ongoingLosses: ongoingLosses,
     planB: planB, planCWho: planCWho, planCBolus: planCBolus,
-    zinc: zinc, samScreen: samScreen
+    zinc: zinc, samScreen: samScreen,
+    sodiumBand: sodiumBand, slowRehydration: slowRehydration, glucoseBolus: glucoseBolus
   };
   if (typeof module !== "undefined" && module.exports) module.exports = root.RH_CALC;
 })(typeof window !== "undefined" ? window : globalThis);

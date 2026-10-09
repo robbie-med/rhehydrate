@@ -1,6 +1,7 @@
 /* node tests/calc.test.js */
 "use strict";
 var assert = require("assert");
+require("../js/whz.js");
 var C = require("../js/calc.js");
 var S = require("../js/sam.js");
 
@@ -46,6 +47,19 @@ t("bedside units: drops/min, sachets, zinc tablets", function () {
   close(C.dripRate(120, 60).v, 120); close(C.dripRate(120, 20).v, 40); checkWork(C.dripRate(90, 20).work);
   var s = C.sachets(900, 1000); close(s.n, 0.9); close(s.cups, 4.5); checkWork(s.work);
   assert.strictEqual(C.zincTablets(10).label, "½"); assert.strictEqual(C.zincTablets(20).label, "1"); checkWork(C.zincTablets(20).work);
+});
+t("weight from age (APLS)", function () {
+  close(C.weightFromAge(6).v, 7); close(C.weightFromAge(24).v, 12); close(C.weightFromAge(96).v, 31); assert.strictEqual(C.weightFromAge(null), null);
+  checkWork(C.weightFromAge(30).work);
+});
+t("weight-for-height band from WHO cut-offs", function () {
+  var b = C.whzBand(85, "m", 18, 9.0);   // boys 85 cm length: −3 SD 9.1, −2 SD 9.8
+  assert.strictEqual(b.key, "whz3"); close(b.cut3, 9.1); close(b.cut2, 9.8); assert.strictEqual(b.table, "wfl");
+  assert.strictEqual(C.whzBand(85, "m", 18, 9.5).key, "whz2"); assert.strictEqual(C.whzBand(85, "m", 18, 11).key, "whzok");
+  var g = C.whzBand(100, "f", 40, 11.5); assert.strictEqual(g.table, "wfh"); close(g.cut3, 11.7); assert.strictEqual(g.key, "whz3");
+  assert.strictEqual(C.whzBand(85.3, "m", 18, 9).cm, 85.5); assert.strictEqual(C.whzBand(40, "m", 10, 5), null);
+  assert.strictEqual(C.samScreen({ muac: null, oedema: 0, whz: null, months: 18, whzBand: b }).status, "pos");
+  assert.ok(C.samScreen({ muac: null, oedema: 0, whz: null, months: 18, whzBand: C.whzBand(85, "m", 18, 9.5) }).notes.indexOf("sam.note.whzMod") >= 0);
 });
 t("sodium bands", function () {
   assert.strictEqual(C.sodiumBand(128).key, "hypo"); assert.strictEqual(C.sodiumBand(140).key, "iso");
@@ -319,6 +333,7 @@ t("every formula and unit the working can show has a translation key", function 
   });
   add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work); add(C.planCNg(7).work);
   add(C.dripRate(100, 60).work); add(C.sachets(600, 500).work); add(C.zincTablets(10).work);
+  add(C.weightFromAge(30).work); add(C.whzBand(85, "m", 18, 9).work); add(C.whzBand(100, "f", 40, 11.5).work);
   add(C.sodiumBand(155).work); add(C.slowRehydration(1000, 40).work); add(C.glucoseBolus(8).work);
   add(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).work);
   add(C.whoSeverity({ condition: 1, eyes: 1, thirst: 1, skin: 1 }).work);

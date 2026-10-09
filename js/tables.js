@@ -324,6 +324,12 @@
         { t: "MSF. 5.8 Cholera and acute malnutrition.", u: S.msfCholera }
       ] },
 
+    // ── WHO weight-for-length/height cut-offs (from js/whz.js) ────────
+    { id: "whz", whz: true,
+      title: { en: "WHO weight-for-length and weight-for-height: −3 SD and −2 SD cut-offs", fr: "OMS, poids-pour-longueur et poids-pour-taille : seuils −3 ET et −2 ET" },
+      notes: [{ en: "Weight below the −3 SD value = severe wasting (SAM); from −3 SD to below −2 SD = moderate wasting. A child under 2 measured standing: add 0.7 cm; a child of 2 or older measured lying: subtract 0.7 cm. The calculator uses the same values at 0.5 cm steps.", fr: "Poids inférieur à la valeur −3 ET = émaciation sévère (MAS) ; de −3 ET à moins de −2 ET = émaciation modérée. Enfant de moins de 2 ans mesuré debout : ajouter 0,7 cm ; enfant de 2 ans ou plus mesuré couché : retrancher 0,7 cm. Le calculateur utilise les mêmes valeurs par pas de 0,5 cm." }],
+      sources: [{ t: "WHO. Child Growth Standards 2006: weight-for-length and weight-for-height z-score tables.", u: S.whoGrowth }] },
+
     // ── 11. Formulas & code ───────────────────────────────────────────
     { id: "formulas", formulas: true,
       title: { en: "Formulas & code", fr: "Formules et code" } },
@@ -446,6 +452,29 @@
     return p;
   }
 
+  var WHZ_T = {
+    len:  { en: "Length (cm), lying, under 2 years", fr: "Longueur (cm), couché, moins de 2 ans" },
+    hgt:  { en: "Height (cm), standing, 2–5 years", fr: "Taille (cm), debout, 2–5 ans" },
+    cm:   { en: "cm", fr: "cm" },
+    m3: { en: "Boys −3 SD", fr: "Garçons −3 ET" }, m2: { en: "Boys −2 SD", fr: "Garçons −2 ET" },
+    f3: { en: "Girls −3 SD", fr: "Filles −3 ET" }, f2: { en: "Girls −2 SD", fr: "Filles −2 ET" }
+  };
+  // two tables at 1 cm steps from the 0.5 cm data the calculator uses
+  function renderWhz(sec) {
+    var D = window.RH_WHZ; if (!D) return;
+    var grid = el("div", "cds-grid");
+    [["wfl", WHZ_T.len], ["wfh", WHZ_T.hgt]].forEach(function (x) {
+      var T = D[x[0]], rows = [];
+      for (var i = 0; i < T.m3.length; i += 2) {
+        rows.push([String(T.from + i * T.step), String(T.m3[i]), String(T.m2[i]), String(T.f3[i]), String(T.f2[i])]);
+      }
+      var d = el("div");
+      d.appendChild(renderTable({ caption: x[1], cols: [{ t: WHZ_T.cm, cls: "col-sign" }, { t: WHZ_T.m3, cls: "th-severe" }, { t: WHZ_T.m2, cls: "th-some" }, { t: WHZ_T.f3, cls: "th-severe" }, { t: WHZ_T.f2, cls: "th-some" }], rows: rows }));
+      grid.appendChild(d);
+    });
+    sec.appendChild(grid);
+  }
+
   function renderFormulas(sec) {
     FORMULAS.forEach(function (f) {
       var box = el("div", "formula");
@@ -508,6 +537,11 @@
       h.appendChild(el("span", "ref-label", L(s.title)));
       sec.appendChild(h);
       if (s.formulas) { renderFormulas(sec); root.appendChild(sec); return; }
+      if (s.whz) {
+        renderWhz(sec);
+        (s.notes || []).forEach(function (n) { sec.appendChild(el("p", "ref-note", L(n))); });
+        sec.appendChild(renderSources(s.sources)); root.appendChild(sec); return;
+      }
       var holder = s.grid ? el("div", "cds-grid") : sec;
       s.tables.forEach(function (T) {
         if (s.grid) { var d = el("div"); d.appendChild(renderTable(T)); holder.appendChild(d); }

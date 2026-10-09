@@ -278,5 +278,14 @@ window.RH_TABLES_ZH = {
  "−3 to < −2 SD": "−3 至 < −2 SD",
  "50–100 mL ReSoMal": "ReSoMal 50–100 mL",
  "Cal": "热量",
- "MSF cholera §5.8.": "MSF 霍乱 §5.8."
+ "MSF cholera §5.8.": "MSF 霍乱 §5.8.",
+ "WHO weight-for-length and weight-for-height: −3 SD and −2 SD cut-offs": "WHO身长/身高别体重：−3 SD与−2 SD界值",
+ "Weight below the −3 SD value = severe wasting (SAM); from −3 SD to below −2 SD = moderate wasting. A child under 2 measured standing: add 0.7 cm; a child of 2 or older measured lying: subtract 0.7 cm. The calculator uses the same values at 0.5 cm steps.": "体重低于−3 SD值 = 重度消瘦（SAM）；−3 SD至低于−2 SD = 中度消瘦。2岁以下立位测量：加0.7 cm；2岁及以上卧位测量：减0.7 cm。计算器使用相同数值，步长0.5 cm。",
+ "Length (cm), lying, under 2 years": "身长（cm），卧位，2岁以下",
+ "Height (cm), standing, 2–5 years": "身高（cm），立位，2–5岁",
+ "cm": "cm",
+ "Boys −3 SD": "男 −3 SD",
+ "Boys −2 SD": "男 −2 SD",
+ "Girls −3 SD": "女 −3 SD",
+ "Girls −2 SD": "女 −2 SD"
 };

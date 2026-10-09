@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.13.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.14.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -37,13 +37,15 @@ Four methods, selectable at the bedside:
 | **Measured weight loss** | `% deficit = (well weight − current) ÷ well weight × 100` (capped at 15%) |
 | **Direct % entry** | Clinician override for experienced estimation |
 
+No scale: tick *estimate the weight from age* (APLS formula) and the plan is computed on the estimate, flagged everywhere until a measured weight replaces it.
+
 A measured or entered deficit is banded as **none** below 3% (CDC/AAP minimal dehydration), **some** up to
 the institution's "severe" threshold (default 10%), and **severe** from there. The clinical scales assign the
 institution's "some" and "severe" deficit percentages instead.
 
 ### Severe acute malnutrition (SAM)
 
-A malnutrition screen (MUAC, weight-for-height, bilateral oedema — WHO 2023 criteria)
+A malnutrition screen (MUAC, weight-for-height from length/height and sex against the WHO 2006 cut-offs, bilateral oedema — WHO 2023 criteria)
 sits above the severity assessment. When it is positive, Plans A/B/C are replaced by a
 SAM rehydration plan from the protocol chosen in Settings:
 
@@ -222,6 +224,7 @@ css/styles.css          # CSS custom properties for theming; no preprocessor
 js/i18n.js              # window.I18N — core strings, 5 languages
 js/i18n-sam.js          # SAM, show-the-maths (formulas, units), setup link — 5 languages
 js/i18n-sheet.js        # bedside sheet, logo — 5 languages
+js/whz.js               # WHO 2006 weight-for-length/height −3 SD and −2 SD cut-offs (0.5 cm steps)
 js/calc.js              # every formula, as pure functions returning their working
 js/sam.js               # the five SAM protocols, with page-level sources
 js/sheet.js             # bedside sheet: plan → timed checklist rows, and its layout

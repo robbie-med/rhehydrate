@@ -278,5 +278,14 @@ window.RH_TABLES_RU = {
  "−3 to < −2 SD": "от −3 до < −2 SD",
  "50–100 mL ReSoMal": "50–100 мл ReSoMal",
  "Cal": "ккал",
- "MSF cholera §5.8.": "MSF, холера §5.8."
+ "MSF cholera §5.8.": "MSF, холера §5.8.",
+ "WHO weight-for-length and weight-for-height: −3 SD and −2 SD cut-offs": "ВОЗ, вес к длине тела и вес к росту: пороги −3 SD и −2 SD",
+ "Weight below the −3 SD value = severe wasting (SAM); from −3 SD to below −2 SD = moderate wasting. A child under 2 measured standing: add 0.7 cm; a child of 2 or older measured lying: subtract 0.7 cm. The calculator uses the same values at 0.5 cm steps.": "Вес ниже значения −3 SD = тяжёлое истощение (ТОН); от −3 SD до менее −2 SD = умеренное истощение. Ребёнок до 2 лет, измеренный стоя: прибавить 0,7 см; ребёнок 2 лет и старше, измеренный лёжа: вычесть 0,7 см. Калькулятор использует те же значения с шагом 0,5 см.",
+ "Length (cm), lying, under 2 years": "Длина тела (см), лёжа, до 2 лет",
+ "Height (cm), standing, 2–5 years": "Рост (см), стоя, 2–5 лет",
+ "cm": "см",
+ "Boys −3 SD": "Мальчики −3 SD",
+ "Boys −2 SD": "Мальчики −2 SD",
+ "Girls −3 SD": "Девочки −3 SD",
+ "Girls −2 SD": "Девочки −2 SD"
 };

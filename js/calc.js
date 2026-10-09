@@ -21,6 +21,7 @@
     kenya2022:  "https://kijabehospital.or.ke/uploads/guidelines/1712736965_Basic_Paediatric_Protocols-JAN_27_2022_DRAFT_SW.pdf",
     gastrosam:  "https://doi.org/10.1016/S2352-4642(25)00371-2",
     nice:       "https://www.nice.org.uk/guidance/cg84",
+    whoGrowth:  "https://www.who.int/tools/child-growth-standards/standards/weight-for-length-height",
     aap2018:    "https://doi.org/10.1542/peds.2018-3083"
   };
 
@@ -219,6 +220,34 @@
       null, "zincTablets")] };
   }
 
+  // No scale: APLS weight estimate. < 1 y: 0.5 × months + 4; 1–5 y: 2 × years + 8; 6–12 y: 3 × years + 7.
+  function weightFromAge(months) {
+    if (months == null || isNaN(months) || months < 0) return null;
+    var y = Math.floor(months / 12), v, x;
+    if (months < 12)     { v = 0.5 * months + 4; x = "0.5 × " + n(months) + " + 4"; }
+    else if (months < 72) { v = 2 * y + 8;      x = "2 × " + y + " + 8"; }
+    else                  { v = 3 * y + 7;      x = "3 × " + y + " + 7"; }
+    return { v: v, work: [line("w.wEst", "age < 12 months → 0.5 × months + 4 · < 6 years → 2 × years + 8 · else 3 × years + 7",
+      x, v, "kg", null, "weightFromAge")] };
+  }
+
+  // Weight-for-length/height band from the WHO 2006 −3 SD and −2 SD cut-offs (RH_WHZ).
+  // Length (lying) under 24 months, height (standing) from 24 months; by cm if age unknown.
+  function whzBand(cm, sex, months, w) {
+    var D = root.RH_WHZ;
+    if (!D || cm == null || isNaN(cm) || !w || (sex !== "m" && sex !== "f")) return null;
+    var useLength = months != null ? months < 24 : cm < 87;
+    var T = useLength ? D.wfl : D.wfh;
+    var i = Math.round((cm - T.from) / T.step);
+    if (i < 0 || i >= T.m3.length) return null;
+    var c3 = T[sex + "3"][i], c2 = T[sex + "2"][i];
+    var key = w < c3 ? "whz3" : (w < c2 ? "whz2" : "whzok");
+    return { key: key, cut3: c3, cut2: c2, cm: T.from + i * T.step, table: useLength ? "wfl" : "wfh", work: [
+      line("w.whzCut", "weight vs −3 SD and −2 SD cut-offs at this length/height",
+        n(w) + " kg vs " + n(c3) + " / " + n(c2) + " kg", key, "", SRC.whoGrowth, "whzBand")
+    ]};
+  }
+
   // Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.
   function zinc(months) {
     var mg = months < 6 ? 10 : 20;
@@ -249,7 +278,11 @@
       work.push(line("w.oedema", "bilateral pitting oedema → SAM", new Array(o.oedema + 1).join("+"), "SAM", "",
         SRC.who2023, "samScreen"));
     }
-    if (o.whz === "yes") {
+    if (o.whzBand) {
+      work = work.concat(o.whzBand.work);
+      if (o.whzBand.key === "whz3") reasons.push({ k: "sam.reason.whz", v: {} });
+      else if (o.whzBand.key === "whz2") notes.push("sam.note.whzMod");
+    } else if (o.whz === "yes") {
       reasons.push({ k: "sam.reason.whz", v: {} });
       work.push(line("w.whz", "WHZ/WLZ < −3 → SAM", "< −3", "SAM", "", SRC.who2023, "samScreen"));
     }
@@ -266,7 +299,8 @@
     planB: planB, planCWho: planCWho, planCBolus: planCBolus, planCNg: planCNg,
     zinc: zinc, samScreen: samScreen,
     sodiumBand: sodiumBand, slowRehydration: slowRehydration, glucoseBolus: glucoseBolus,
-    dripRate: dripRate, sachets: sachets, zincTablets: zincTablets
+    dripRate: dripRate, sachets: sachets, zincTablets: zincTablets,
+    weightFromAge: weightFromAge, whzBand: whzBand
   };
   if (typeof module !== "undefined" && module.exports) module.exports = root.RH_CALC;
 })(typeof window !== "undefined" ? window : globalThis);

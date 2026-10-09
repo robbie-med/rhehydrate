@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.13.0";
+  var APP_VERSION = "1.14.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -62,7 +62,7 @@
   };
 
   function samDefaults() {
-    return { muac: null, oedema: null, whz: null, hyd: null, shock: false, oralOk: true, preW: null };
+    return { muac: null, oedema: null, whz: null, len: null, sex: null, hyd: null, shock: false, oralOk: true, preW: null };
   }
 
   // ── state ───────────────────────────────────────────────────────────
@@ -278,13 +278,28 @@
 
   function samScreenResult(months) {
     if (state.inst.samScreen === "off") return null;
-    return C.samScreen({ muac: state.sam.muac, oedema: state.sam.oedema, whz: state.sam.whz, months: months });
+    var band = C.whzBand(state.sam.len, state.sam.sex, months, parseFloat($("#weight").value));
+    var r = C.samScreen({ muac: state.sam.muac, oedema: state.sam.oedema, whz: state.sam.whz, whzBand: band, months: months });
+    r.whzBand = band;
+    return r;
+  }
+  // no scale: fill the weight from age while the box is ticked
+  function applyWeightEstimate(months) {
+    var est = null;
+    if ($("#weightEst").checked) {
+      var e = C.weightFromAge(months);
+      if (e) { est = e; $("#weight").value = C.n(e.v); }
+    }
+    $("#weight").classList.toggle("est", !!est);
+    $("#weightEstNote").textContent = est ? t("in.weight.estNote", { w: est.v }) : "";
+    return est;
   }
 
   // quiet = live update; the Calculate button also flags a missing weight
   function calculate(quiet) {
-    var weight = parseFloat($("#weight").value);
     var months = ageMonths();
+    var est = applyWeightEstimate(months);
+    var weight = parseFloat($("#weight").value);
     var screen = samScreenResult(months);
     renderSamStatus(screen);
     if (!weight || weight <= 0) {
@@ -296,7 +311,7 @@
     // positive SAM screen → SAM pathway instead of Plans A/B/C
     if (screen && screen.status === "pos") {
       if (!state.sam.hyd) { lastResult = null; renderMessage("res.sam.needHyd"); persist(); return; }
-      lastResult = { sam: true, weight: weight, months: months, screen: screen, generic: deriveSeverity(weight) };
+      lastResult = { sam: true, weight: weight, months: months, screen: screen, est: est, generic: deriveSeverity(weight) };
       renderResults(lastResult);
       persist();
       return;
@@ -316,10 +331,10 @@
     var na    = C.sodiumBand(parseFloat($("#sodium").value));
 
     lastResult = {
-      weight: weight, months: months, sev: sev, screen: screen, na: na,
+      weight: weight, months: months, sev: sev, screen: screen, na: na, est: est,
       deficitVol: def.v, maint24: maint.daily, maintHr: maint.hourly,
       stools: stools, emesis: emesis, lossVol: loss.v,
-      work: sev.work.concat(def.work, maint.work, loss.work, na ? na.work : [])
+      work: (est ? est.work : []).concat(sev.work, def.work, maint.work, loss.work, na ? na.work : [])
     };
     renderResults(lastResult);
     persist();
@@ -426,6 +441,7 @@
     bt.appendChild(txt("div", "sev-name", t("sev." + key)));
     var sub = t("res.deficitPct") + " " + fmt(R.sev.pct) + "% · " + fmt(R.deficitVol) + " " + t("u.mL");
     if (R.na && R.na.key !== "iso") sub += " · " + t("na." + R.na.key, { na: R.na.na });
+    if (R.est) sub += " · " + t("res.weightEst");
     bt.appendChild(txt("div", "sev-sub", sub));
     banner.appendChild(bt);
     body.appendChild(banner);
@@ -697,7 +713,7 @@
     var metrics = el("div", "metrics");
     metrics.appendChild(metric(t("res.sam.hyd"), t("sam.hyd." + s.hyd) + (s.shock ? " · " + t("sam.shock") : "")));
     metrics.appendChild(metric(t("res.sam.protocol"), t(P.protocol.nameKey + ".short")));
-    metrics.appendChild(metric(t("res.sam.weight"), fmt(R.weight) + "<small> " + t("u.kg") + "</small>"));
+    metrics.appendChild(metric(t("res.sam.weight"), fmt(R.weight) + "<small> " + t("u.kg") + (R.est ? " · " + t("res.weightEst") : "") + "</small>"));
     metrics.appendChild(metric(t("res.sam.fluid"), t("sam.fluid." + P.fluid)));
     body.appendChild(metrics);
     body.appendChild(workDetails(R.screen.work, "js/calc.js"));
@@ -762,7 +778,7 @@
     var head = {
       logo: ins.logo, inst: ins.name, dept: ins.dept,
       age: R.months < 24 ? t("bs.age.m", { n: R.months }) : t("bs.age.y", { n: R.months / 12 }),
-      weight: fmt(R.weight) + " " + t("u.kg"),
+      weight: fmt(R.weight) + " " + t("u.kg") + (R.est ? " " + t("bs.weight.est") : ""),
       classLabel: R.sam ? t("bs.class.sam", { hyd: { key: "sam.hyd." + s.hyd } }) + (s.shock ? " · " + t("sam.shock") : "")
         : t("sev." + R.sev.key),
       samLabel: samLabel,
@@ -806,6 +822,9 @@
     if (screen.reasons.length) head += ": " + screen.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     box.appendChild(txt("strong", null, head));
     screen.notes.forEach(function (k) { box.appendChild(txt("span", "hint", t(k))); });
+    var bd = screen.whzBand;
+    $("#samWhzSeg").hidden = !!bd;
+    $("#samWhzDerived").textContent = bd ? t("sam.whz.derived", { z: { key: "w.v." + bd.key }, cm: bd.cm, c3: bd.cut3, c2: bd.cut2 }) : "";
     $("#samExtra").hidden = screen.status !== "pos";
     var g = $("#samHydHint"); g.textContent = "";
     if (screen.status === "pos") {
@@ -819,6 +838,8 @@
     var s = state.sam;
     $("#samMuac").value = s.muac == null ? "" : s.muac;
     $("#samPreW").value = s.preW == null ? "" : s.preW;
+    $("#samLen").value = s.len == null ? "" : s.len;
+    syncStrSeg("#samSexSeg", s.sex);
     syncStrSeg("#samWhzSeg", s.whz);
     syncStrSeg("#samOedemaSeg", s.oedema);
     syncStrSeg("#samHydSeg", s.hyd);
@@ -835,6 +856,7 @@
     function num(v) { var x = parseFloat(v); return isNaN(x) ? null : x; }
     $("#samMuac").addEventListener("input", function () { state.sam.muac = num(this.value); changed(); });
     $("#samPreW").addEventListener("input", function () { state.sam.preW = num(this.value); changed(); });
+    $("#samLen").addEventListener("input", function () { state.sam.len = num(this.value); changed(); });
     function seg(sel, fn) {
       $(sel).addEventListener("click", function (e) {
         var b = e.target.closest(".seg"); if (!b) return;
@@ -842,6 +864,7 @@
       });
     }
     seg("#samWhzSeg",    function (v) { state.sam.whz = v || null; });
+    seg("#samSexSeg",    function (v) { state.sam.sex = v || null; });
     seg("#samOedemaSeg", function (v) { state.sam.oedema = parseInt(v, 10); });
     seg("#samHydSeg",    function (v) { state.sam.hyd = v; });
     seg("#samShockSeg",  function (v) { state.sam.shock = v === "1"; });
@@ -1161,6 +1184,7 @@
         stools:     $("#stools").value,
         emesis:     $("#emesis").value,
         sodium:     $("#sodium").value,
+        weightEst:  $("#weightEst").checked,
         cds:        state.cds,
         who:        state.who,
         sam:        state.sam,
@@ -1181,6 +1205,7 @@
       if (d.stools)     $("#stools").value      = d.stools;
       if (d.emesis)     $("#emesis").value      = d.emesis;
       if (d.sodium)     $("#sodium").value      = d.sodium;
+      $("#weightEst").checked = !!d.weightEst;
       if (d.cds)        state.cds = d.cds;
       if (d.who)        state.who = d.who;
       if (d.sam)        state.sam = Object.assign(samDefaults(), d.sam);
@@ -1197,6 +1222,7 @@
     state.cholera = false;
     state.bolusCount = 1;
     ["#weight","#age","#wellWeight","#sodium"].forEach(function(s){ $(s).value = ""; });
+    $("#weightEst").checked = false; $("#weight").classList.remove("est"); $("#weightEstNote").textContent = "";
     $("#stools").value = "0"; $("#emesis").value = "0";
     $("#pctRange").value = "5"; $("#pctOut").textContent = "5%";
     lastResult = null; renderEmpty();
@@ -1320,6 +1346,8 @@
     // age notes update while typing, so nothing shifts under the next tap
     $("#age").addEventListener("input", function () { renderSamStatus(samScreenResult(ageMonths())); });
     $("#ageUnit").addEventListener("change", function () { renderSamStatus(samScreenResult(ageMonths())); });
+    $("#weightEst").addEventListener("change", function () { persist(); recalc(); });
+    $("#weight").addEventListener("input", function () { if (this.classList.contains("est")) { $("#weightEst").checked = false; this.classList.remove("est"); } });
     $$(".inputs input, .inputs select").forEach(function (n) {
       n.addEventListener("change", recalc);
     });

@@ -278,5 +278,14 @@ window.RH_TABLES_KR = {
  "−3 to < −2 SD": "−3 ~ < −2 SD",
  "50–100 mL ReSoMal": "ReSoMal 50–100 mL",
  "Cal": "열량",
- "MSF cholera §5.8.": "MSF 콜레라 §5.8."
+ "MSF cholera §5.8.": "MSF 콜레라 §5.8.",
+ "WHO weight-for-length and weight-for-height: −3 SD and −2 SD cut-offs": "WHO 신장별 체중: −3 SD 및 −2 SD 기준",
+ "Weight below the −3 SD value = severe wasting (SAM); from −3 SD to below −2 SD = moderate wasting. A child under 2 measured standing: add 0.7 cm; a child of 2 or older measured lying: subtract 0.7 cm. The calculator uses the same values at 0.5 cm steps.": "체중이 −3 SD 값 미만 = 중증 소모증(SAM); −3 SD 이상 −2 SD 미만 = 중등도 소모증. 2세 미만을 서서 쟀으면 0.7 cm를 더하고, 2세 이상을 누워서 쟀으면 0.7 cm를 뺍니다. 계산기는 같은 값을 0.5 cm 단위로 사용합니다.",
+ "Length (cm), lying, under 2 years": "신장 (cm), 누워서, 2세 미만",
+ "Height (cm), standing, 2–5 years": "키 (cm), 서서, 2–5세",
+ "cm": "cm",
+ "Boys −3 SD": "남아 −3 SD",
+ "Boys −2 SD": "남아 −2 SD",
+ "Girls −3 SD": "여아 −3 SD",
+ "Girls −2 SD": "여아 −2 SD"
 };

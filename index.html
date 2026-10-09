@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link rel="stylesheet" href="css/styles.css?v=1.13.0" />
+  <link rel="stylesheet" href="css/styles.css?v=1.14.0" />
   <script>
     try { var th = localStorage.getItem("rh.theme") || "system";
       if (th === "system") th = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
@@ -59,6 +59,8 @@
               <input id="weight" type="number" inputmode="decimal" min="0.5" max="100" step="0.1" data-i18n-ph="in.weight.ph" placeholder="e.g. 12" />
               <span class="suffix" data-i18n="u.kg">kg</span>
             </span>
+            <span class="check"><input type="checkbox" id="weightEst" /><span data-i18n="in.weight.est">No scale: estimate the weight from age</span></span>
+            <span class="hint" id="weightEstNote"></span>
           </label>
           <label class="field">
             <span class="field-l" data-i18n="in.age">Age</span>
@@ -83,6 +85,23 @@
                 <span class="suffix" data-i18n="u.mm">mm</span>
               </span>
             </label>
+            <label class="field">
+              <span class="field-l" data-i18n="sam.length">Length / height</span>
+              <span class="inputwrap">
+                <input id="samLen" type="number" inputmode="decimal" min="45" max="120" step="0.5" />
+                <span class="suffix">cm</span>
+              </span>
+              <span class="hint" data-i18n="sam.length.help"></span>
+            </label>
+          </div>
+          <div class="sam-grid">
+            <div class="field">
+              <span class="field-l" data-i18n="sam.sex">Sex</span>
+              <div class="segmented small" id="samSexSeg">
+                <button class="seg" data-val="m" data-i18n="sam.sex.m">Boy</button>
+                <button class="seg" data-val="f" data-i18n="sam.sex.f">Girl</button>
+              </div>
+            </div>
             <div class="field">
               <span class="field-l" data-i18n="sam.whz">Weight-for-height &lt; −3 SD</span>
               <div class="segmented small" id="samWhzSeg">
@@ -90,6 +109,7 @@
                 <button class="seg" data-val="no" data-i18n="sam.no">No</button>
                 <button class="seg" data-val="" data-i18n="sam.whz.unk">Not measured</button>
               </div>
+              <span class="hint" id="samWhzDerived"></span>
             </div>
           </div>
           <div class="field">
@@ -500,12 +520,13 @@
 
   <div id="printSheet" aria-hidden="true"></div>
 
-  <script src="js/i18n.js?v=1.13.0"></script>
-  <script src="js/i18n-sam.js?v=1.13.0"></script>
-  <script src="js/i18n-sheet.js?v=1.13.0"></script>
-  <script src="js/calc.js?v=1.13.0"></script>
-  <script src="js/sam.js?v=1.13.0"></script>
-  <script src="js/sheet.js?v=1.13.0"></script>
-  <script src="js/app.js?v=1.13.0"></script>
+  <script src="js/i18n.js?v=1.14.0"></script>
+  <script src="js/i18n-sam.js?v=1.14.0"></script>
+  <script src="js/i18n-sheet.js?v=1.14.0"></script>
+  <script src="js/whz.js?v=1.14.0"></script>
+  <script src="js/calc.js?v=1.14.0"></script>
+  <script src="js/sam.js?v=1.14.0"></script>
+  <script src="js/sheet.js?v=1.14.0"></script>
+  <script src="js/app.js?v=1.14.0"></script>
 </body>
 </html>

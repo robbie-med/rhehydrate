@@ -57,7 +57,7 @@
       if (ins.showOnda)  items.push(["plan.b.2", {}]);
       if (ins.showNgOrs) items.push(["plan.b.5", {}]);
       m.orders.push({ h: null, items: items });
-      m.rows.push({ type: "head", text: ["plan.b.dose", { vol: b.vol, hours: String(ins.planBHours), rate: String(ins.planBRate) }] });
+      m.rows.push({ type: "head", text: ["plan.b.dose", { vol: b.vol, hours: String(ins.planBHours), rate: String(ins.planBRate), perHour: b.perHour }] });
       m.rows = m.rows.concat(slots(b.vol, ins.planBHours, 60, 0, 0, ["bs.give", { fluid: { key: "bs.ors" } }]));
       m.rows.push({ type: "check", when: hm(ins.planBHours * 60), text: ["bs.chk.b", {}] });
       return m;

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.7.0";
+  var APP_VERSION = "1.8.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -29,7 +29,8 @@
     { url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr5216a1.htm", key: "edu.refs.14" },
     { url: "https://www.who.int/publications/i/item/978-92-4-154837-3", key: "edu.refs.15" },
     { url: "https://iris.who.int/handle/10665/376075",           key: "edu.refs.16" },
-    { url: "https://doi.org/10.1016/S2352-4642(25)00371-2",      key: "edu.refs.17" }
+    { url: "https://doi.org/10.1016/S2352-4642(25)00371-2",      key: "edu.refs.17" },
+    { url: "https://ansm.sante.fr/actualites/medicaments-a-base-dargile-dans-le-traitement-symptomatique-de-la-diarrhee-aigue-chez-lenfant", key: "edu.refs.18" }
   ];
 
   // ── institution defaults ──
@@ -158,20 +159,19 @@
     if (state.theme === "system") applyTheme();
   });
 
+  // active state + aria (tabs use aria-selected, everything else aria-pressed)
+  function markSeg(b, on) {
+    b.classList.toggle("active", on);
+    b.setAttribute(b.getAttribute("role") === "tab" ? "aria-selected" : "aria-pressed", on ? "true" : "false");
+  }
   function syncSeg(sel, attr, val) {
-    $$(sel + " .seg").forEach(function (b) {
-      b.classList.toggle("active", b.getAttribute("data-" + attr) === val);
-    });
+    $$(sel + " .seg").forEach(function (b) { markSeg(b, b.getAttribute("data-" + attr) === val); });
   }
   function syncValSeg(sel, val) {
-    $$(sel + " .seg").forEach(function (b) {
-      b.classList.toggle("active", b.getAttribute("data-val") === String(val ? 1 : 0));
-    });
+    $$(sel + " .seg").forEach(function (b) { markSeg(b, b.getAttribute("data-val") === String(val ? 1 : 0)); });
   }
   function syncStrSeg(sel, val) {
-    $$(sel + " .seg").forEach(function (b) {
-      b.classList.toggle("active", b.getAttribute("data-val") === (val == null ? "" : String(val)));
-    });
+    $$(sel + " .seg").forEach(function (b) { markSeg(b, b.getAttribute("data-val") === (val == null ? "" : String(val))); });
   }
 
   // ── scale definitions ────────────────────────────────────────────────
@@ -230,10 +230,16 @@
   function sevLine(key, pct) {
     return C.line("w.sevPct", "institution setting: " + key + " → deficit %", key, pct, "%", null, "deriveSeverity");
   }
-  function pctToKey(p, somePct, severePct) {
-    if (p < somePct)   return "none";
-    if (p < severePct) return "some";
+  // measured or entered deficit: < 3% minimal (CDC/King 2003), ≥ severe threshold severe
+  var MIN_SOME_PCT = 3;
+  function pctToKey(p, severePct) {
+    if (p < MIN_SOME_PCT) return "none";
+    if (p < severePct)    return "some";
     return "severe";
+  }
+  function bandLine(p, severePct, k) {
+    return C.line("w.band", "< " + MIN_SOME_PCT + "% none · < " + severePct + "% some · else severe",
+      C.n(p) + "%", k, "", C.SRC.king2003, "deriveSeverity");
   }
   function deriveSeverity(weight) {
     var ins = state.inst, r, pct;
@@ -248,16 +254,14 @@
     if (state.method === "weight") {
       r = C.deficitFromWeightLoss(parseFloat($("#wellWeight").value), weight);
       if (!r) return null;
-      var k = pctToKey(r.pct, ins.somePct, ins.severePct);
-      return { key: k, pct: r.pct, work: r.work.concat([C.line("w.band",
-        "< " + ins.somePct + "% none · < " + ins.severePct + "% some · else severe", C.n(r.pct) + "%", k, "",
-        null, "deriveSeverity")]) };
+      var k = pctToKey(r.pct, ins.severePct);
+      return { key: k, pct: r.pct, work: r.work.concat([bandLine(r.pct, ins.severePct, k)]) };
     }
     if (state.method === "percent") {
       var p2 = parseFloat($("#pctRange").value);
-      var k2 = pctToKey(p2, ins.somePct, ins.severePct);
+      var k2 = pctToKey(p2, ins.severePct);
       return { key: k2, pct: p2, work: [C.line("w.pctDirect", "entered by clinician", C.n(p2) + "%", p2, "%",
-        null, "deriveSeverity")] };
+        null, "deriveSeverity"), bandLine(p2, ins.severePct, k2)] };
     }
     return null;
   }
@@ -462,7 +466,7 @@
       head.textContent = t("plan.b.title");
       var b = C.planB(w, ins.planBRate, ins.planBHours);
       body.appendChild(el("div", "plan-dose",
-        t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours })));
+        t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours, perHour: fmt(b.perHour) })));
       var its = [t("plan.b.1")];
       if (ins.showOnda)         its.push(t("plan.b.2"));
       its.push(t("plan.b.3", { losses: fmt(R.lossVol) }));
@@ -1095,17 +1099,21 @@
     if (!("serviceWorker" in navigator)) return;
     navigator.serviceWorker.register("sw.js").catch(function(){});
   }
+  // a newer release installs and reloads the page (sw.js activate); otherwise report up to date
   function checkUpdate(btn) {
     if (!("serviceWorker" in navigator)) return;
     var orig = btn.textContent;
     btn.textContent = t("set.update.checking");
+    function done(key) {
+      btn.textContent = t(key);
+      setTimeout(function () { btn.textContent = orig; }, 1800);
+    }
     navigator.serviceWorker.getRegistration().then(function (reg) {
-      if (reg) reg.update();
-      setTimeout(function () {
-        btn.textContent = t("set.update.current");
-        setTimeout(function(){ btn.textContent = orig; }, 1500);
-      }, 800);
-    });
+      if (!reg) { done("set.update.current"); return; }
+      return reg.update().then(function () {
+        done(reg.installing || reg.waiting ? "set.update.found" : "set.update.current");
+      });
+    }).catch(function () { done("set.update.offline"); });
   }
 
   function detectLang() {

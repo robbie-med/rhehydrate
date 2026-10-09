@@ -86,7 +86,7 @@ button { font: inherit; color: inherit; }
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
 }
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand, .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mark { border-radius: 7px; flex: none; }
 .brand-text { display: flex; flex-direction: column; min-width: 0; }
 .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.2px; line-height: 1.2; color: var(--text); }

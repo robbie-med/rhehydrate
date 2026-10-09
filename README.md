@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.7.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.8.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -34,8 +34,12 @@ Four methods, selectable at the bedside:
 |--------|-------|
 | **Clinical Dehydration Scale (CDS)** | Goldman 4-item scale, 0–8 pts · validated 1 mo–5 yr |
 | **WHO / IMCI clinical signs** | Two-or-more signs per column → severity class |
-| **Measured weight loss** | `% deficit = (well weight − current) ÷ well weight × 100` |
+| **Measured weight loss** | `% deficit = (well weight − current) ÷ well weight × 100` (capped at 15%) |
 | **Direct % entry** | Clinician override for experienced estimation |
+
+A measured or entered deficit is banded as **none** below 3% (CDC/AAP minimal dehydration), **some** up to
+the institution's "severe" threshold (default 10%), and **severe** from there. The clinical scales assign the
+institution's "some" and "severe" deficit percentages instead.
 
 ### Severe acute malnutrition (SAM)
 
@@ -145,6 +149,7 @@ All protocols and reference ranges are drawn from peer-reviewed sources:
 | Schnadower D; Freedman SB et al. *NEJM* 2018 | [LGG](https://doi.org/10.1056/NEJMoa1802598) · [combination](https://doi.org/10.1056/NEJMoa1802597) | Probiotic RCTs (no benefit) |
 | MSF, ACF, MoHFW India, Kenya MoH | see [`docs/SAM-PROTOCOLS.md`](./docs/SAM-PROTOCOLS.md) | SAM protocols |
 | GASTROSAM. *Lancet Child Adolesc Health* 2026 | [10.1016/S2352-4642(25)00371-2](https://doi.org/10.1016/S2352-4642(25)00371-2) | ORS vs ReSoMal in SAM |
+| ANSM (France), 28 Feb 2019 | [ansm.sante.fr](https://ansm.sante.fr/actualites/medicaments-a-base-dargile-dans-le-traitement-symptomatique-de-la-diarrhee-aigue-chez-lenfant) | Diosmectite not under 2 years (lead traces) |
 
 ---
 
@@ -184,7 +189,7 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 | Ondansetron note | On / Off | On |
 | NG-ORS note | On / Off | On |
 | Racecadotril note | On / Off | Off |
-| Smectite / diosmectite note | On / Off | Off |
+| Smectite / diosmectite note (over 2 years only) | On / Off | Off |
 | *S. boulardii* / probiotic note | On / Off | Off |
 | Malnutrition screen | Optional · Required before any plan · Off | Optional |
 | SAM protocol | WHO · MSF · ACF · India · Kenya | WHO |

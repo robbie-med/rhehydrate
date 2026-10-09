@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.14.0";
+  var APP_VERSION = "2.0.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -356,16 +356,24 @@
   // ── rendering helpers ────────────────────────────────────────────────
   function setResultBtns(on) {
     $("#printBtn").hidden = !on;
+    $("#copyBtn").hidden = !on;
     $("#sheetBtn").hidden = !on;
+  }
+  // one-line summary for the mobile bar
+  function liveSummary() {
+    var body = $("#resultsBody"), name = body.querySelector(".sev-name"), dose = body.querySelector(".plan-dose");
+    $("#liveSum").textContent = name ? name.textContent + (dose ? " · " + dose.textContent : "") : "";
   }
   function renderEmpty() {
     setResultBtns(false);
+    $("#liveSum").textContent = "";
     $("#resultsBody").innerHTML = '<p class="empty">' + t("res.empty") + "</p>";
   }
   function renderMessage(key) {
     setResultBtns(false);
     var b = $("#resultsBody"); b.innerHTML = "";
     b.appendChild(txt("p", "empty sam-msg", t(key)));
+    $("#liveSum").textContent = "";
   }
 
   function el(tag, cls, html) {
@@ -470,6 +478,7 @@
     body.appendChild(wk);
 
     setResultBtns(true);
+    liveSummary();
   }
 
   function instHeader() {
@@ -759,6 +768,7 @@
     body.appendChild(src);
 
     setResultBtns(true);
+    liveSummary();
   }
 
   // ── bedside sheet ────────────────────────────────────────────────────
@@ -788,6 +798,72 @@
     };
     return SHEET.render(M, head, t);
   }
+  // ── report: the rendered plan as lines (text for sharing, DOM for print) ──
+  function reportLines() {
+    var lines = [];
+    function push(pre, s) { s = (s || "").replace(/\s+/g, " ").trim(); if (s) lines.push(pre + s); }
+    function kids(n, f) { Array.prototype.forEach.call(n.children, f); }
+    function walk(n) {
+      var c = n.classList;
+      if (c.contains("plan-inst") || c.contains("working") || c.contains("maths") || c.contains("variants") || c.contains("sam-sources")) return;
+      if (c.contains("sev-banner")) { push("# ", n.querySelector(".sev-name").textContent); var sb = n.querySelector(".sev-sub"); if (sb) push("", sb.textContent); return; }
+      if (c.contains("metrics")) { kids(n, function (m) { push("", m.querySelector(".m-l").textContent + ": " + m.querySelector(".m-v").textContent); }); return; }
+      if (c.contains("group")) { push("## ", n.querySelector("summary").textContent); kids(n, function (x) { if (x.tagName !== "SUMMARY") walk(x); }); return; }
+      if (c.contains("plan")) { push("## ", n.querySelector(".plan-head").textContent); kids(n.querySelector(".plan-body"), walk); return; }
+      if (c.contains("plan-phase")) { push("## ", n.querySelector(".plan-phase-label").textContent); kids(n, function (x) { if (!x.classList.contains("plan-phase-label")) walk(x); }); return; }
+      if (c.contains("bolus-given")) { push("", n.querySelector("span").textContent + " " + n.querySelector("select").selectedOptions[0].textContent); return; }
+      if (c.contains("redflags")) { push("## ", n.querySelector("h4").textContent); kids(n.querySelector("ul"), function (li) { push("• ", li.textContent); }); var nt = n.querySelector(".note"); if (nt) push("", nt.textContent); return; }
+      if (n.tagName === "UL") { kids(n, function (li) { push("• ", li.textContent); }); return; }
+      push("", n.textContent);
+    }
+    kids($("#resultsBody"), walk);
+    return lines;
+  }
+  function reportMeta() {
+    var R = lastResult, ins = state.inst, m = [];
+    if (ins.name) m.push(ins.name + (ins.dept ? " · " + ins.dept : ""));
+    m.push(new Date().toLocaleString(LOCALES[state.lang] || "en-US", { dateStyle: "medium", timeStyle: "short" }));
+    var pt = [];
+    if (R.months != null) pt.push(t("bs.f.age") + ": " + (R.months < 24 ? t("bs.age.m", { n: R.months }) : t("bs.age.y", { n: R.months / 12 })));
+    pt.push(t("in.weight") + ": " + fmt(R.weight) + " " + t("u.kg") + (R.est ? " " + t("bs.weight.est") : ""));
+    if (R.na) pt.push("Na⁺ " + fmt(R.na.na) + " mmol/L");
+    m.push(pt.join(" · "));
+    return m;
+  }
+  function reportText() {
+    if (!lastResult) return "";
+    var out = [t("app.title") + " " + APP_VERSION].concat(reportMeta(), [t("rep.name"), ""]);
+    reportLines().forEach(function (l) {
+      if (l.indexOf("# ") === 0) out.push(l.slice(2).toUpperCase());
+      else if (l.indexOf("## ") === 0) out.push("", l.slice(3));
+      else out.push(l);
+    });
+    out.push("", t("rep.sign"), t("res.disclaimerShort"));
+    return out.join("\n");
+  }
+  function buildReport() {
+    var root = txt("div", "rep");
+    var head = txt("div", "rep-head");
+    if (state.inst.logo) { var i = txt("img", "rep-logo"); i.src = state.inst.logo; i.alt = ""; head.appendChild(i); }
+    var hm = txt("div");
+    reportMeta().forEach(function (l, k) { hm.appendChild(txt("div", k === 0 && state.inst.name ? "rep-inst" : "rep-meta", l)); });
+    head.appendChild(hm);
+    head.appendChild(txt("div", "rep-title", t("app.title")));
+    root.appendChild(head);
+    root.appendChild(txt("p", "rep-line", t("rep.name")));
+    var ul = null;
+    reportLines().forEach(function (l) {
+      if (l.indexOf("• ") === 0) { if (!ul) { ul = txt("ul"); root.appendChild(ul); } ul.appendChild(txt("li", null, l.slice(2))); return; }
+      ul = null;
+      if (l.indexOf("# ") === 0) root.appendChild(txt("h2", null, l.slice(2)));
+      else if (l.indexOf("## ") === 0) root.appendChild(txt("h3", null, l.slice(3)));
+      else root.appendChild(txt("p", null, l));
+    });
+    root.appendChild(txt("p", "rep-line", t("rep.sign")));
+    root.appendChild(txt("p", "rep-foot", t("app.title") + " " + APP_VERSION + " · " + t("res.disclaimerShort")));
+    return root;
+  }
+
   function sheetOpen() {
     return !$("#overlay").hidden && !$('[data-panel-body="bedside"]').hidden;
   }
@@ -803,24 +879,38 @@
   }
   // printing with the preview open prints the sheet only
   window.addEventListener("beforeprint", function () {
-    if (!sheetOpen() || !lastResult) return;
-    var box = $("#printSheet"); box.innerHTML = "";
-    box.appendChild(buildSheet());
-    document.documentElement.classList.add("print-sheet");
+    if (!lastResult) return;
+    if (sheetOpen()) {
+      var box = $("#printSheet"); box.innerHTML = "";
+      box.appendChild(buildSheet());
+      document.documentElement.classList.add("print-sheet");
+    } else {
+      var rb = $("#printReport"); rb.innerHTML = "";
+      rb.appendChild(buildReport());
+      document.documentElement.classList.add("print-report");
+    }
   });
   window.addEventListener("afterprint", function () {
     document.documentElement.classList.remove("print-sheet");
+    document.documentElement.classList.remove("print-report");
   });
 
   // ── SAM screen UI ────────────────────────────────────────────────────
   function renderSamStatus(screen) {
     var box = $("#samStatus"); box.innerHTML = "";
     box.className = "sam-status";
-    if (!screen) { $("#samExtra").hidden = true; return; }
+    var pos = !!screen && screen.status === "pos";
+    $("#methodBlock").hidden = pos;
+    $("#samHiddenNote").hidden = !pos;
+    if (!screen) { $("#samExtra").hidden = true; $("#samSum").textContent = ""; return; }
     box.classList.add("st-" + screen.status);
     var head = t("sam.status." + screen.status);
     if (screen.reasons.length) head += ": " + screen.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     box.appendChild(txt("strong", null, head));
+    var s = state.sam, touched = s.muac != null || s.oedema != null || s.whz != null || s.len != null;
+    var sum = $("#samSum"); sum.className = "sam-sum st-" + screen.status;
+    sum.textContent = touched || screen.status !== "incomplete" ? t("sam.status." + screen.status) : t("sam.screen.open");
+    if (pos) $("#samScreen").open = true;
     screen.notes.forEach(function (k) { box.appendChild(txt("span", "hint", t(k))); });
     var bd = screen.whzBand;
     $("#samWhzSeg").hidden = !!bd;
@@ -1287,12 +1377,18 @@
     updateInstTag();
     if (fromLink) toast(t("toast.linkApplied") + (state.inst.name ? ": " + state.inst.name : ""));
 
-    $("#langToggle").addEventListener("click", function () {
-      var idx = LANGS.indexOf(state.lang);
-      state.lang = LANGS[(idx + 1) % LANGS.length];
-      try { localStorage.setItem(LS.lang, state.lang); } catch(e) {}
-      applyI18n(); syncSeg("#langSeg", "lang", state.lang);
+    function langMenu(open) {
+      $("#langMenu").hidden = !open;
+      $("#langToggle").setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    $("#langToggle").addEventListener("click", function (e) { e.stopPropagation(); langMenu($("#langMenu").hidden); });
+    $("#langMenu").addEventListener("click", function (e) {
+      var b = e.target.closest(".lang-item"); if (!b) return;
+      state.lang = b.getAttribute("data-lang");
+      try { localStorage.setItem(LS.lang, state.lang); } catch(e2) {}
+      applyI18n(); syncSeg("#langSeg", "lang", state.lang); langMenu(false);
     });
+    document.addEventListener("click", function () { if (!$("#langMenu").hidden) langMenu(false); });
     $("#langSeg").addEventListener("click", function (e) {
       var b = e.target.closest(".seg"); if (!b) return;
       state.lang = b.getAttribute("data-lang");
@@ -1319,7 +1415,7 @@
     });
     $("#sheetClose").addEventListener("click", closePanel);
     $("#overlay").addEventListener("click", function (e) { if (e.target === this) closePanel(); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePanel(); langMenu(false); } });
     $("#calcBtn").addEventListener("click", function () {
       calculate(false);
       if (lastResult && window.matchMedia("(max-width: 767px)").matches) {
@@ -1328,6 +1424,13 @@
     });
     $("#resetBtn").addEventListener("click", clearInputs);
     $("#printBtn").addEventListener("click", function () { window.print(); });
+    $("#copyBtn").addEventListener("click", function () {
+      var text = reportText(), btn = this;
+      function done() { btn.textContent = t("btn.copied"); setTimeout(function () { btn.textContent = t("btn.copy"); }, 1500); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { toast(text.slice(0, 200)); });
+      else toast(text.slice(0, 200));
+    });
+    if (state.inst.samScreen === "required") $("#samScreen").open = true;
     $("#sheetBtn").addEventListener("click", openSheet);
     $("#sheetPrintBtn").addEventListener("click", function () { window.print(); });
     $("#clearBtn").addEventListener("click", function () {

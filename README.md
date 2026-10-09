@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.14.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-2.0.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -83,7 +83,13 @@ Every plan lists its sources. Page-level excerpts for each number:
   each day; and a "plan changed" line. The child's name is written by hand on the paper —
   it is never entered in the app. The on-screen preview can be copied by hand where there
   is no printer.
-- **Print / save** — formatted output for the medical record
+- **Print / save** — a one-page report for the medical record: patient line, classification, dose card,
+  checklist, adjuncts, red flags, signature line
+- **Copy as text** — the same report as plain text, for WhatsApp or a referral note where there is no printer
+- **No pump, no scale** — drops per minute for the giving set, ORS in sachets and cups, zinc in 20 mg tablets,
+  weight estimated from age when there is no scale; IV → IO → NG access ladder in Plan C
+- **Sodium and cholera** — serum Na⁺ changes the schedule (48 h slow rehydration above 150, isotonic fluids
+  below 130); a cholera flag adds loss replacement, antibiotic and notification lines to every plan
 
 > **⚕ Decision support only.** PRhehydrate is not a regulated medical device. Verify every
 > dose and volume against your local protocol and direct clinical assessment.

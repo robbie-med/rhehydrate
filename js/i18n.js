@@ -317,6 +317,20 @@ en: {
   "w.v.whzok":"≥ −2 SD",
   "f:age < # months → # × months + # · < # years → # × years + # · else # × years + #":"age < # months → # × months + # · < # years → # × years + # · else # × years + #",
   "f:weight vs −# SD and −# SD cut-offs at this length/height":"weight vs −# SD and −# SD cut-offs at this length/height",
+  /* ── layout, report (v2.0) ── */
+  "in.method.cds.s":"CDS",
+  "in.method.who.s":"WHO signs",
+  "in.method.weight.s":"Weight loss",
+  "in.method.percent.s":"% deficit",
+  "btn.seePlan":"See the plan",
+  "set.display":"Display",
+  "set.protocol":"Protocols",
+  "btn.copy":"Copy as text",
+  "btn.copied":"Copied",
+  "rep.name":"Name / bed: ________________________",
+  "rep.sign":"Clinician: ______________   Date / time: ______________",
+  "sam.screen.open":"Open the screen",
+  "in.samHidden":"SAM screen positive: the SAM pathway replaces the severity scale below.",
 "foot.disclaimer":"This tool does not replace clinical judgement, local guidelines, or direct assessment. Verify all doses and volumes. The authors accept no liability for clinical use. Not a regulated medical device."
 },
 
@@ -636,6 +650,20 @@ kr: {
   "w.v.whzok":"≥ −2 SD",
   "f:age < # months → # × months + # · < # years → # × years + # · else # × years + #":"나이 < #개월 → # × 개월 + # · < #세 → # × 세 + # · 그 외 # × 세 + #",
   "f:weight vs −# SD and −# SD cut-offs at this length/height":"체중 vs 이 신장의 −# SD 및 −# SD 기준",
+  /* ── layout, report (v2.0) ── */
+  "in.method.cds.s":"CDS",
+  "in.method.who.s":"WHO 징후",
+  "in.method.weight.s":"체중 감소",
+  "in.method.percent.s":"결핍 %",
+  "btn.seePlan":"계획 보기",
+  "set.display":"화면",
+  "set.protocol":"프로토콜",
+  "btn.copy":"텍스트로 복사",
+  "btn.copied":"복사됨",
+  "rep.name":"이름 / 병상: ________________________",
+  "rep.sign":"의료진: ______________   날짜 / 시간: ______________",
+  "sam.screen.open":"선별 열기",
+  "in.samHidden":"SAM 선별 양성: 아래 중증도 척도 대신 SAM 경로를 적용합니다.",
 "foot.disclaimer":"이 도구는 임상 판단, 기관 지침 또는 직접 진찰을 대체하지 않습니다. 모든 용량과 용적을 확인하십시오. 저자는 임상 사용에 대한 책임을 지지 않습니다. 규제 대상 의료기기가 아닙니다."
 },
 
@@ -955,6 +983,20 @@ fr: {
   "w.v.whzok":"≥ −2 ET",
   "f:age < # months → # × months + # · < # years → # × years + # · else # × years + #":"âge < # mois → # × mois + # · < # ans → # × ans + # · sinon # × ans + #",
   "f:weight vs −# SD and −# SD cut-offs at this length/height":"poids vs seuils −# ET et −# ET pour cette taille",
+  /* ── layout, report (v2.0) ── */
+  "in.method.cds.s":"ECD",
+  "in.method.who.s":"Signes OMS",
+  "in.method.weight.s":"Perte de poids",
+  "in.method.percent.s":"% déficit",
+  "btn.seePlan":"Voir le plan",
+  "set.display":"Affichage",
+  "set.protocol":"Protocoles",
+  "btn.copy":"Copier en texte",
+  "btn.copied":"Copié",
+  "rep.name":"Nom / lit : ________________________",
+  "rep.sign":"Clinicien : ______________   Date / heure : ______________",
+  "sam.screen.open":"Ouvrir le dépistage",
+  "in.samHidden":"Dépistage MAS positif : la filière MAS remplace l'échelle de gravité ci-dessous.",
 "foot.disclaimer":"Cet outil ne remplace pas le jugement clinique, les protocoles locaux ou l'évaluation directe. Vérifiez toutes les doses et tous les volumes. Les auteurs déclinent toute responsabilité en cas d'utilisation clinique. Ce n'est pas un dispositif médical réglementé."
 },
 
@@ -1274,6 +1316,20 @@ ru: {
   "w.v.whzok":"≥ −2 SD",
   "f:age < # months → # × months + # · < # years → # × years + # · else # × years + #":"возраст < # мес → # × мес + # · < # лет → # × лет + # · иначе # × лет + #",
   "f:weight vs −# SD and −# SD cut-offs at this length/height":"вес vs пороги −# SD и −# SD для этого роста",
+  /* ── layout, report (v2.0) ── */
+  "in.method.cds.s":"CDS",
+  "in.method.who.s":"Признаки ВОЗ",
+  "in.method.weight.s":"Потеря веса",
+  "in.method.percent.s":"% дефицита",
+  "btn.seePlan":"Показать план",
+  "set.display":"Отображение",
+  "set.protocol":"Протоколы",
+  "btn.copy":"Копировать текстом",
+  "btn.copied":"Скопировано",
+  "rep.name":"Имя / койка: ________________________",
+  "rep.sign":"Врач: ______________   Дата / время: ______________",
+  "sam.screen.open":"Открыть скрининг",
+  "in.samHidden":"Скрининг ТОН положительный: путь ТОН заменяет шкалу тяжести ниже.",
 "foot.disclaimer":"Данный инструмент не заменяет клиническое суждение, местные протоколы или непосредственный осмотр пациента. Проверяйте все дозы и объёмы. Авторы не несут ответственности за клиническое применение. Не является зарегистрированным медицинским изделием."
 },
 
@@ -1593,6 +1649,20 @@ zh: {
   "w.v.whzok":"≥ −2 SD",
   "f:age < # months → # × months + # · < # years → # × years + # · else # × years + #":"年龄 < # 月 → # × 月龄 + # · < # 岁 → # × 岁 + # · 否则 # × 岁 + #",
   "f:weight vs −# SD and −# SD cut-offs at this length/height":"体重 vs 该身高的 −# SD 与 −# SD 界值",
+  /* ── layout, report (v2.0) ── */
+  "in.method.cds.s":"CDS",
+  "in.method.who.s":"WHO体征",
+  "in.method.weight.s":"体重减轻",
+  "in.method.percent.s":"脱水%",
+  "btn.seePlan":"查看方案",
+  "set.display":"显示",
+  "set.protocol":"方案",
+  "btn.copy":"复制为文本",
+  "btn.copied":"已复制",
+  "rep.name":"姓名 / 床号：________________________",
+  "rep.sign":"医师：______________   日期 / 时间：______________",
+  "sam.screen.open":"打开筛查",
+  "in.samHidden":"SAM筛查阳性：SAM路径取代下方的严重程度评分。",
 "foot.disclaimer":"本工具不能替代临床判断、当地指南或直接评估。请核实所有剂量和液量。作者对临床使用不承担任何责任。本工具不是受监管的医疗器械。"
 }
 

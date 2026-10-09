@@ -66,6 +66,7 @@ en: {
   "res.deficitVol":"Fluid deficit","res.maint24":"Maintenance (24 h)",
   "res.maintHr":"Maintenance (hourly)","res.losses":"Ongoing-loss replacement",
   "res.plan":"Recommended protocol","res.reassess":"Reassess",
+  "res.adjuncts":"Adjuncts","res.fluids":"Maintenance and ongoing losses",
 
   "sev.none":"No / minimal dehydration",
   "sev.some":"Some dehydration (mild–moderate)",
@@ -270,6 +271,7 @@ kr: {
   "res.deficitVol":"수분 결핍량","res.maint24":"유지 수액 (24시간)",
   "res.maintHr":"유지 수액 (시간당)","res.losses":"지속 손실 보충",
   "res.plan":"권장 프로토콜","res.reassess":"재평가",
+  "res.adjuncts":"보조 치료","res.fluids":"유지 수액과 지속 손실",
 
   "sev.none":"탈수 없음 / 경미",
   "sev.some":"경도–중등도 탈수",
@@ -474,6 +476,7 @@ fr: {
   "res.deficitVol":"Déficit hydrique","res.maint24":"Entretien (24 h)",
   "res.maintHr":"Entretien (horaire)","res.losses":"Compensation des pertes en cours",
   "res.plan":"Protocole recommandé","res.reassess":"Réévaluer",
+  "res.adjuncts":"Traitements adjuvants","res.fluids":"Entretien et pertes en cours",
 
   "sev.none":"Déshydratation absente ou minime",
   "sev.some":"Signes évidents de déshydratation (légère à modérée)",
@@ -678,6 +681,7 @@ ru: {
   "res.deficitVol":"Дефицит жидкости","res.maint24":"Поддерживающий объём (24 ч)",
   "res.maintHr":"Поддерживающий объём (в час)","res.losses":"Возмещение текущих потерь",
   "res.plan":"Рекомендуемый протокол","res.reassess":"Переоценка",
+  "res.adjuncts":"Дополнительные средства","res.fluids":"Поддержание и текущие потери",
 
   "sev.none":"Обезвоживания нет / минимальное",
   "sev.some":"Умеренное обезвоживание (лёгкое–среднетяжёлое)",
@@ -882,6 +886,7 @@ zh: {
   "res.deficitVol":"累积损失量","res.maint24":"维持量（24小时）",
   "res.maintHr":"维持量（每小时）","res.losses":"继续损失补充量",
   "res.plan":"推荐方案","res.reassess":"重新评估",
+  "res.adjuncts":"辅助治疗","res.fluids":"维持量与继续损失",
 
   "sev.none":"无 / 轻微脱水",
   "sev.some":"部分脱水（轻–中度）",

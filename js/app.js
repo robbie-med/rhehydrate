@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.8.0";
+  var APP_VERSION = "1.9.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -369,9 +369,21 @@
     return ul;
   }
 
+  // collapsible section of the results
+  function group(titleKey, cls, open) {
+    var d = txt("details", "group" + (cls ? " " + cls : ""));
+    if (open) d.open = true;
+    d.appendChild(txt("summary", null, t(titleKey)));
+    return d;
+  }
   function workDetails(lines, codeFile) {
     var d = txt("details", "working");
     d.appendChild(txt("summary", null, t("w.show")));
+    d.appendChild(workList(lines, codeFile));
+    return d;
+  }
+  function workList(lines, codeFile) {
+    var d = txt("div", "work");
     var ul = txt("ul", "work-list");
     lines.forEach(function (l) {
       var li = txt("li");
@@ -403,29 +415,33 @@
 
     var banner = el("div", "sev-banner sev-" + key);
     var bt = el("div");
-    bt.appendChild(el("div", "sev-name", t("sev." + key)));
+    bt.appendChild(txt("div", "sev-name", t("sev." + key)));
+    bt.appendChild(txt("div", "sev-sub", t("res.deficitPct") + " " + fmt(R.sev.pct) + "% · " + fmt(R.deficitVol) + " " + t("u.mL")));
     banner.appendChild(bt);
     body.appendChild(banner);
 
-    if (R.screen) {
-      body.appendChild(txt("p", "note sam-note", t(R.screen.status === "neg" ? "res.sam.neg" : "res.sam.incomplete")));
+    // screen notes only once the screen has been answered
+    if (R.screen && R.screen.status !== "incomplete") {
       R.screen.notes.forEach(function (k) { body.appendChild(txt("p", "note sam-note", t(k))); });
     }
 
-    var metrics = el("div", "metrics");
-    metrics.appendChild(metric(t("res.deficitPct"),  fmt(R.sev.pct) + "<small>%</small>"));
-    metrics.appendChild(metric(t("res.deficitVol"),  fmt(R.deficitVol) + "<small> " + t("u.mL") + "</small>"));
-    metrics.appendChild(metric(t("res.maint24"),     fmt(R.maint24) + "<small> " + t("unit.mlDay") + "</small>"));
-    metrics.appendChild(metric(t("res.maintHr"),     fmt(R.maintHr) + "<small> " + t("u.mL/h") + "</small>"));
-    if (R.lossVol > 0) {
-      metrics.appendChild(metric(t("res.losses"), fmt(R.lossVol) + "<small> " + t("u.mL") + "</small>"));
-    }
-    body.appendChild(metrics);
-    body.appendChild(workDetails(R.work));
-
+    R.planWork = [];
     body.appendChild(buildPlan(R));
     body.appendChild(buildRedFlags());
-    body.appendChild(el("p", "note", t("res.maintNote")));
+
+    var fl = group("res.fluids", "fluids");
+    var metrics = el("div", "metrics");
+    metrics.appendChild(metric(t("res.maint24"), fmt(R.maint24) + "<small> " + t("unit.mlDay") + "</small>"));
+    metrics.appendChild(metric(t("res.maintHr"), fmt(R.maintHr) + "<small> " + t("u.mL/h") + "</small>"));
+    metrics.appendChild(metric(t("res.losses"), fmt(R.lossVol) + "<small> " + t("u.mL") + "</small>"));
+    fl.appendChild(metrics);
+    fl.appendChild(txt("p", "note", t("res.maintNote")));
+    fl.appendChild(txt("p", "note", t("loss.help")));
+    body.appendChild(fl);
+
+    var wk = group("w.show", "maths");
+    wk.appendChild(workList(R.work.concat(R.planWork)));
+    body.appendChild(wk);
 
     setResultBtns(true);
   }
@@ -452,32 +468,34 @@
     var head = el("div", "plan-head");
     var body = el("div", "plan-body");
     var loss = C.ongoingLosses(R.stools, R.emesis, w);
+    var adj  = [];
+    function adjuncts() {
+      if (!adj.length) return null;
+      var g = group("res.adjuncts", "adjuncts");
+      g.appendChild(liList(adj));
+      return g;
+    }
 
     if (key === "none") {
       head.textContent = t("plan.a.title");
-      var items = [t("plan.a.1"), t("plan.a.2"),
-        t("plan.a.3", { stool: fmt(loss.perStool), emesis: fmt(loss.perEmesis) })];
-      if (ins.showZinc) items.push(zincLine(R));
-      items.push(t("plan.a.5"));
-      body.appendChild(liList(items));
-      body.appendChild(workDetails(loss.work.slice(0, 2)));
+      body.appendChild(liList([t("plan.a.1"), t("plan.a.2"),
+        t("plan.a.3", { stool: fmt(loss.perStool), emesis: fmt(loss.perEmesis) }), t("plan.a.5")]));
+      if (ins.showZinc) adj.push(zincLine(R));
+      R.planWork = loss.work.slice(0, 2);
 
     } else if (key === "some") {
       head.textContent = t("plan.b.title");
       var b = C.planB(w, ins.planBRate, ins.planBHours);
       body.appendChild(el("div", "plan-dose",
         t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours, perHour: fmt(b.perHour) })));
-      var its = [t("plan.b.1")];
-      if (ins.showOnda)         its.push(t("plan.b.2"));
-      its.push(t("plan.b.3", { losses: fmt(R.lossVol) }));
-      its.push(t("plan.b.4", { hours: ins.planBHours }));
-      if (ins.showNgOrs)        its.push(t("plan.b.5"));
-      if (ins.showZinc)         its.push(zincLine(R));
-      if (ins.showRacecadotril) its.push(t("plan.b.racecadotril"));
-      if (ins.showSmectite)     its.push(t("plan.b.smectite"));
-      if (ins.showSboulardii)   its.push(t("plan.b.sboulardii"));
-      body.appendChild(liList(its));
-      body.appendChild(workDetails(b.work));
+      body.appendChild(liList([t("plan.b.1"), t("plan.b.3", { losses: fmt(R.lossVol) }), t("plan.b.4", { hours: ins.planBHours })]));
+      if (ins.showOnda)         adj.push(t("plan.b.2"));
+      if (ins.showNgOrs)        adj.push(t("plan.b.5"));
+      if (ins.showZinc)         adj.push(zincLine(R));
+      if (ins.showRacecadotril) adj.push(t("plan.b.racecadotril"));
+      if (ins.showSmectite)     adj.push(t("plan.b.smectite"));
+      if (ins.showSboulardii)   adj.push(t("plan.b.sboulardii"));
+      R.planWork = b.work;
 
     } else {
       head.textContent = t("plan.c.title");
@@ -505,22 +523,12 @@
             total:     fmt(pc.total),
             rate:      fmt(pc.rate)
           })));
-        ph2.appendChild(liList([
-          t("plan.c.phase2.switch"),
-          t("plan.c.4"),
-          t("plan.c.phase2.reassess"),
-          ins.showZinc ? zincLine(R) : null
-        ]));
+        ph2.appendChild(liList([t("plan.c.phase2.switch"), t("plan.c.4"), t("plan.c.phase2.reassess")]));
         body.appendChild(ph2);
-        body.appendChild(workDetails(pc.work));
+        R.planWork = pc.work;
 
-        var varDiv = el("div", "plan-variants");
-        varDiv.appendChild(el("div", "plan-variants-h", t("plan.c.var.h")));
-        varDiv.appendChild(liList([
-          t("plan.c.var.cardiac"),
-          t("plan.c.var.dysna"),
-          t("plan.c.var.surgical")
-        ]));
+        var varDiv = group("plan.c.var.h", "variants");
+        varDiv.appendChild(liList([t("plan.c.var.cardiac"), t("plan.c.var.dysna"), t("plan.c.var.surgical")]));
         body.appendChild(varDiv);
 
       } else {
@@ -528,22 +536,17 @@
         body.appendChild(el("div", "plan-dose",
           t("plan.c.fluid", { vol: fmt(wc.total), fluid: fluidName })));
         var witems = [];
-        if (R.months == null) {
-          witems.push(t("plan.c.infant", { first: fmt(wc.first), rest: fmt(wc.rest) }));
-          witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
-        } else if (R.months < 12) {
-          witems.push(t("plan.c.infant", { first: fmt(wc.first), rest: fmt(wc.rest) }));
-        } else {
-          witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
-        }
+        if (R.months == null || R.months < 12) witems.push(t("plan.c.infant", { first: fmt(wc.first), rest: fmt(wc.rest) }));
+        if (R.months == null || R.months >= 12) witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
         witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"));
-        if (ins.showZinc) witems.push(zincLine(R));
         body.appendChild(liList(witems));
         body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
-        body.appendChild(workDetails(wc.work));
+        R.planWork = wc.work;
       }
+      if (ins.showZinc) adj.push(zincLine(R));
     }
 
+    var ag = adjuncts(); if (ag) body.appendChild(ag);
     plan.appendChild(head); plan.appendChild(body);
     return plan;
   }

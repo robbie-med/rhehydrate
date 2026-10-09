@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.11.0";
+  var APP_VERSION = "1.12.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -55,7 +55,10 @@
     showSboulardii:   false,
     samScreen:        "optional",   // off | optional | required
     samProtocol:      "who",        // who | msf | acf | india | kenya
-    samFluid:         "auto"        // auto | ors
+    samFluid:         "auto",       // auto | ors
+    dripSet:          60,           // drops/mL of the giving set; 0 = pump
+    orsSachet:        1000,         // mL made up per sachet
+    zincTab:          true          // show zinc as 20 mg dispersible tablets
   };
 
   function samDefaults() {
@@ -92,7 +95,7 @@
   }
 
   // units inside working lines and unit labels
-  var UNIT_RE = /\b(mL\/kg\/h|mL\/kg|mL\/h|mL\/day|mg\/kg|mg\/day|mL|kg|mg|mm|months|min|h)\b/g;
+  var UNIT_RE = /\b(mL\/kg\/h|mL\/kg|mL\/h|mL\/day|mg\/kg|mg\/day|drops\/min|sachets|cups|tablets|mL|kg|mg|mm|months|min|h)\b/g;
   function lu(s) {
     return String(s).replace(UNIT_RE, function (u) { return t("u." + u); });
   }
@@ -504,6 +507,8 @@
       var b = C.planB(w, ins.planBRate, ins.planBHours);
       body.appendChild(el("div", "plan-dose",
         t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours, perHour: fmt(b.perHour) })));
+      R.planWork = b.work;
+      body.appendChild(sachetLine(R, b.vol));
       body.appendChild(liList([t("plan.b.1"), t("plan.b.3", { losses: fmt(R.lossVol) }), t("plan.b.4", { hours: ins.planBHours })]));
       var nb = naBlock(); if (nb) body.appendChild(nb);
       var nn = naNote(); if (nn) body.appendChild(nn);
@@ -513,7 +518,6 @@
       if (ins.showRacecadotril) adj.push(t("plan.b.racecadotril"));
       if (ins.showSmectite)     adj.push(t("plan.b.smectite"));
       if (ins.showSboulardii)   adj.push(t("plan.b.sboulardii"));
-      R.planWork = b.work;
 
     } else {
       head.textContent = t("plan.c.title");
@@ -542,10 +546,10 @@
         ps2.appendChild(bolusSelect(w));
         ps2.appendChild(el("div", "plan-calc", t("plan.c.slow.rate", {
           remaining: fmt(pcs.remaining), maint48: fmt(slow.maint48), total: fmt(slow.total), rate: fmt(slow.rate), fluid: fluidName })));
-        ps2.appendChild(liList([t("plan.na.hyper.1"), t("plan.na.hyper.2", { fluid: fluidName }), t("plan.c.4"), gluLine]));
+        R.planWork = pcs.work.concat(slow.work, glu.work, ng.work);
+        ps2.appendChild(liList([dripLine(R, slow.rate), t("plan.na.hyper.1"), t("plan.na.hyper.2", { fluid: fluidName }), t("plan.c.4"), gluLine]));
         body.appendChild(ps2);
         body.appendChild(routeBlock());
-        R.planWork = pcs.work.concat(slow.work, glu.work, ng.work);
 
       } else if (ins.planCAppr === "bolus") {
         var pc = C.planCBolus(w, R.deficitVol, R.maintHr, state.bolusCount);
@@ -567,10 +571,10 @@
             total:     fmt(pc.total),
             rate:      fmt(pc.rate)
           })));
-        ph2.appendChild(liList([t("plan.c.phase2.switch"), t("plan.c.4"), gluLine, t("plan.c.phase2.reassess")]));
+        R.planWork = pc.work.concat(glu.work, ng.work);
+        ph2.appendChild(liList([dripLine(R, pc.rate), t("plan.c.phase2.switch"), t("plan.c.4"), gluLine, t("plan.c.phase2.reassess")]));
         body.appendChild(ph2);
         body.appendChild(routeBlock());
-        R.planWork = pc.work.concat(glu.work, ng.work);
 
         var varDiv = group("plan.c.var.h", "variants");
         varDiv.appendChild(liList([t("plan.c.var.cardiac"), t("plan.c.var.dysna"), t("plan.c.var.surgical")]));
@@ -583,11 +587,16 @@
         var witems = [];
         if (R.months == null || R.months < 12) witems.push(t("plan.c.infant", { first: fmt(wc.first), rest: fmt(wc.rest) }));
         if (R.months == null || R.months >= 12) witems.push(t("plan.c.child",  { first: fmt(wc.first), rest: fmt(wc.rest) }));
+        R.planWork = wc.work.concat(glu.work, ng.work);
+        if (ins.dripSet && R.months != null) {
+          var d1 = C.dripRate(wc.firstRate, ins.dripSet), d2 = C.dripRate(wc.restRate, ins.dripSet);
+          R.planWork = R.planWork.concat(d1.work, d2.work);
+          witems.push(t("res.drip.who", { r1: fmt(wc.firstRate), d1: Math.round(d1.v), r2: fmt(wc.restRate), d2: Math.round(d2.v), gtt: ins.dripSet }));
+        }
         witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"), gluLine);
         body.appendChild(liList(witems));
         body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
         body.appendChild(routeBlock());
-        R.planWork = wc.work.concat(glu.work, ng.work);
       }
       if (naKey === "hypo") body.appendChild(naBlock());
       var cn = naNote(); if (cn) body.appendChild(cn);
@@ -599,9 +608,22 @@
     return plan;
   }
 
-  // range if age unknown
+  // range if age unknown; tablets when the institution stocks 20 mg dispersible tablets
   function zincLine(R) {
-    return R.months == null ? t("plan.a.4") : t("plan.zinc", { mg: String(C.zinc(R.months).mg) });
+    if (R.months == null) return t("plan.a.4");
+    var z = C.zinc(R.months), s = t("plan.zinc", { mg: String(z.mg) });
+    if (state.inst.zincTab) s += " " + t("plan.zinc.tab", { n: C.zincTablets(z.mg).label });
+    return s;
+  }
+  // "{rate} mL/h ≈ {d} drops/min" when a giving set is configured; pushes the working to R.planWork
+  function dripLine(R, rate) {
+    var gtt = state.inst.dripSet; if (!gtt) return null;
+    var d = C.dripRate(rate, gtt); R.planWork = R.planWork.concat(d.work);
+    return t("res.drip", { rate: fmt(rate), d: Math.round(d.v), gtt: gtt });
+  }
+  function sachetLine(R, ml) {
+    var s = C.sachets(ml, state.inst.orsSachet); R.planWork = R.planWork.concat(s.work);
+    return txt("div", "plan-dose-sub", t("res.sachets", { n: s.n, size: state.inst.orsSachet, cups: s.cups }));
   }
 
   // boluses given → phase 2
@@ -668,8 +690,14 @@
       ph.appendChild(txt("div", "plan-phase-label", t(b.h, b.hv)));
       var ul = document.createElement("ul");
       b.items.forEach(function (it) { ul.appendChild(txt("li", null, t(it[0], it[1]))); });
+      var bw = b.work.slice();
+      if (inst.dripSet) b.work.forEach(function (l) {
+        if (!l.iv) return;
+        var d = C.dripRate(l.v, inst.dripSet); bw = bw.concat(d.work);
+        ul.appendChild(txt("li", "drip", t("res.drip", { rate: fmt(l.v), d: Math.round(d.v), gtt: inst.dripSet })));
+      });
       ph.appendChild(ul);
-      if (b.work.length) ph.appendChild(workDetails(b.work, "js/sam.js"));
+      if (bw.length) ph.appendChild(workDetails(bw, "js/sam.js"));
       pb.appendChild(ph);
     });
     if (P.fluid === "ors" && !s.cholera) pb.appendChild(txt("p", "note", t("sam.fluid.orsNote")));
@@ -702,6 +730,7 @@
     var R = lastResult, ins = state.inst, s = state.sam, sc = R.screen;
     var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
       : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr, na: R.na });
+    M.dripSet = ins.dripSet;
     var samLabel = t("bs.sam.unk");
     if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + ": " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
     else if (sc && sc.status === "neg") samLabel = t("bs.sam.no");
@@ -852,6 +881,9 @@
     $("#instSamScreen").value     = ins.samScreen;
     $("#instSamProtocol").value   = ins.samProtocol;
     $("#instSamFluid").value      = ins.samFluid;
+    $("#instDripSet").value       = String(ins.dripSet);
+    $("#instOrsSachet").value     = String(ins.orsSachet);
+    syncValSeg("#instZincTabSeg",    ins.zincTab);
     $("#instLogoPreview").hidden  = !ins.logo;
     if (ins.logo) $("#instLogoPreview").src = ins.logo; else $("#instLogoPreview").removeAttribute("src");
     $("#instLogoRemove").hidden   = !ins.logo;
@@ -936,6 +968,12 @@
     $("#instSamFluid").addEventListener("change", function () {
       state.inst.samFluid = this.value; saveInst();
     });
+    $("#instDripSet").addEventListener("change", function () {
+      state.inst.dripSet = parseInt(this.value, 10) || 0; saveInst();
+    });
+    $("#instOrsSachet").addEventListener("change", function () {
+      state.inst.orsSachet = parseInt(this.value, 10) || 1000; saveInst();
+    });
 
     function wireBoolSeg(selId, key) {
       $(selId).addEventListener("click", function (e) {
@@ -952,6 +990,7 @@
     wireBoolSeg("#instRaceSeg",       "showRacecadotril");
     wireBoolSeg("#instSmectiteSeg",   "showSmectite");
     wireBoolSeg("#instSboulardiiSeg", "showSboulardii");
+    wireBoolSeg("#instZincTabSeg",    "zincTab");
 
     $("#instResetBtn").addEventListener("click", function () {
       resetInst();
@@ -1023,7 +1062,10 @@
     sbou:   { k: "showSboulardii",   type: "bool" },
     sam:    { k: "samScreen",        type: "enum", vals: ["off", "optional", "required"] },
     samp:   { k: "samProtocol",      type: "enum", vals: ["who", "msf", "acf", "india", "kenya"] },
-    samf:   { k: "samFluid",         type: "enum", vals: ["auto", "ors"] }
+    samf:   { k: "samFluid",         type: "enum", vals: ["auto", "ors"] },
+    drip:   { k: "dripSet",          type: "num",  vals: [0, 20, 60] },
+    sach:   { k: "orsSachet",        type: "num",  vals: [1000, 500, 200] },
+    ztab:   { k: "zincTab",          type: "bool" }
   };
   var METHODS = ["cds", "who", "weight", "percent"];
 

@@ -46,6 +46,10 @@
       loss: { perStool: loss.perStool, perEmesis: loss.perEmesis },
       zinc: ins.showZinc ? C.zinc(o.months) : null
     };
+    if (m.zinc && ins.zincTab) m.zinc.tabs = C.zincTablets(m.zinc.mg).label;
+    function drip(rate) {
+      return ins.dripSet ? [["res.drip", { rate: rate, d: Math.round(C.dripRate(rate, ins.dripSet).v), gtt: ins.dripSet }]] : [];
+    }
 
     if (o.sev === "none") {
       m.orders.push({ h: null, items: [["plan.a.1", {}], ["plan.a.2", {}], ["plan.a.5", {}]] });
@@ -126,7 +130,7 @@
 
     var wc = C.planCWho(w, o.months);
     var h1 = wc.infant ? 1 : 0.5, h2 = wc.infant ? 5 : 2.5;
-    m.orders.push({ h: null, items: [["plan.c.1", {}]] });
+    m.orders.push({ h: null, items: [["plan.c.1", {}]].concat(drip(wc.firstRate), drip(wc.restRate)) });
     m.rows.push({ type: "head", text: ["bs.ph.c1", { fluid: fluid, v: wc.first, dur: dur(h1), rate: wc.firstRate }] });
     m.rows = m.rows.concat(slots(wc.first, h1 * 2, 30, 0, 0, ["bs.give", { fluid: fluid }]));
     m.rows.push({ type: "head", text: ["bs.ph.c2", { fluid: fluid, v: wc.rest, dur: dur(h2), rate: wc.restRate }] });
@@ -306,7 +310,7 @@
 
     if (M.zinc) {
       var zn = section("bs-zinc", t("bs.zinc.h"));
-      zn.appendChild(el("p", "bs-rule", t("bs.zinc.dose", { mg: String(M.zinc.mg) })));
+      zn.appendChild(el("p", "bs-rule", t("bs.zinc.dose", { mg: String(M.zinc.mg) }) + (M.zinc.tabs ? " " + t("bs.zinc.tab", { n: M.zinc.tabs }) : "")));
       zn.appendChild(el("p", "bs-note", t("bs.zinc.band")));
       var zg = el("div", "bs-zgrid");
       for (var d = 1; d <= 14; d++) {

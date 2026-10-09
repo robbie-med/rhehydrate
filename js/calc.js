@@ -200,6 +200,25 @@
     return { rate: r.v, total: tot.v, work: [r, tot] };
   }
 
+  // Bedside units: drops/min for a giving set, ORS sachets and 200 mL cups, 20 mg zinc tablets.
+  function dripRate(mlPerHour, dropsPerMl) {
+    var d = mlPerHour * dropsPerMl / 60;
+    return { v: d, work: [line("w.drip", "rate × drops/mL ÷ 60", n(mlPerHour) + " × " + n(dropsPerMl) + " ÷ 60", d,
+      "drops/min", null, "dripRate")] };
+  }
+  function sachets(ml, sachetMl) {
+    var s = ml / sachetMl, cups = ml / 200;
+    return { n: s, cups: cups, work: [
+      line("w.sachets", "volume ÷ sachet size", n(ml) + " ÷ " + n(sachetMl), s, "sachets", null, "sachets"),
+      line("w.cups", "volume ÷ 200 mL", n(ml) + " ÷ 200", cups, "cups", null, "sachets")
+    ]};
+  }
+  function zincTablets(mg) {
+    var t = mg / 20;
+    return { n: t, label: t === 0.5 ? "½" : n(t), work: [line("w.zincTab", "mg ÷ 20 mg per tablet", n(mg) + " ÷ 20", t, "tablets",
+      null, "zincTablets")] };
+  }
+
   // Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.
   function zinc(months) {
     var mg = months < 6 ? 10 : 20;
@@ -246,7 +265,8 @@
     maintenance: maintenance, ongoingLosses: ongoingLosses,
     planB: planB, planCWho: planCWho, planCBolus: planCBolus, planCNg: planCNg,
     zinc: zinc, samScreen: samScreen,
-    sodiumBand: sodiumBand, slowRehydration: slowRehydration, glucoseBolus: glucoseBolus
+    sodiumBand: sodiumBand, slowRehydration: slowRehydration, glucoseBolus: glucoseBolus,
+    dripRate: dripRate, sachets: sachets, zincTablets: zincTablets
   };
   if (typeof module !== "undefined" && module.exports) module.exports = root.RH_CALC;
 })(typeof window !== "undefined" ? window : globalThis);

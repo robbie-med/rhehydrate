@@ -7,6 +7,11 @@
   function block(h, tone, items, work, hv) {
     return { h: h, hv: hv || {}, tone: tone || null, items: items, work: work || [] };
   }
+  // rate of an IV volume given over `hours` (drip rates use lines flagged iv)
+  function ivRate(vol, hours, src, fn) {
+    var l = line("w.sam.ivRate", "volume ÷ " + hours + " h", n(vol) + " ÷ " + hours, vol / hours, "mL/h", src, fn);
+    l.iv = true; return l;
+  }
   function fluidVar(ctx) { return { fluid: { key: "sam.fluid." + ctx.fluid } }; }
   function mix(a, b) { var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
 
@@ -34,7 +39,7 @@
     } else {
       var b = perKg("w.sam.bolus", 20, "mL/kg", w, "mL", src, fn);
       var c = perKg("w.sam.total", 70, "mL/kg", w, "mL", src, fn);
-      var rc = line("w.sam.rate", "70 mL/kg ÷ 6 h", n(c.v) + " ÷ 6", c.v / 6, "mL/h", src, fn);
+      var rc = line("w.sam.rate", "70 mL/kg ÷ 6 h", n(c.v) + " ÷ 6", c.v / 6, "mL/h", src, fn); rc.iv = true;
       out.push(block("sam.chol.c.h", "danger", [
         ["sam.chol.c.1", { b: b.v }], ["sam.chol.c.2", { c: c.v, r: rc.v }],
         ["sam.chol.c.3", {}], ["sam.chol.c.4", {}]
@@ -64,6 +69,7 @@
           var m4  = perKg("w.sam.maint", 4, "mL/kg/h", w, "mL/h", src, fn);
           var b10 = perKg("w.sam.blood", 10, "mL/kg", w, "mL", src, fn);
           var g5  = perKg("w.sam.glucose", 5, "mL/kg", w, "mL", src, fn);
+          var iv1 = ivRate(v15.v, 1, src, fn); m4.iv = true;
           out.push(block(ctx.shock ? "sam.who.shock.h" : "sam.who.ivNoOral.h", "danger", [
             ["sam.who.shock.glu", { g: g5.v }],
             ["sam.who.shock.1", { v: v15.v }],
@@ -71,7 +77,7 @@
             ["sam.who.shock.3", { v: v15.v, r10: r10.v }],
             ["sam.who.shock.4", { m4: m4.v, b10: b10.v }],
             ["sam.who.shock.5", {}]
-          ], [g5, v15, r10, m4, b10]));
+          ], [g5, v15, iv1, r10, m4, b10]));
         } else if (ctx.hyd === "none") {
           out.push(block("sam.who.prev.h", null, [["sam.who.prev.1", {}], ["sam.who.prev.2", {}]]));
         } else {
@@ -104,7 +110,7 @@
         if (ctx.shock) {
           tw = targetWeight(ctx, 1.1, src, fn);
           var cef = perKg("w.sam.drug", 80, "mg/kg", w, "mg", src, fn);
-          r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn);
+          r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn); r10.iv = true;
           out.push(block("sam.msf.shock.h", "danger", [
             ["sam.msf.target", { tw: tw.v, basis: { key: tw.basis } }],
             ["sam.msf.c.mon", {}],
@@ -136,7 +142,7 @@
             items.push(["sam.msf.c.1", { v20: v20.v }], ["sam.msf.c.2", { tw: tw.v }]);
             work.push(v20);
           } else {
-            r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn);
+            r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn); r10.iv = true;
             items.push(["sam.msf.c.3", { r10: r10.v }], ["sam.msf.c.4", { r10: r10.v }]);
             work.push(r10);
           }
@@ -171,7 +177,7 @@
           out.push(block("sam.acf.shock.h", "danger", [
             ["sam.acf.shock.1", { v15: v15.v }], ["sam.acf.shock.2", { v15: v15.v }],
             ["sam.acf.shock.3", { r10: r10.v }], ["sam.acf.shock.4", {}]
-          ], [v15, r10]));
+          ], [v15, ivRate(v15.v, 1, src, fn), r10]));
         } else if (ctx.hyd === "none") {
           out.push(block("sam.acf.a.h", null, [["sam.acf.a.1", {}]]));
         } else {
@@ -211,12 +217,12 @@
           var g5 = perKg("w.sam.glucose", 5, "mL/kg", w, "mL", src, fn);
           var v15 = perKg("w.sam.bolus", 15, "mL/kg", w, "mL", src, fn);
           var r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn);
-          var m4 = perKg("w.sam.maint", 4, "mL/kg/h", w, "mL/h", src, fn);
+          var m4 = perKg("w.sam.maint", 4, "mL/kg/h", w, "mL/h", src, fn); m4.iv = true;
           out.push(block("sam.ind.shock.h", "danger", [
             ["sam.ind.shock.1", { g: g5.v }], ["sam.ind.shock.2", { v15: v15.v }],
             ["sam.ind.shock.3", { v15: v15.v, r10: r10.v }], ["sam.ind.shock.4", { m4: m4.v }],
             ["sam.ind.shock.5", {}]
-          ], [g5, v15, r10, m4]));
+          ], [g5, v15, ivRate(v15.v, 1, src, fn), r10, m4]));
         } else if (ctx.hyd === "none") {
           var ml = ctx.months == null ? null : (ctx.months < 24 ? 50 : 100);
           out.push(block("sam.ind.prev.h", null, [
@@ -250,7 +256,7 @@
         var out = [];
         if (ctx.shock) {
           var v20 = perKg("w.sam.bolus", 20, "mL/kg", w, "mL", src, fn);
-          var rs = line("w.sam.rate", "volume ÷ 2 h", n(v20.v) + " ÷ 2", v20.v / 2, "mL/h", src, fn);
+          var rs = line("w.sam.rate", "volume ÷ 2 h", n(v20.v) + " ÷ 2", v20.v / 2, "mL/h", src, fn); rs.iv = true;
           out.push(block("sam.ken.shock.h", "danger", [
             ["sam.ken.shock.1", { v20: v20.v, r: rs.v }], ["sam.ken.shock.2", {}]
           ], [v20, rs]));
@@ -260,7 +266,7 @@
         } else {
           var items = [], work = [];
           if (!ctx.oralOk) {
-            var m4 = perKg("w.sam.maint", 4, "mL/kg/h", w, "mL/h", src, fn);
+            var m4 = perKg("w.sam.maint", 4, "mL/kg/h", w, "mL/h", src, fn); m4.iv = true;
             items.push(["sam.ken.iv", { m4: m4.v }]); work.push(m4);
           }
           var r10 = perKg("w.sam.rate", 10, "mL/kg/h", w, "mL/h", src, fn);

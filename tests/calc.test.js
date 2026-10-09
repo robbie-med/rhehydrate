@@ -42,6 +42,11 @@ t("Plan C bolus — 1 bolus given", function () {
 t("Plan C bolus — 3 boluses given", function () { var c = C.planCBolus(12, 1200, 1100 / 24, 3); close(c.given, 720); close(c.remaining, 480); });
 t("Plan C bolus — remaining never negative", function () { close(C.planCBolus(10, 500, 1000 / 24, 3).remaining, 0); });
 t("Plan C NG fallback: 20 mL/kg/h × 6 h", function () { var g = C.planCNg(10); close(g.rate, 200); close(g.total, 1200); checkWork(g.work); });
+t("bedside units: drops/min, sachets, zinc tablets", function () {
+  close(C.dripRate(120, 60).v, 120); close(C.dripRate(120, 20).v, 40); checkWork(C.dripRate(90, 20).work);
+  var s = C.sachets(900, 1000); close(s.n, 0.9); close(s.cups, 4.5); checkWork(s.work);
+  assert.strictEqual(C.zincTablets(10).label, "½"); assert.strictEqual(C.zincTablets(20).label, "1"); checkWork(C.zincTablets(20).work);
+});
 t("sodium bands", function () {
   assert.strictEqual(C.sodiumBand(128).key, "hypo"); assert.strictEqual(C.sodiumBand(140).key, "iso");
   assert.strictEqual(C.sodiumBand(151).key, "hyper"); assert.strictEqual(C.sodiumBand(null), null);
@@ -157,7 +162,7 @@ t("Cholera overrides protocol: 20 mL/kg + 70 mL/kg over 6 h", function () {
 // ── bedside sheet ──
 var SH = require("../js/sheet.js");
 var INST = { planBRate: 75, planBHours: 4, planCAppr: "who", ivFluid: "rl", showZinc: true,
-  showOnda: true, showNgOrs: true, samProtocol: "who", samFluid: "auto" };
+  showOnda: true, showNgOrs: true, samProtocol: "who", samFluid: "auto", dripSet: 60, orsSachet: 1000, zincTab: true };
 function inst(extra) { var o = {}, k; for (k in INST) o[k] = INST[k]; for (k in extra) o[k] = extra[k]; return o; }
 function doses(m) { return m.rows.filter(function (r) { return r.type === "dose" && r.v != null; }); }
 function sum(rows) { return rows.reduce(function (a, r) { return a + r.v; }, 0); }
@@ -304,6 +309,7 @@ t("every formula and unit the working can show has a translation key", function 
     add(C.planB(w, 75, 4).work); add(C.planCWho(w, null).work); add(C.planCBolus(w, 1000, 40, 2).work);
   });
   add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work); add(C.planCNg(7).work);
+  add(C.dripRate(100, 60).work); add(C.sachets(600, 500).work); add(C.zincTablets(10).work);
   add(C.sodiumBand(155).work); add(C.slowRehydration(1000, 40).work); add(C.glucoseBolus(8).work);
   add(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).work);
   add(C.whoSeverity({ condition: 1, eyes: 1, thirst: 1, skin: 1 }).work);

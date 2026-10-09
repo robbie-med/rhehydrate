@@ -319,6 +319,8 @@ input[type="number"] { -moz-appearance: textfield; }
   background: var(--accent-soft); border-left: 4px solid var(--accent);
   font-size: 19px; font-weight: 700; line-height: 1.35; color: var(--text);
 }
+.plan-dose-sub { margin: -6px 0 12px 20px; font-size: 13.5px; color: var(--text-2); }
+.plan li.drip { color: var(--text-2); }
 .plan ul { margin: 8px 0 0; padding-left: 20px; }
 .plan .group ul { margin: 0 0 10px; }
 .plan li { margin: 7px 0; font-size: 14.5px; line-height: 1.5; color: var(--text); }

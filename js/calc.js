@@ -193,6 +193,13 @@
     return { v: g.v, work: [g] };
   }
 
+  // No IV or IO: NG (or oral) ORS 20 mL/kg/h for 6 h (WHO Plan C).
+  function planCNg(w) {
+    var r = perKg("w.ngRate", 20, "mL/kg/h", w, "mL/h", SRC.whoTod, "planCNg");
+    var tot = line("w.ngTotal", "rate × 6 h", n(r.v) + " × 6", r.v * 6, "mL", SRC.whoTod, "planCNg");
+    return { rate: r.v, total: tot.v, work: [r, tot] };
+  }
+
   // Zinc for acute diarrhoea: 10 mg/day under 6 months, 20 mg/day from 6 months, for 10–14 days.
   function zinc(months) {
     var mg = months < 6 ? 10 : 20;
@@ -237,7 +244,7 @@
     cdsSeverity: cdsSeverity, whoSeverity: whoSeverity,
     deficitFromWeightLoss: deficitFromWeightLoss, deficitVolume: deficitVolume,
     maintenance: maintenance, ongoingLosses: ongoingLosses,
-    planB: planB, planCWho: planCWho, planCBolus: planCBolus,
+    planB: planB, planCWho: planCWho, planCBolus: planCBolus, planCNg: planCNg,
     zinc: zinc, samScreen: samScreen,
     sodiumBand: sodiumBand, slowRehydration: slowRehydration, glucoseBolus: glucoseBolus
   };

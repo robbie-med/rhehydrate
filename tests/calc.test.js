@@ -41,6 +41,7 @@ t("Plan C bolus — 1 bolus given", function () {
 });
 t("Plan C bolus — 3 boluses given", function () { var c = C.planCBolus(12, 1200, 1100 / 24, 3); close(c.given, 720); close(c.remaining, 480); });
 t("Plan C bolus — remaining never negative", function () { close(C.planCBolus(10, 500, 1000 / 24, 3).remaining, 0); });
+t("Plan C NG fallback: 20 mL/kg/h × 6 h", function () { var g = C.planCNg(10); close(g.rate, 200); close(g.total, 1200); checkWork(g.work); });
 t("sodium bands", function () {
   assert.strictEqual(C.sodiumBand(128).key, "hypo"); assert.strictEqual(C.sodiumBand(140).key, "iso");
   assert.strictEqual(C.sodiumBand(151).key, "hyper"); assert.strictEqual(C.sodiumBand(null), null);
@@ -174,11 +175,16 @@ t("sheet Plan B: hourly slots add up to the ORS volume", function () {
     assert.strictEqual(m.zinc.mg, 20); close(m.loss.perStool, 80); close(m.loss.perEmesis, 16);
   });
 });
+// rows before the NG fallback block
+function ivPart(m) {
+  var i = m.rows.map(function (r) { return r.text && r.text[0]; }).indexOf("bs.ng.h");
+  return i < 0 ? m : { rows: m.rows.slice(0, i) };
+}
 t("sheet Plan C WHO: infant 1 h + 5 h, child 30 min + 2.5 h, total 100 mL/kg", function () {
-  var inf = doses(SH.build({ w: 8, months: 9, sev: "severe", inst: inst() }));
+  var inf = doses(ivPart(SH.build({ w: 8, months: 9, sev: "severe", inst: inst() })));
   assert.strictEqual(inf.length, 12); close(sum(inf), 800);
   close(inf[0].v + inf[1].v, 240); close(inf[11].cum, 800); assert.strictEqual(inf[11].when, "5:30–6:00");
-  var ch = doses(SH.build({ w: 10, months: 18, sev: "severe", inst: inst() }));
+  var ch = doses(ivPart(SH.build({ w: 10, months: 18, sev: "severe", inst: inst() })));
   assert.strictEqual(ch.length, 6); close(ch[0].v, 300); close(sum(ch), 1000); assert.strictEqual(ch[5].when, "2:30–3:00");
 });
 t("sheet Plan C bolus: phase-2 options match planCBolus for 1–3 boluses", function () {
@@ -187,6 +193,19 @@ t("sheet Plan C bolus: phase-2 options match planCBolus for 1–3 boluses", func
   assert.strictEqual(opts.length, 3);
   opts.forEach(function (o, i) { close(o.text[1].rate, C.planCBolus(12, 1200, 1100 / 24, i + 1).rate); });
   m.rows.filter(function (r) { return r.text && /^bs\.bolus/.test(r.text[0]); }).forEach(function (r) { close(r.v, 240); });
+});
+t("sheet severe: access row and six NG fallback rows in every variant", function () {
+  ["who", "bolus"].forEach(function (ap) {
+    [null, C.sodiumBand(160)].forEach(function (na) {
+      var m = SH.build({ w: 10, months: 18, sev: "severe", deficitVol: 1000, maintHr: 1000 / 24, inst: inst({ planCAppr: ap }), na: na });
+      assert.ok(m.rows.some(function (r) { return r.text && r.text[0] === "bs.access"; }));
+      var i = m.rows.map(function (r) { return r.text && r.text[0]; }).indexOf("bs.ng.h");
+      assert.ok(i > 0, ap + " NG head");
+      var doses = m.rows.slice(i + 1, i + 7);
+      assert.strictEqual(doses.filter(function (r) { return r.type === "dose"; }).length, 6);
+      close(doses.reduce(function (s, r) { return s + r.v; }, 0), 1200);
+    });
+  });
 });
 t("sheet hypernatraemia: 48 h rows, options for 0–3 boluses, labs row carries Na⁺", function () {
   var na = C.sodiumBand(158);
@@ -284,7 +303,7 @@ t("every formula and unit the working can show has a translation key", function 
     add(C.maintenance(w).work); add(C.deficitVolume(6, w).work); add(C.ongoingLosses(2, 1, w).work);
     add(C.planB(w, 75, 4).work); add(C.planCWho(w, null).work); add(C.planCBolus(w, 1000, 40, 2).work);
   });
-  add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work);
+  add(C.deficitFromWeightLoss(10, 8).work); add(C.zinc(20).work); add(C.planCNg(7).work);
   add(C.sodiumBand(155).work); add(C.slowRehydration(1000, 40).work); add(C.glucoseBolus(8).work);
   add(C.cdsSeverity({ appearance: 1, eyes: 1, mucous: 1, tears: 1 }).work);
   add(C.whoSeverity({ condition: 1, eyes: 1, thirst: 1, skin: 1 }).work);

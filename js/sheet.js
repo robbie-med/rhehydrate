@@ -71,7 +71,16 @@
     var ors = C.perKg("w.ors", 5, "mL/kg/h", w, "mL/h");
     m.rows.push({ type: "task", when: hm(0), text: ["bs.row.base", {}] });
     m.rows.push({ type: "task", when: "", text: o.na ? ["bs.row.labs.na", { na: o.na.na }] : ["bs.row.labs", {}] });
+    m.rows.push({ type: "task", when: "", text: ["bs.access", {}] });
     if (naKey === "hypo") m.stop.items = RED_FLAGS.concat([["bs.hypo", {}]]);
+    // fallback when neither IV nor IO is possible: NG ORS 20 mL/kg/h × 6 h
+    var ng = C.planCNg(w);
+    function ngRows() {
+      m.rows.push({ type: "head", text: ["bs.ng.h", { rate: ng.rate, total: ng.total }] });
+      m.rows = m.rows.concat(slots(ng.total, 6, 60, 0, 0, ["bs.give", { fluid: { key: "bs.ors" } }]));
+      m.rows.push({ type: "check", when: hm(360), text: ["bs.chk.ng", {}] });
+      return m;
+    }
 
     // hypernatraemia: boluses only for shock, then 48 h at a steady rate with Na⁺ every 4 h
     if (naKey === "hyper") {
@@ -92,7 +101,7 @@
         m.rows.push({ type: "dose", when: ["bs.p2.when", { t: hm(q * 240) }], text: ["bs.p48.row", { fluid: fluid }] });
       }
       m.rows.push({ type: "task", when: "", text: ["bs.oral.started", {}] });
-      return m;
+      return ngRows();
     }
 
     if (ins.planCAppr === "bolus") {
@@ -112,7 +121,7 @@
         m.rows.push({ type: "dose", when: ["bs.p2.when", { t: hm(i * 120) }], text: ["bs.p2.row", {}] });
       }
       m.rows.push({ type: "task", when: "", text: ["bs.oral.started", {}] });
-      return m;
+      return ngRows();
     }
 
     var wc = C.planCWho(w, o.months);
@@ -124,7 +133,7 @@
     m.rows = m.rows.concat(slots(wc.rest, h2 * 2, 30, h1 * 60, wc.first, ["bs.give", { fluid: fluid }]));
     m.rows.push({ type: "task", when: "", text: ["bs.c.ors", { v: ors.v }] });
     m.rows.push({ type: "check", when: hm((h1 + h2) * 60), text: ["bs.chk.c", {}] });
-    return m;
+    return ngRows();
   }
 
   function sam(o) {

@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.10.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.11.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -182,7 +182,7 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 | IV fluid (Plan C) | Ringer's lactate · Normal saline · Plasma-Lyte | Ringer's lactate |
 | ORS dose (Plan B) | 50 mL/kg · **60 mL/kg** · 75 mL/kg · 100 mL/kg | 75 mL/kg |
 | Rehydration duration (Plan B) | 3 h · **4 h** · 6 h | 4 h |
-| Plan C approach | WHO 30/70 schedule · AAP bolus-first | Bolus-first |
+| Plan C approach | WHO 30/70 schedule · AAP bolus-first | WHO |
 | "Some" dehydration deficit | 1–9% (adjustable) | 6% |
 | "Severe" dehydration deficit | 5–15% (adjustable) | 10% |
 | Zinc reminder | On / Off | On |

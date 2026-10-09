@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.10.0";
+  var APP_VERSION = "1.11.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -31,7 +31,9 @@
     { url: "https://iris.who.int/handle/10665/376075",           key: "edu.refs.16" },
     { url: "https://doi.org/10.1016/S2352-4642(25)00371-2",      key: "edu.refs.17" },
     { url: "https://ansm.sante.fr/actualites/medicaments-a-base-dargile-dans-le-traitement-symptomatique-de-la-diarrhee-aigue-chez-lenfant", key: "edu.refs.18" },
-    { url: "https://doi.org/10.1542/peds.2018-3083",              key: "edu.refs.19" }
+    { url: "https://doi.org/10.1542/peds.2018-3083",              key: "edu.refs.19" },
+    { url: "https://doi.org/10.1056/NEJMoa1101549",              key: "edu.refs.20" },
+    { url: "https://www.who.int/publications/i/item/9789241510219", key: "edu.refs.21" }
   ];
 
   // ── institution defaults ──
@@ -42,7 +44,7 @@
     ivFluid:          "rl",
     planBRate:        75,
     planBHours:       4,
-    planCAppr:        "bolus",
+    planCAppr:        "who",
     somePct:          6,
     severePct:        10,
     showZinc:         true,
@@ -517,6 +519,14 @@
       head.textContent = t("plan.c.title");
       var glu = C.glucoseBolus(w);
       var gluLine = t("plan.c.gluc", { g: fmt(glu.v) });
+      var ng = C.planCNg(w);
+      function routeBlock() {
+        var rb = el("div", "plan-phase");
+        rb.appendChild(el("div", "plan-phase-label", t("plan.c.route.h")));
+        rb.appendChild(liList([t("plan.c.route.iv"), t("plan.c.route.io"),
+          t("plan.c.route.ng", { rate: fmt(ng.rate), total: fmt(ng.total) })]));
+        return rb;
+      }
 
       if (naKey === "hyper") {
         // shock boluses if needed, then the remaining deficit slowly (NICE CG84)
@@ -525,7 +535,7 @@
         var ps1 = el("div", "plan-phase");
         ps1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
         ps1.appendChild(el("div", "plan-dose", t("plan.c.bolus", { bolus: fmt(pcs.bolus), fluid: fluidName })));
-        ps1.appendChild(liList([t("plan.na.hyper.3"), t("plan.c.bolus.fluid", { fluid: fluidName }), t("plan.c.bolus.access")]));
+        ps1.appendChild(liList([t("plan.na.hyper.3"), t("plan.c.bolus.fluid", { fluid: fluidName })]));
         body.appendChild(ps1);
         var ps2 = el("div", "plan-phase plan-phase-2 tone-warn");
         ps2.appendChild(el("div", "plan-phase-label", t("plan.c.slow.label")));
@@ -534,7 +544,8 @@
           remaining: fmt(pcs.remaining), maint48: fmt(slow.maint48), total: fmt(slow.total), rate: fmt(slow.rate), fluid: fluidName })));
         ps2.appendChild(liList([t("plan.na.hyper.1"), t("plan.na.hyper.2", { fluid: fluidName }), t("plan.c.4"), gluLine]));
         body.appendChild(ps2);
-        R.planWork = pcs.work.concat(slow.work, glu.work);
+        body.appendChild(routeBlock());
+        R.planWork = pcs.work.concat(slow.work, glu.work, ng.work);
 
       } else if (ins.planCAppr === "bolus") {
         var pc = C.planCBolus(w, R.deficitVol, R.maintHr, state.bolusCount);
@@ -542,11 +553,8 @@
         ph1.appendChild(el("div", "plan-phase-label", t("plan.c.phase1.label")));
         ph1.appendChild(el("div", "plan-dose",
           t("plan.c.bolus", { bolus: fmt(pc.bolus), fluid: fluidName })));
-        ph1.appendChild(liList([
-          t("plan.c.bolus.repeat"),
-          t("plan.c.bolus.fluid", { fluid: fluidName }),
-          t("plan.c.bolus.access")
-        ]));
+        ph1.appendChild(liList([t("plan.c.bolus.repeat"), t("plan.c.bolus.fluid", { fluid: fluidName })]));
+        ph1.appendChild(txt("p", "note feast", t("plan.c.feast")));
         body.appendChild(ph1);
 
         var ph2 = el("div", "plan-phase plan-phase-2");
@@ -561,7 +569,8 @@
           })));
         ph2.appendChild(liList([t("plan.c.phase2.switch"), t("plan.c.4"), gluLine, t("plan.c.phase2.reassess")]));
         body.appendChild(ph2);
-        R.planWork = pc.work.concat(glu.work);
+        body.appendChild(routeBlock());
+        R.planWork = pc.work.concat(glu.work, ng.work);
 
         var varDiv = group("plan.c.var.h", "variants");
         varDiv.appendChild(liList([t("plan.c.var.cardiac"), t("plan.c.var.dysna"), t("plan.c.var.surgical")]));
@@ -577,7 +586,8 @@
         witems.push(t("plan.c.1"), t("plan.c.2"), t("plan.c.3"), t("plan.c.4"), gluLine);
         body.appendChild(liList(witems));
         body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
-        R.planWork = wc.work.concat(glu.work);
+        body.appendChild(routeBlock());
+        R.planWork = wc.work.concat(glu.work, ng.work);
       }
       if (naKey === "hypo") body.appendChild(naBlock());
       var cn = naNote(); if (cn) body.appendChild(cn);

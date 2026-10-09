@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "2.0.0";
+  var APP_VERSION = "2.0.1";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -151,6 +151,7 @@
     syncSamUI();
     updateInstTag();
     $("#verOut").textContent = APP_VERSION;
+    applyWeightEstimate(ageMonths());
     if (lastResult) renderResults(lastResult);
     if (sheetOpen()) renderSheetPreview();
   }

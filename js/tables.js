@@ -125,7 +125,7 @@
       tables: [{
         cols: [{ t: { en: "Characteristic", fr: "Caractéristique" } }, { t: "0", center: true }, { t: "1", center: true }, { t: "2", center: true }],
         rows: [
-          [{ en: "General appearance", fr: "Aspect général" }, { en: "Normal", fr: "Normal" }, { en: "Thirsty, restless, or lethargic but irritable when touched", fr: "Assoiffé, agité, ou léthargique mais irritable au toucher" }, { en: "Drowsy, limp, cold or sweaty ± comatose", fr: "Somnolent, hypotonique, froid ou moite ± comateux" }],
+          [{ en: "General appearance", fr: "Aspect général" }, { en: "Normal", fr: "Aspect normal" }, { en: "Thirsty, restless, or lethargic but irritable when touched", fr: "Assoiffé, agité, ou léthargique mais irritable au toucher" }, { en: "Drowsy, limp, cold or sweaty ± comatose", fr: "Somnolent, hypotonique, froid ou moite ± comateux" }],
           [{ en: "Eyes", fr: "Yeux" }, { en: "Normal", fr: "Normaux" }, { en: "Slightly sunken", fr: "Légèrement enfoncés" }, { en: "Extremely sunken", fr: "Extrêmement enfoncés" }],
           [{ en: "Mucous membranes (tongue)", fr: "Muqueuses (langue)" }, { en: "Moist", fr: "Humides" }, { en: "Sticky", fr: "Collantes" }, { en: "Dry", fr: "Sèches" }],
           [{ en: "Tears", fr: "Larmes" }, { en: "Present", fr: "Présentes" }, { en: "Decreased", fr: "Diminuées" }, { en: "Absent", fr: "Absentes" }]

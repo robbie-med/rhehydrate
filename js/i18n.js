@@ -692,7 +692,7 @@ fr: {
   "cds.help":"Échelle de Goldman en 4 items, cotés de 0 à 2. Validée chez l'enfant de 1 mois à 5 ans.",
   "cds.appearance":"Aspect général","cds.eyes":"Yeux",
   "cds.mucous":"Muqueuses (langue)","cds.tears":"Larmes",
-  "cds.appearance.0":"Normal",
+  "cds.appearance.0":"Aspect normal",
   "cds.appearance.1":"Assoiffé, agité ou léthargique, irritable au toucher",
   "cds.appearance.2":"Somnolent, hypotonique, froid ou moite ; comateux",
   "cds.eyes.0":"Normaux","cds.eyes.1":"Légèrement enfoncés","cds.eyes.2":"Très enfoncés",

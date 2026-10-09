@@ -8,7 +8,7 @@
 [![PWA](https://img.shields.io/badge/PWA-offline--first-4ec87a?style=flat-square&logo=pwa&logoColor=white)](https://prhehydrate.robbiemed.org)
 [![Languages](https://img.shields.io/badge/languages-EN·KR·FR·RU·ZH-9e9488?style=flat-square)](#languages)
 [![License](https://img.shields.io/badge/license-MIT-555?style=flat-square)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.12.0-888?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-1.13.0-888?style=flat-square)](#)
 
 A fast, offline-capable, clinician-facing decision-support tool for the bedside assessment
 and management of pediatric dehydration. No login. No telemetry. No build step.
@@ -179,7 +179,7 @@ Open **Settings → Institution** to configure for your ward. Settings are saved
 |-----------|---------|---------|
 | Institution name, department / ward | free text | — |
 | Logo | any image (stored on this device only; not in the setup link) | — |
-| IV fluid (Plan C) | Ringer's lactate · Normal saline · Plasma-Lyte | Ringer's lactate |
+| IV fluid (Plan C) | Ringer's lactate · Normal saline · Plasma-Lyte · ½-Darrow's + 5% dextrose · 0.45% saline + 5% dextrose | Ringer's lactate |
 | ORS dose (Plan B) | 50 mL/kg · **60 mL/kg** · 75 mL/kg · 100 mL/kg | 75 mL/kg |
 | Rehydration duration (Plan B) | 3 h · **4 h** · 6 h | 4 h |
 | Plan C approach | WHO 30/70 schedule · AAP bolus-first | WHO |
@@ -202,7 +202,7 @@ https://prhehydrate.robbiemed.org/?lang=fr&method=who&name=CHR%20Saint-Louis&dep
 ```
 
 Parameters: `lang` (en·kr·fr·ru·zh), `method` (cds·who·weight·percent), `name`, `dept`,
-`iv` (rl·ns·plasmalyte), `bRate` (50·60·75·100), `bHours` (3·4·6), `cAppr` (who·bolus),
+`iv` (rl·ns·plasmalyte·darrow·halfns), `bRate` (50·60·75·100), `bHours` (3·4·6), `cAppr` (who·bolus),
 `some` (1–9), `severe` (5–15), `zinc`·`onda`·`ng`·`race`·`smec`·`sbou` (0·1),
 `sam` (off·optional·required), `samp` (who·msf·acf·india·kenya), `samf` (auto·ors).
 Invalid values are ignored; the query is removed from the address bar once applied.

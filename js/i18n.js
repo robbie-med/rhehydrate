@@ -285,6 +285,19 @@ en: {
   "u.tablets":"tablets",
   "w.v.½":"½",
   "w.sam.ivRate":"IV rate",
+  /* ── cholera, fluids, Plan B details (v1.13) ── */
+  "plan.chol.h":"Suspected cholera",
+  "plan.chol.1":"Volumes are unchanged, but losses are large and fast: replace each watery stool as it occurs ({perStool} mL, 10–20 mL/kg) and reassess hourly; a child can need its whole deficit again within hours.",
+  "plan.chol.2":"Antibiotic once rehydration has started: azithromycin 20 mg/kg once (max 1 g); alternatives doxycycline 2–4 mg/kg once (over 8 years) or ciprofloxacin 20 mg/kg once, by local sensitivity.",
+  "plan.chol.3":"Notify the district health office, isolate stools, and give ORS to household contacts with diarrhoea.",
+  "inst.ivFluid.darrow":"Half-strength Darrow's with 5% dextrose",
+  "inst.ivFluid.halfns":"0.45% saline with 5% dextrose",
+  "inst.ivFluid.help":"Ringer's lactate is preferred; normal saline is acceptable. Plain 5% dextrose does not resuscitate. Half-strength Darrow's and 0.45% saline are hypotonic: WHO lists them for shock in SAM, not for Plan C.",
+  "plan.c.nsNote":"Normal saline contains no potassium: start ORS as soon as the child can drink, and recheck K⁺.",
+  "plan.c.hypoNote":"{fluid} is hypotonic: acceptable only where WHO lists it (shock in SAM). Use Ringer's lactate or normal saline for Plan C when available.",
+  "plan.b.infant":"Non-breastfed infant under 6 months: also give 100–200 mL clean water during the first 4 h.",
+  "plan.b.puffy":"If the eyelids become puffy, stop ORS; give water or breast milk; restart ORS when the puffiness has gone.",
+  "rf.dys":"Bloody diarrhoea: treat as Shigella (ciprofloxacin 15 mg/kg twice daily for 3 days), keep rehydrating and give zinc.",
 "foot.disclaimer":"This tool does not replace clinical judgement, local guidelines, or direct assessment. Verify all doses and volumes. The authors accept no liability for clinical use. Not a regulated medical device."
 },
 
@@ -572,6 +585,19 @@ kr: {
   "u.tablets":"정",
   "w.v.½":"½",
   "w.sam.ivRate":"정맥 주입 속도",
+  /* ── cholera, fluids, Plan B details (v1.13) ── */
+  "plan.chol.h":"콜레라 의심",
+  "plan.chol.1":"수액량은 같지만 손실이 많고 빠릅니다. 물설사가 날 때마다 바로 보충하고({perStool} mL, 10–20 mL/kg) 매시간 재평가합니다. 몇 시간 안에 결핍량 전체가 다시 필요해질 수 있습니다.",
+  "plan.chol.2":"수액 보충을 시작한 뒤 항생제: 아지트로마이신 20 mg/kg 1회(최대 1 g). 대안은 독시사이클린 2–4 mg/kg 1회(8세 초과) 또는 시프로플록사신 20 mg/kg 1회이며 지역 감수성에 따릅니다.",
+  "plan.chol.3":"보건 당국에 신고하고, 대변을 격리 처리하며, 설사가 있는 가족 접촉자에게 ORS를 줍니다.",
+  "inst.ivFluid.darrow":"반농도 Darrow 용액 + 5% 포도당",
+  "inst.ivFluid.halfns":"0.45% 식염수 + 5% 포도당",
+  "inst.ivFluid.help":"젖산링거액이 우선이며 생리식염수도 가능합니다. 5% 포도당 단독은 소생 수액이 아닙니다. 반농도 Darrow 용액과 0.45% 식염수는 저장액으로, WHO는 SAM 쇼크에만 제시하며 계획 C에는 쓰지 않습니다.",
+  "plan.c.nsNote":"생리식염수에는 칼륨이 없습니다. 마실 수 있게 되면 바로 ORS를 시작하고 K⁺를 재검합니다.",
+  "plan.c.hypoNote":"{fluid}는 저장액입니다. WHO가 제시한 경우(SAM 쇼크)에만 허용되며, 계획 C에는 가능하면 젖산링거액이나 생리식염수를 사용합니다.",
+  "plan.b.infant":"모유를 먹지 않는 6개월 미만 영아: 처음 4시간 동안 깨끗한 물 100–200 mL도 함께 줍니다.",
+  "plan.b.puffy":"눈꺼풀이 부으면 ORS를 중단하고 물이나 모유를 줍니다. 부기가 가라앉으면 ORS를 다시 시작합니다.",
+  "rf.dys":"혈변 설사: 이질(Shigella)로 치료(시프로플록사신 15 mg/kg 1일 2회, 3일), 수액 보충을 계속하고 아연을 줍니다.",
 "foot.disclaimer":"이 도구는 임상 판단, 기관 지침 또는 직접 진찰을 대체하지 않습니다. 모든 용량과 용적을 확인하십시오. 저자는 임상 사용에 대한 책임을 지지 않습니다. 규제 대상 의료기기가 아닙니다."
 },
 
@@ -859,6 +885,19 @@ fr: {
   "u.tablets":"comprimés",
   "w.v.½":"½",
   "w.sam.ivRate":"Débit IV",
+  /* ── cholera, fluids, Plan B details (v1.13) ── */
+  "plan.chol.h":"Choléra suspecté",
+  "plan.chol.1":"Les volumes sont inchangés, mais les pertes sont massives et rapides : compenser chaque selle liquide dès qu'elle survient ({perStool} mL, 10–20 mL/kg) et réévaluer toutes les heures ; un enfant peut perdre à nouveau tout son déficit en quelques heures.",
+  "plan.chol.2":"Antibiotique dès que la réhydratation est commencée : azithromycine 20 mg/kg en une prise (max 1 g) ; alternatives doxycycline 2–4 mg/kg en une prise (après 8 ans) ou ciprofloxacine 20 mg/kg en une prise, selon la sensibilité locale.",
+  "plan.chol.3":"Déclarer au district sanitaire, isoler les selles, et donner du SRO aux contacts du foyer ayant une diarrhée.",
+  "inst.ivFluid.darrow":"Darrow demi-concentré avec glucose 5 %",
+  "inst.ivFluid.halfns":"NaCl 0,45 % avec glucose 5 %",
+  "inst.ivFluid.help":"Le Ringer lactate est préféré ; le sérum physiologique est acceptable. Le glucose 5 % seul ne réanime pas. Le Darrow demi-concentré et le NaCl 0,45 % sont hypotoniques : l'OMS les réserve au choc en cas de MAS, pas au Plan C.",
+  "plan.c.nsNote":"Le sérum physiologique ne contient pas de potassium : commencer le SRO dès que l'enfant peut boire et recontrôler la kaliémie.",
+  "plan.c.hypoNote":"{fluid} est hypotonique : acceptable seulement là où l'OMS le prévoit (choc en cas de MAS). Utiliser le Ringer lactate ou le sérum physiologique pour le Plan C quand ils sont disponibles.",
+  "plan.b.infant":"Nourrisson de moins de 6 mois non allaité : donner aussi 100–200 mL d'eau propre pendant les 4 premières heures.",
+  "plan.b.puffy":"Si les paupières deviennent bouffies, arrêter le SRO ; donner de l'eau ou du lait maternel ; reprendre le SRO quand l'œdème a disparu.",
+  "rf.dys":"Diarrhée sanglante : traiter comme une shigellose (ciprofloxacine 15 mg/kg deux fois par jour pendant 3 jours), poursuivre la réhydratation et donner du zinc.",
 "foot.disclaimer":"Cet outil ne remplace pas le jugement clinique, les protocoles locaux ou l'évaluation directe. Vérifiez toutes les doses et tous les volumes. Les auteurs déclinent toute responsabilité en cas d'utilisation clinique. Ce n'est pas un dispositif médical réglementé."
 },
 
@@ -1146,6 +1185,19 @@ ru: {
   "u.tablets":"таблеток",
   "w.v.½":"½",
   "w.sam.ivRate":"Скорость в/в",
+  /* ── cholera, fluids, Plan B details (v1.13) ── */
+  "plan.chol.h":"Подозрение на холеру",
+  "plan.chol.1":"Объёмы не меняются, но потери велики и быстры: возмещать каждый водянистый стул сразу ({perStool} мл, 10–20 мл/кг) и оценивать состояние ежечасно; за несколько часов ребёнку может вновь понадобиться весь объём дефицита.",
+  "plan.chol.2":"Антибиотик после начала регидратации: азитромицин 20 мг/кг однократно (макс. 1 г); альтернативы — доксициклин 2–4 мг/кг однократно (старше 8 лет) или ципрофлоксацин 20 мг/кг однократно, по местной чувствительности.",
+  "plan.chol.3":"Сообщить в районный отдел здравоохранения, изолировать испражнения, давать ОРС контактным в семье с диареей.",
+  "inst.ivFluid.darrow":"Раствор Дарроу половинной концентрации с 5 % глюкозой",
+  "inst.ivFluid.halfns":"0,45 % NaCl с 5 % глюкозой",
+  "inst.ivFluid.help":"Предпочтителен раствор Рингера лактат; физиологический раствор допустим. Чистая 5 % глюкоза не подходит для реанимации. Раствор Дарроу половинной концентрации и 0,45 % NaCl гипотоничны: ВОЗ указывает их для шока при ТОН, не для плана В.",
+  "plan.c.nsNote":"Физиологический раствор не содержит калия: начать ОРС, как только ребёнок сможет пить, и проверить K⁺.",
+  "plan.c.hypoNote":"{fluid} — гипотонический раствор: допустим только там, где его указывает ВОЗ (шок при ТОН). Для плана В по возможности использовать Рингера лактат или физиологический раствор.",
+  "plan.b.infant":"Младенец до 6 месяцев не на грудном вскармливании: дополнительно 100–200 мл чистой воды в первые 4 ч.",
+  "plan.b.puffy":"Если веки стали одутловатыми, прекратить ОРС; давать воду или грудное молоко; возобновить ОРС, когда отёчность пройдёт.",
+  "rf.dys":"Кровянистая диарея: лечить как шигеллёз (ципрофлоксацин 15 мг/кг два раза в сутки 3 дня), продолжать регидратацию и давать цинк.",
 "foot.disclaimer":"Данный инструмент не заменяет клиническое суждение, местные протоколы или непосредственный осмотр пациента. Проверяйте все дозы и объёмы. Авторы не несут ответственности за клиническое применение. Не является зарегистрированным медицинским изделием."
 },
 
@@ -1433,6 +1485,19 @@ zh: {
   "u.tablets":"片",
   "w.v.½":"½",
   "w.sam.ivRate":"静脉输注速度",
+  /* ── cholera, fluids, Plan B details (v1.13) ── */
+  "plan.chol.h":"疑似霍乱",
+  "plan.chol.1":"补液量不变，但丢失量大且快：每次水样便后立即补充（{perStool} mL，10–20 mL/kg）并每小时重新评估；患儿可能在数小时内再次丢失全部累积损失量。",
+  "plan.chol.2":"开始补液后给予抗生素：阿奇霉素20 mg/kg单次（最大1 g）；替代方案为多西环素2–4 mg/kg单次（8岁以上）或环丙沙星20 mg/kg单次，依当地药敏而定。",
+  "plan.chol.3":"向当地卫生部门报告，隔离处理粪便，并给有腹泻的家庭接触者ORS。",
+  "inst.ivFluid.darrow":"半张Darrow液加5%葡萄糖",
+  "inst.ivFluid.halfns":"0.45%氯化钠加5%葡萄糖",
+  "inst.ivFluid.help":"首选乳酸林格液；生理盐水可接受。单纯5%葡萄糖不能用于复苏。半张Darrow液和0.45%氯化钠为低渗液：WHO仅将其用于SAM休克，不用于方案C。",
+  "plan.c.nsNote":"生理盐水不含钾：患儿能饮时即开始ORS，并复查K⁺。",
+  "plan.c.hypoNote":"{fluid}为低渗液：仅在WHO列出的情况（SAM休克）下可接受。方案C在有条件时使用乳酸林格液或生理盐水。",
+  "plan.b.infant":"6个月以下非母乳喂养婴儿：最初4小时内另给100–200 mL清洁水。",
+  "plan.b.puffy":"若眼睑浮肿，停用ORS；给水或母乳；浮肿消退后再恢复ORS。",
+  "rf.dys":"血性腹泻：按志贺菌感染治疗（环丙沙星15 mg/kg每日两次，共3天），继续补液并给锌。",
 "foot.disclaimer":"本工具不能替代临床判断、当地指南或直接评估。请核实所有剂量和液量。作者对临床使用不承担任何责任。本工具不是受监管的医疗器械。"
 }
 

@@ -51,8 +51,11 @@
       return ins.dripSet ? [["res.drip", { rate: rate, d: Math.round(C.dripRate(rate, ins.dripSet).v), gtt: ins.dripSet }]] : [];
     }
 
+    var chol = o.cholera ? [{ h: ["plan.chol.h", {}], items: [["plan.chol.1", { perStool: loss.perStool }], ["plan.chol.2", {}], ["plan.chol.3", {}]] }] : [];
+
     if (o.sev === "none") {
       m.orders.push({ h: null, items: [["plan.a.1", {}], ["plan.a.2", {}], ["plan.a.5", {}]] });
+      m.orders = m.orders.concat(chol);
       return m;
     }
 
@@ -63,7 +66,10 @@
       if (ins.showNgOrs) items.push(["plan.b.5", {}]);
       if (naKey === "hyper") items.push(["plan.na.hyper.1", {}], ["plan.na.hyper.2", { fluid: fluid }]);
       if (naKey === "hypo")  m.stop.items = RED_FLAGS.concat([["bs.hypo", {}]]);
+      items.push(["plan.b.puffy", {}]);
+      if (o.months != null && o.months < 6) items.push(["plan.b.infant", {}]);
       m.orders.push({ h: null, items: items });
+      m.orders = m.orders.concat(chol);
       m.rows.push({ type: "head", text: ["plan.b.dose", { vol: b.vol, hours: String(ins.planBHours), rate: String(ins.planBRate), perHour: b.perHour }] });
       m.rows = m.rows.concat(slots(b.vol, ins.planBHours, 60, 0, 0, ["bs.give", { fluid: { key: "bs.ors" } }]));
       m.rows.push({ type: "check", when: hm(ins.planBHours * 60), text: ["bs.chk.b", {}] });
@@ -76,6 +82,7 @@
     m.rows.push({ type: "task", when: hm(0), text: ["bs.row.base", {}] });
     m.rows.push({ type: "task", when: "", text: o.na ? ["bs.row.labs.na", { na: o.na.na }] : ["bs.row.labs", {}] });
     m.rows.push({ type: "task", when: "", text: ["bs.access", {}] });
+    m.orders = m.orders.concat(chol);
     if (naKey === "hypo") m.stop.items = RED_FLAGS.concat([["bs.hypo", {}]]);
     // fallback when neither IV nor IO is possible: NG ORS 20 mL/kg/h × 6 h
     var ng = C.planCNg(w);

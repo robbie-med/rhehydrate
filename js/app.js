@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.12.0";
+  var APP_VERSION = "1.13.0";
   var LS = { lang: "rh.lang", theme: "rh.theme", inputs: "rh.inputs", inst: "rh.inst" };
   var REPO = "https://github.com/robbie-med/rhehydrate/blob/main/";
   var C = window.RH_CALC, SAM = window.RH_SAM, SHEET = window.RH_SHEET;
@@ -62,7 +62,7 @@
   };
 
   function samDefaults() {
-    return { muac: null, oedema: null, whz: null, hyd: null, shock: false, cholera: false, oralOk: true, preW: null };
+    return { muac: null, oedema: null, whz: null, hyd: null, shock: false, oralOk: true, preW: null };
   }
 
   // ── state ───────────────────────────────────────────────────────────
@@ -73,6 +73,7 @@
     cds: { appearance: null, eyes: null, mucous: null, tears: null },
     who: { condition: null, eyes: null, thirst: null, skin: null },
     sam: samDefaults(),
+    cholera: false,
     bolusCount: 1,
     inst: Object.assign({}, INST_DEFAULTS)
   };
@@ -488,6 +489,18 @@
       return ph;
     }
     function naNote() { return naKey ? null : txt("p", "note", t("plan.na.unknown")); }
+    function cholBlock() {
+      if (!state.cholera) return null;
+      var ph = el("div", "plan-phase tone-danger");
+      ph.appendChild(txt("div", "plan-phase-label", t("plan.chol.h")));
+      ph.appendChild(liList([t("plan.chol.1", { perStool: fmt(loss.perStool) }), t("plan.chol.2"), t("plan.chol.3")]));
+      return ph;
+    }
+    function fluidNote() {
+      if (ins.ivFluid === "ns") return txt("p", "note", t("plan.c.nsNote"));
+      if (ins.ivFluid === "darrow" || ins.ivFluid === "halfns") return txt("p", "note warn", t("plan.c.hypoNote", { fluid: fluidName }));
+      return null;
+    }
     function adjuncts() {
       if (!adj.length) return null;
       var g = group("res.adjuncts", "adjuncts");
@@ -509,7 +522,11 @@
         t("plan.b.dose", { vol: fmt(b.vol), rate: ins.planBRate, hours: ins.planBHours, perHour: fmt(b.perHour) })));
       R.planWork = b.work;
       body.appendChild(sachetLine(R, b.vol));
-      body.appendChild(liList([t("plan.b.1"), t("plan.b.3", { losses: fmt(R.lossVol) }), t("plan.b.4", { hours: ins.planBHours })]));
+      var bl = [t("plan.b.1")];
+      if (R.months != null && R.months < 6) bl.push(t("plan.b.infant"));
+      bl.push(t("plan.b.3", { losses: fmt(R.lossVol) }), t("plan.b.puffy"), t("plan.b.4", { hours: ins.planBHours }));
+      body.appendChild(liList(bl));
+      var cb = cholBlock(); if (cb) body.appendChild(cb);
       var nb = naBlock(); if (nb) body.appendChild(nb);
       var nn = naNote(); if (nn) body.appendChild(nn);
       if (ins.showOnda)         adj.push(t("plan.b.2"));
@@ -598,6 +615,8 @@
         body.appendChild(txt("p", "note", t("plan.c.ivNote", { fluid: fluidName })));
         body.appendChild(routeBlock());
       }
+      var fn = fluidNote(); if (fn) body.appendChild(fn);
+      var cc = cholBlock(); if (cc) body.appendChild(cc);
       if (naKey === "hypo") body.appendChild(naBlock());
       var cn = naNote(); if (cn) body.appendChild(cn);
       if (ins.showZinc) adj.push(zincLine(R));
@@ -649,13 +668,14 @@
     var rf = el("div", "redflags");
     rf.appendChild(el("h4", null, "⚠ " + t("rf.title")));
     rf.appendChild(liList([t("rf.1"), t("rf.2"), t("rf.3"), t("rf.4"), t("rf.5")]));
+    rf.appendChild(txt("p", "note", t("rf.dys")));
     return rf;
   }
 
   // ── SAM results ──────────────────────────────────────────────────────
   function samCtx(R) {
     var s = state.sam;
-    return { w: R.weight, months: R.months, hyd: s.hyd, shock: !!s.shock, cholera: !!s.cholera,
+    return { w: R.weight, months: R.months, hyd: s.hyd, shock: !!s.shock, cholera: !!state.cholera,
       oralOk: s.oralOk !== false, preW: s.preW, oedema: s.oedema || 0, fluid: state.inst.samFluid };
   }
 
@@ -700,8 +720,8 @@
       if (bw.length) ph.appendChild(workDetails(bw, "js/sam.js"));
       pb.appendChild(ph);
     });
-    if (P.fluid === "ors" && !s.cholera) pb.appendChild(txt("p", "note", t("sam.fluid.orsNote")));
-    if (P.fluid === "orsK" && !s.cholera) pb.appendChild(txt("p", "note", t("sam.fluid.orsKNote")));
+    if (P.fluid === "ors" && !state.cholera) pb.appendChild(txt("p", "note", t("sam.fluid.orsNote")));
+    if (P.fluid === "orsK" && !state.cholera) pb.appendChild(txt("p", "note", t("sam.fluid.orsKNote")));
     plan.appendChild(pb);
     body.appendChild(plan);
 
@@ -712,7 +732,7 @@
     var ul = txt("ul", "src-list");
     var list = P.protocol.sources.slice();
     list.push({ t: "WHO. Guideline on the prevention and management of wasting and nutritional oedema, 2023, definitions, B6.", u: C.SRC.who2023 });
-    if (s.cholera) list.push({ t: "Médecins Sans Frontières. Management of a cholera epidemic, 5.8 Cholera and acute malnutrition.", u: C.SRC.msfCholera });
+    if (state.cholera) list.push({ t: "Médecins Sans Frontières. Management of a cholera epidemic, 5.8 Cholera and acute malnutrition.", u: C.SRC.msfCholera });
     list.push({ t: "GASTROSAM trial. Lancet Child Adolesc Health 2026.", u: C.SRC.gastrosam });
     var seen = {};
     list.forEach(function (x) {
@@ -729,7 +749,7 @@
   function buildSheet() {
     var R = lastResult, ins = state.inst, s = state.sam, sc = R.screen;
     var M = SHEET.build(R.sam ? { w: R.weight, months: R.months, inst: ins, samCtx: samCtx(R) }
-      : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr, na: R.na });
+      : { w: R.weight, months: R.months, inst: ins, sev: R.sev.key, deficitVol: R.deficitVol, maintHr: R.maintHr, na: R.na, cholera: state.cholera });
     M.dripSet = ins.dripSet;
     var samLabel = t("bs.sam.unk");
     if (sc && sc.status === "pos") samLabel = t("bs.sam.yes") + ": " + sc.reasons.map(function (r) { return t(r.k, r.v); }).join(" · ");
@@ -803,7 +823,7 @@
     syncStrSeg("#samOedemaSeg", s.oedema);
     syncStrSeg("#samHydSeg", s.hyd);
     syncValSeg("#samShockSeg", s.shock);
-    syncValSeg("#samCholSeg", s.cholera);
+    syncValSeg("#samCholSeg", state.cholera);
     syncValSeg("#samOralSeg", s.oralOk !== false);
     var p = SAM.PROTOCOLS[state.inst.samProtocol] || SAM.PROTOCOLS.who;
     $("#samShockDef").textContent = t(p.shockDefKey);
@@ -825,7 +845,7 @@
     seg("#samOedemaSeg", function (v) { state.sam.oedema = parseInt(v, 10); });
     seg("#samHydSeg",    function (v) { state.sam.hyd = v; });
     seg("#samShockSeg",  function (v) { state.sam.shock = v === "1"; });
-    seg("#samCholSeg",   function (v) { state.sam.cholera = v === "1"; });
+    seg("#samCholSeg",   function (v) { state.cholera = v === "1"; });
     seg("#samOralSeg",   function (v) { state.sam.oralOk = v === "1"; });
   }
 
@@ -1048,7 +1068,7 @@
   var URL_MAP = {
     name:   { k: "name",             type: "str" },
     dept:   { k: "dept",             type: "str" },
-    iv:     { k: "ivFluid",          type: "enum", vals: ["rl", "ns", "plasmalyte"] },
+    iv:     { k: "ivFluid",          type: "enum", vals: ["rl", "ns", "plasmalyte", "darrow", "halfns"] },
     bRate:  { k: "planBRate",        type: "num",  vals: [50, 60, 75, 100] },
     bHours: { k: "planBHours",       type: "num",  vals: [3, 4, 6] },
     cAppr:  { k: "planCAppr",        type: "enum", vals: ["who", "bolus"] },
@@ -1144,6 +1164,7 @@
         cds:        state.cds,
         who:        state.who,
         sam:        state.sam,
+        cholera:    state.cholera,
         bolusCount: state.bolusCount
       }));
     } catch(e) {}
@@ -1163,6 +1184,7 @@
       if (d.cds)        state.cds = d.cds;
       if (d.who)        state.who = d.who;
       if (d.sam)        state.sam = Object.assign(samDefaults(), d.sam);
+      state.cholera = !!(d.cholera || (d.sam && d.sam.cholera));
       if (d.bolusCount != null) state.bolusCount = d.bolusCount;
       if (d.method)     state.method = d.method;
     } catch(e) {}
@@ -1172,6 +1194,7 @@
     state.cds = { appearance: null, eyes: null, mucous: null, tears: null };
     state.who = { condition: null, eyes: null, thirst: null, skin: null };
     state.sam = samDefaults();
+    state.cholera = false;
     state.bolusCount = 1;
     ["#weight","#age","#wellWeight","#sodium"].forEach(function(s){ $(s).value = ""; });
     $("#stools").value = "0"; $("#emesis").value = "0";
@@ -1294,9 +1317,9 @@
     ["#weight","#age","#ageUnit","#wellWeight","#stools","#emesis","#sodium"].forEach(function (s) {
       $(s).addEventListener("change", persist);
     });
-    ["#age","#ageUnit"].forEach(function (s) {
-      $(s).addEventListener("change", function () { renderSamStatus(samScreenResult(ageMonths())); });
-    });
+    // age notes update while typing, so nothing shifts under the next tap
+    $("#age").addEventListener("input", function () { renderSamStatus(samScreenResult(ageMonths())); });
+    $("#ageUnit").addEventListener("change", function () { renderSamStatus(samScreenResult(ageMonths())); });
     $$(".inputs input, .inputs select").forEach(function (n) {
       n.addEventListener("change", recalc);
     });

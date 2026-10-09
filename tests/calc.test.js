@@ -212,6 +212,15 @@ t("sheet severe: access row and six NG fallback rows in every variant", function
     });
   });
 });
+t("sheet cholera: orders carry the cholera block with the per-stool volume, in every plan", function () {
+  ["none", "some", "severe"].forEach(function (sev) {
+    var m = SH.build({ w: 10, months: 18, sev: sev, deficitVol: 1000, maintHr: 1000 / 24, inst: inst(), cholera: true });
+    var g = m.orders.filter(function (o) { return o.h && o.h[0] === "plan.chol.h"; });
+    assert.strictEqual(g.length, 1, sev); close(g[0].items[0][1].perStool, 100);
+  });
+  var b = SH.build({ w: 6, months: 4, sev: "some", deficitVol: 360, maintHr: 25, inst: inst(), cholera: false });
+  assert.ok(b.orders[0].items.some(function (i) { return i[0] === "plan.b.infant"; }));
+});
 t("sheet hypernatraemia: 48 h rows, options for 0–3 boluses, labs row carries Na⁺", function () {
   var na = C.sodiumBand(158);
   var m = SH.build({ w: 10, months: 18, sev: "severe", deficitVol: 1000, maintHr: 1000 / 24, inst: inst({ planCAppr: "who" }), na: na });

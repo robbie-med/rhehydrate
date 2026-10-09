@@ -367,6 +367,8 @@ input[type="number"] { -moz-appearance: textfield; }
 .group.adjuncts li { color: var(--text-2); }
 
 .note { font-size: 13px; color: var(--text-3); margin: 10px 0 0; line-height: 1.5; }
+.note.warn { color: var(--warn); }
+.setrow .hint.full { width: 100%; }
 .sam-evidence { margin-top: 24px; padding-left: 14px; border-left: 3px solid var(--line); color: var(--text-2); }
 .sam-sources, .set-sources { font-size: 12.5px; }
 .sam-sources h4 { margin: 24px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); }

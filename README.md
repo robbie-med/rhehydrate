@@ -100,44 +100,44 @@ Every plan lists its sources. Page-level excerpts for each number:
 
 <table>
 <tr>
-  <td><strong>📴 Offline-first PWA</strong></td>
-  <td>Service worker caches all assets on first visit. Works with airplane mode, poor Wi-Fi, or no internet at all. Installable to the home screen on iOS and Android.</td>
+  <td><strong>Offline-first PWA</strong></td>
+  <td>Service worker caches all assets on first visit. Works no internet at all. Installable to the home screen on iOS and Android, and from most mainstream desktop browsers too.</td>
 </tr>
 <tr>
-  <td><strong>🌐 Five languages</strong></td>
-  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文. Every language covers everything: the SAM pathway, show-the-maths working, the bedside sheet and the reference tables. The browser language is detected on first visit.</td>
+  <td><strong>Five languages</strong></td>
+  <td>🇬🇧 English · 🇰🇷 한국어 · 🇫🇷 Français · 🇷🇺 Русский · 🇨🇳 中文. Browser language is detected on first visit.</td>
 </tr>
 <tr>
-  <td><strong>🔗 Setup link</strong></td>
-  <td>Settings → Setup link creates a URL carrying the language, assessment method and all institution settings. Opening it on another device applies and saves them — one link sets up a whole ward.</td>
+  <td><strong>Setup link</strong></td>
+  <td>Settings → Setup link creates a URL carrying the language, assessment method and all institution settings. Opening it on another device applies and saves them, and you can generate one link that sets up a whole ward.</td>
 </tr>
 <tr>
-  <td><strong>∑ Transparent maths</strong></td>
-  <td>All formulas live in <code>js/calc.js</code> and <code>js/sam.js</code> as pure functions that return their working. The reference-tables page prints the live source of each one; <code>node tests/calc.test.js</code> checks them.</td>
+  <td><strong>Transparent maths</strong></td>
+  <td>All formulas live in <code>js/calc.js</code> and <code>js/sam.js</code> as pure functions. The reference-tables page prints the live source of each one; <code>node tests/calc.test.js</code> checks them.</td>
 </tr>
 <tr>
-  <td><strong>🏥 Institution parameters</strong></td>
-  <td>Configurable IV fluid choice, ORS dose, rehydration duration, Plan C approach, deficit thresholds, and adjunct note visibility. All settings saved locally — no account needed.</td>
+  <td><strong>Institution parameters</strong></td>
+  <td>Configurable IV fluid choice, ORS dose, rehydration duration, Plan C approach, deficit thresholds, and adjunct note visibility. All settings saved locally, no account needed.</td>
 </tr>
 <tr>
-  <td><strong>🌗 Thoughtful theming</strong></td>
+  <td><strong>Thoughtful theming</strong></td>
   <td>Light / dark / system. Dark mode is true black with an amber accent — easy on the eyes at 3 am and on OLED batteries.</td>
 </tr>
 <tr>
-  <td><strong>🔒 Fully private</strong></td>
+  <td><strong>Fully private</strong></td>
   <td>No server, no analytics, no cookies. Every calculation happens in the browser; nothing leaves the device.</td>
 </tr>
 <tr>
-  <td><strong>🖥 Responsive layout</strong></td>
-  <td>Flat, uncluttered layout. Desktop and tablet (≥ 768 px): inputs in a left column, the plan on the right. Mobile: one column with Calculate pinned to the bottom of the screen. The plan updates live as you fill in the inputs.</td>
+  <td><strong>Responsive layout</strong></td>
+  <td>Flat, uncluttered layout, responsive to Desktop or Mobile, the plan updates live as you fill in the inputs.</td>
 </tr>
 </table>
 
 ---
 
-## Clinical evidence base
+## Evidence-based
 
-All protocols and reference ranges are drawn from peer-reviewed sources:
+Really, it's just evidence, actioned. All protocols and reference ranges are drawn from:
 
 | Reference | DOI / URL | Coverage |
 |-----------|-----------|----------|
@@ -163,10 +163,8 @@ All protocols and reference ranges are drawn from peer-reviewed sources:
 
 ## Languages
 
-The app, the bedside sheet and the reference tables are complete in all five languages,
-including the formulas and units in show-the-maths. `node tests/calc.test.js` fails if any
-language is missing a string. Language is detected from the browser on first visit and
-persisted across sessions.
+Complete in all five languages, including the formulas and units in show-the-maths. `node tests/calc.test.js` fails if any
+language is missing a string. Language is detected from the browser on first visit and persisted across sessions.
 
 | Flag | Code | Language | Notes |
 |------|------|----------|-------|
@@ -301,3 +299,5 @@ medical interventions ever described. This tool exists to put it one tap away.
 ## License
 
 [MIT](./LICENSE) © 2026 robbie.med
+
+S.D.G.
